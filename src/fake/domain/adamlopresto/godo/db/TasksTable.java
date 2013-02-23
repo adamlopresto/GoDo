@@ -12,8 +12,12 @@ public class TasksTable {
 	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_NAME = "task_name";
 	public static final String COLUMN_NOTES = "task_notes";
-	public static final String COLUMN_NOTIFY = "notify";
-	public static final String COLUMN_NOTIFY_SOUND = "notify_sound";
+	
+	//drawn from NotificationLevels
+	public static final String COLUMN_NOTIFICATION = "notification";
+	
+	//drawn from RepeatTypes
+	public static final String COLUMN_REPEAT = "repeat";
 	
 
 	public static void onCreate(SQLiteDatabase db) {
@@ -22,8 +26,8 @@ public class TasksTable {
 				+ COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
 				+ COLUMN_NAME + " TEXT NOT NULL UNIQUE COLLATE NOCASE, "
 				+ COLUMN_NOTES + " TEXT, "
-				+ COLUMN_NOTIFY + " BOOLEAN, "
-				+ COLUMN_NOTIFY_SOUND + " BOOLEAN "
+				+ COLUMN_NOTIFICATION + " INTEGER, "
+				+ COLUMN_REPEAT + " INTEGER"
 				+ ")"
 		);
 	}
@@ -36,8 +40,7 @@ public class TasksTable {
 				COLUMN_ID,
 				COLUMN_NAME,
 				COLUMN_NOTES,
-				COLUMN_NOTIFY,
-				COLUMN_NOTIFY_SOUND,
+				COLUMN_NOTIFICATION,
 		};
 		if (projection != null) {
 			HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
