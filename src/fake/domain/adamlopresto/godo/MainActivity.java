@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.SimpleCursorAdapter;
-import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -22,7 +21,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		adapter = new SimpleCursorAdapter(this, android.R.layout.two_line_list_item, null,
+		adapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, null,
 				projection,
 				new int[]{android.R.id.text1, android.R.id.text2}, 
 				0);
