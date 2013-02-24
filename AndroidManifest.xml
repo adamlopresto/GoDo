@@ -22,7 +22,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <provider android:exported="false" android:authorities="fake.domain.adamlopresto.godo.contentprovider" android:name="GoDoContentProvider"></provider>
+
+        <provider
+            android:name="fake.domain.adamlopresto.godo.GoDoContentProvider"
+            android:authorities="fake.domain.adamlopresto.godo.contentprovider"
+            android:exported="false" >
+        </provider>
+
+        <activity
+            android:name="fake.domain.adamlopresto.godo.ContextsActivity"
+            android:label="@string/title_activity_contexts"
+            android:parentActivityName="fake.domain.adamlopresto.godo.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fake.domain.adamlopresto.godo.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

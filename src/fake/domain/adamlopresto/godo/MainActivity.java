@@ -3,11 +3,13 @@ package fake.domain.adamlopresto.godo;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.SimpleCursorAdapter;
 
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
@@ -36,10 +38,21 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_contexts:
+			startActivity(new Intent(this, ContextsActivity.class));
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}	
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		Uri uri = GoDoContentProvider.AVAILABLE_INSTANCES_URI;
+		
 		CursorLoader cursorLoader = new CursorLoader(this,
 				uri, new String[]{"_id", "task_name", "task_notes"}, null, null, null);
 		return cursorLoader;

@@ -4,11 +4,11 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import fake.domain.adamlopresto.godo.db.AvailableInstancesView;
+import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 
 public class GoDoContentProvider extends ContentProvider {
@@ -17,16 +17,20 @@ public class GoDoContentProvider extends ContentProvider {
 
 	// Used for the UriMatcher
 	private static final int AVAILABLE_INSTANCES = 1;
+	private static final int CONTEXTS = 2;
 
 	public static final String AUTHORITY = "fake.domain.adamlopresto.godo.contentprovider";
+	
+	public static final Uri BASE = Uri.parse("content://"+AUTHORITY);
 
 	private static final String INSTANCE_BASE_PATH = "instances";
-	public static final Uri INSTANCES_URI = Uri.parse("content://" + AUTHORITY + "/" + INSTANCE_BASE_PATH);
+	public static final Uri INSTANCES_URI = Uri.withAppendedPath(BASE, INSTANCE_BASE_PATH);
 	
 	private static final String AVAILABLE_INSTANCE_PATH = INSTANCE_BASE_PATH+"/available";
-	public static final Uri AVAILABLE_INSTANCES_URI =Uri.parse("content://" + AUTHORITY + "/" 
-			+ AVAILABLE_INSTANCE_PATH);
+	public static final Uri AVAILABLE_INSTANCES_URI = Uri.withAppendedPath(BASE, AVAILABLE_INSTANCE_PATH);
 	
+	private static final String CONTEXTS_BASE_PATH = "contexts";
+	public static final Uri CONTEXTS_URI = Uri.withAppendedPath(BASE, CONTEXTS_BASE_PATH);
 	
 	/*
 	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
@@ -38,6 +42,7 @@ public class GoDoContentProvider extends ContentProvider {
 	private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 	static {
 		sURIMatcher.addURI(AUTHORITY, AVAILABLE_INSTANCE_PATH, AVAILABLE_INSTANCES);
+		sURIMatcher.addURI(AUTHORITY, CONTEXTS_BASE_PATH, CONTEXTS);
 	}
 
 	@Override
@@ -159,9 +164,13 @@ public class GoDoContentProvider extends ContentProvider {
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 		
 		int uriType = sURIMatcher.match(uri);
+		
 		switch (uriType) {
 		case AVAILABLE_INSTANCES:
 			queryBuilder.setTables(AvailableInstancesView.VIEW);
+			break;
+		case CONTEXTS:
+			queryBuilder.setTables(ContextsTable.TABLE);
 			break;
 		/*	
 		case ITEMS:
@@ -271,6 +280,7 @@ public class GoDoContentProvider extends ContentProvider {
 		return 0;
 	}
 
+	/*
 	private static String[] appendSelectionArgs(String originalValues[], String newValues[]){
 		if (originalValues == null){
 			return newValues;
@@ -280,5 +290,6 @@ public class GoDoContentProvider extends ContentProvider {
 		}
 		return DatabaseUtils.appendSelectionArgs(originalValues, newValues);
 	}
+	*/
 
 }
