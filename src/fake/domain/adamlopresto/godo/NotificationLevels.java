@@ -1,5 +1,5 @@
 package fake.domain.adamlopresto.godo;
 
 public enum NotificationLevels {
-	NONE, SILENT, NOISY, SPOKEN;
+	NONE, SILENT, VIBRATE, NOISY, SPOKEN;
 }
