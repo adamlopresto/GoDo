@@ -8,10 +8,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.SimpleCursorAdapter.ViewBinder;
 import fake.domain.adamlopresto.godo.db.ContextsTable;
@@ -81,6 +83,13 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	protected void onListItemClick (ListView l, View v, int position, long id){
+		Log.e("GoDo", "ListView "+l+","+v+","+position+","+id);
+		
+		getContentResolver().update(GoDoContentProvider.TOGGLE_CONTEXT_URI, null, ContextsTable.COLUMN_ID + "=?", new String[]{Long.toString(id)});
 	}
 	
 	@Override

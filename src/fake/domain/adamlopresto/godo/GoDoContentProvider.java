@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 import fake.domain.adamlopresto.godo.db.AvailableInstancesView;
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
@@ -18,6 +19,7 @@ public class GoDoContentProvider extends ContentProvider {
 	// Used for the UriMatcher
 	private static final int AVAILABLE_INSTANCES = 1;
 	private static final int CONTEXTS = 2;
+	private static final int TOGGLE_CONTEXT = 3;
 
 	public static final String AUTHORITY = "fake.domain.adamlopresto.godo.contentprovider";
 	
@@ -32,6 +34,9 @@ public class GoDoContentProvider extends ContentProvider {
 	private static final String CONTEXTS_BASE_PATH = "contexts";
 	public static final Uri CONTEXTS_URI = Uri.withAppendedPath(BASE, CONTEXTS_BASE_PATH);
 	
+	private static final String TOGGLE_CONTEXT_PATH = "contexts/toggle";
+	public static final Uri TOGGLE_CONTEXT_URI = Uri.withAppendedPath(BASE, TOGGLE_CONTEXT_PATH);
+	
 	/*
 	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
 			+ "/GoShopItems";
@@ -43,6 +48,7 @@ public class GoDoContentProvider extends ContentProvider {
 	static {
 		sURIMatcher.addURI(AUTHORITY, AVAILABLE_INSTANCE_PATH, AVAILABLE_INSTANCES);
 		sURIMatcher.addURI(AUTHORITY, CONTEXTS_BASE_PATH, CONTEXTS);
+		sURIMatcher.addURI(AUTHORITY, TOGGLE_CONTEXT_PATH, TOGGLE_CONTEXT);
 	}
 
 	@Override
@@ -221,13 +227,19 @@ public class GoDoContentProvider extends ContentProvider {
 	@Override
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
-		/* 
-		 * TODO
 		int uriType = sURIMatcher.match(uri);
 		SQLiteDatabase sqlDB = helper.getWritableDatabase();
-		int rowsUpdated = 0;
-		String id;
+		//int rowsUpdated = 0;
+		//String id;
 		switch (uriType) {
+		case TOGGLE_CONTEXT:
+			Log.e("GoDo", "Updating (maybe)");
+			sqlDB.execSQL("UPDATE "+ContextsTable.TABLE+" SET "+ContextsTable.COLUMN_ACTIVE+"= NOT "+ContextsTable.COLUMN_ACTIVE + " WHERE "+selection, selectionArgs);
+			getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
+			return 1;
+		}
+		/* 
+		 * TODO
 		case ITEMS:
 			rowsUpdated = sqlDB.update(ItemsTable.TABLE, 
 					values, 
