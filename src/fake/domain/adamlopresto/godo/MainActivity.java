@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
@@ -48,6 +50,13 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 		}
 		return super.onOptionsItemSelected(item);
 	}	
+	
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id){
+		Intent i = new Intent(this, TaskActivity.class);
+		i.putExtra("task", id);
+		startActivity(i);
+	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
