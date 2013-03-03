@@ -54,16 +54,16 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id){
 		Intent i = new Intent(this, TaskActivity.class);
-		i.putExtra("task", id);
+		i.putExtra("instance", id);
 		startActivity(i);
 	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-		Uri uri = GoDoContentProvider.AVAILABLE_INSTANCES_URI;
+		Uri uri = GoDoContentProvider.INSTANCES_URI;
 		
 		CursorLoader cursorLoader = new CursorLoader(this,
-				uri, new String[]{"_id", "task_name", "task_notes"}, null, null, null);
+				uri, new String[]{"_id", "task_name", "task_notes"}, "NOT blocked_by_context AND NOT blocked_by_task AND done_date IS NULL", null, null);
 		return cursorLoader;
 	}
 

@@ -4,11 +4,12 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
-import fake.domain.adamlopresto.godo.db.AvailableInstancesView;
+import fake.domain.adamlopresto.godo.db.InstancesView;
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 
@@ -17,9 +18,11 @@ public class GoDoContentProvider extends ContentProvider {
 	private DatabaseHelper helper;
 
 	// Used for the UriMatcher
-	private static final int AVAILABLE_INSTANCES = 1;
+	// Odd numbers have an ID, evens don't.
+	private static final int INSTANCES = 0;
+	private static final int INSTANCE_ID = 1;
 	private static final int CONTEXTS = 2;
-	private static final int TOGGLE_CONTEXT = 3;
+	private static final int TOGGLE_CONTEXT = 4;
 
 	public static final String AUTHORITY = "fake.domain.adamlopresto.godo.contentprovider";
 	
@@ -27,9 +30,6 @@ public class GoDoContentProvider extends ContentProvider {
 
 	private static final String INSTANCE_BASE_PATH = "instances";
 	public static final Uri INSTANCES_URI = Uri.withAppendedPath(BASE, INSTANCE_BASE_PATH);
-	
-	private static final String AVAILABLE_INSTANCE_PATH = INSTANCE_BASE_PATH+"/available";
-	public static final Uri AVAILABLE_INSTANCES_URI = Uri.withAppendedPath(BASE, AVAILABLE_INSTANCE_PATH);
 	
 	private static final String CONTEXTS_BASE_PATH = "contexts";
 	public static final Uri CONTEXTS_URI = Uri.withAppendedPath(BASE, CONTEXTS_BASE_PATH);
@@ -46,9 +46,86 @@ public class GoDoContentProvider extends ContentProvider {
 
 	private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 	static {
-		sURIMatcher.addURI(AUTHORITY, AVAILABLE_INSTANCE_PATH, AVAILABLE_INSTANCES);
+		sURIMatcher.addURI(AUTHORITY, INSTANCE_BASE_PATH, INSTANCES);
+		sURIMatcher.addURI(AUTHORITY, INSTANCE_BASE_PATH+"/#", INSTANCE_ID);
 		sURIMatcher.addURI(AUTHORITY, CONTEXTS_BASE_PATH, CONTEXTS);
 		sURIMatcher.addURI(AUTHORITY, TOGGLE_CONTEXT_PATH, TOGGLE_CONTEXT);
+	}
+
+	@Override
+	public boolean onCreate() {
+		helper = new DatabaseHelper(getContext());
+		return true;
+	}
+
+	@Override
+	public Cursor query(Uri uri, String[] projection, String selection,
+			String[] selectionArgs, String sortOrder) {
+	
+		// Using SQLiteQueryBuilder instead of query() method
+		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+		
+		int uriType = sURIMatcher.match(uri);
+		
+		//If it's odd, then it has an ID appended.
+		if ((uriType % 2) == 1){
+			String id = uri.getLastPathSegment();
+			selection = appendSelection(selection, "_id = ?");
+			selectionArgs = appendSelectionArg(selectionArgs, id);
+			uriType--;
+		}
+		
+		switch (uriType) {
+		case INSTANCES:
+			queryBuilder.setTables(InstancesView.VIEW);
+			break;
+		case CONTEXTS:
+			queryBuilder.setTables(ContextsTable.TABLE);
+			break;
+		/*	
+		case ITEMS:
+			// Adding the ID to the original query
+			queryBuilder.setTables(ItemsTable.TABLE);
+			break;
+		case ITEM_AISLE_ID:
+			queryBuilder.appendWhere(ItemAisleDetailView.COLUMN_ID + "="
+					+ uri.getLastPathSegment());
+			//fall through
+		case ITEM_AISLE:
+			queryBuilder.setTables(ItemAisleDetailView.VIEW);
+			break;
+		case STORE_ID:
+			queryBuilder.appendWhere(StoresTable.COLUMN_ID + "="
+					+ uri.getLastPathSegment());
+			//fall through
+		case STORE:
+			queryBuilder.setTables(StoresTable.TABLE);
+			break;
+		case STORES_WITH_ALL:
+			Cursor c = helper.getReadableDatabase().rawQuery(
+					//"SELECT _id, list, store_name FROM (SELECT -1 AS _id, 0 AS list, 'All' AS store_name, 0 as sortfield UNION SELECT _id, list, store_name, 1 as sortfield FROM stores ORDER BY sortfield, store_name)", null);
+					"SELECT _id, list, store_name FROM (SELECT -1 AS _id, 0 AS list, 'All' AS store_name, 0 as sortfield UNION SELECT store as _id, list, store_name, 1 as sortfield FROM item_aisle_detail WHERE status <> 'H' GROUP BY store HAVING count(item) > 0 ORDER BY sortfield, store_name)", null);
+			c.setNotificationUri(getContext().getContentResolver(), ITEM_AISLE_URI);
+			return c;
+		case AISLE_ID:
+			queryBuilder.appendWhere(AislesTable.COLUMN_ID + "="
+					+ uri.getLastPathSegment());
+			//fall through
+		case AISLE:
+			queryBuilder.setTables(AislesTable.TABLE);
+			break;
+			*/
+		default:
+			throw new IllegalArgumentException("Unknown URI: " + uri);
+		}
+	
+		SQLiteDatabase db = helper.getReadableDatabase();
+		Cursor cursor = queryBuilder.query(db, projection, selection,
+				selectionArgs, null, null, sortOrder);
+		// Make sure that potential listeners are getting notified
+		cursor.setNotificationUri(getContext().getContentResolver(), uri);
+	
+		return cursor;
 	}
 
 	@Override
@@ -157,74 +234,6 @@ public class GoDoContentProvider extends ContentProvider {
 	}
 
 	@Override
-	public boolean onCreate() {
-		helper = new DatabaseHelper(getContext());
-		return true;
-	}
-
-	@Override
-	public Cursor query(Uri uri, String[] projection, String selection,
-			String[] selectionArgs, String sortOrder) {
-
-		// Using SQLiteQueryBuilder instead of query() method
-		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-		
-		int uriType = sURIMatcher.match(uri);
-		
-		switch (uriType) {
-		case AVAILABLE_INSTANCES:
-			queryBuilder.setTables(AvailableInstancesView.VIEW);
-			break;
-		case CONTEXTS:
-			queryBuilder.setTables(ContextsTable.TABLE);
-			break;
-		/*	
-		case ITEMS:
-			// Adding the ID to the original query
-			queryBuilder.setTables(ItemsTable.TABLE);
-			break;
-		case ITEM_AISLE_ID:
-			queryBuilder.appendWhere(ItemAisleDetailView.COLUMN_ID + "="
-					+ uri.getLastPathSegment());
-			//fall through
-		case ITEM_AISLE:
-			queryBuilder.setTables(ItemAisleDetailView.VIEW);
-			break;
-		case STORE_ID:
-			queryBuilder.appendWhere(StoresTable.COLUMN_ID + "="
-					+ uri.getLastPathSegment());
-			//fall through
-		case STORE:
-			queryBuilder.setTables(StoresTable.TABLE);
-			break;
-		case STORES_WITH_ALL:
-			Cursor c = helper.getReadableDatabase().rawQuery(
-					//"SELECT _id, list, store_name FROM (SELECT -1 AS _id, 0 AS list, 'All' AS store_name, 0 as sortfield UNION SELECT _id, list, store_name, 1 as sortfield FROM stores ORDER BY sortfield, store_name)", null);
-					"SELECT _id, list, store_name FROM (SELECT -1 AS _id, 0 AS list, 'All' AS store_name, 0 as sortfield UNION SELECT store as _id, list, store_name, 1 as sortfield FROM item_aisle_detail WHERE status <> 'H' GROUP BY store HAVING count(item) > 0 ORDER BY sortfield, store_name)", null);
-			c.setNotificationUri(getContext().getContentResolver(), ITEM_AISLE_URI);
-			return c;
-		case AISLE_ID:
-			queryBuilder.appendWhere(AislesTable.COLUMN_ID + "="
-					+ uri.getLastPathSegment());
-			//fall through
-		case AISLE:
-			queryBuilder.setTables(AislesTable.TABLE);
-			break;
-			*/
-		default:
-			throw new IllegalArgumentException("Unknown URI: " + uri);
-		}
-
-		SQLiteDatabase db = helper.getReadableDatabase();
-		Cursor cursor = queryBuilder.query(db, projection, selection,
-				selectionArgs, null, null, sortOrder);
-		// Make sure that potential listeners are getting notified
-		cursor.setNotificationUri(getContext().getContentResolver(), uri);
-
-		return cursor;
-	}
-
-	@Override
 	public int update(Uri uri, ContentValues values, String selection,
 			String[] selectionArgs) {
 		int uriType = sURIMatcher.match(uri);
@@ -292,7 +301,10 @@ public class GoDoContentProvider extends ContentProvider {
 		return 0;
 	}
 
-	/*
+	private static String appendSelection(String original, String newSelection){
+		return DatabaseUtils.concatenateWhere(original, newSelection);
+	}
+	
 	private static String[] appendSelectionArgs(String originalValues[], String newValues[]){
 		if (originalValues == null){
 			return newValues;
@@ -302,6 +314,10 @@ public class GoDoContentProvider extends ContentProvider {
 		}
 		return DatabaseUtils.appendSelectionArgs(originalValues, newValues);
 	}
-	*/
+	
+	private static String[] appendSelectionArg(String[] originalValues, String newValue){
+		return appendSelectionArgs(originalValues, new String[]{newValue});
+	}
+	
 
 }

@@ -5,9 +5,9 @@ import java.util.HashSet;
 
 import android.database.sqlite.SQLiteDatabase;
 
-public class AvailableInstancesView {
+public class InstancesView {
 
-	public static final String VIEW = "available_instances";
+	public static final String VIEW = "instances_view";
 
 	//as of version 1
 	public static final String COLUMN_ID = InstancesTable.COLUMN_ID;
@@ -22,6 +22,8 @@ public class AvailableInstancesView {
 	public static final String COLUMN_START_DATE = InstancesTable.COLUMN_START_DATE;
 	public static final String COLUMN_PLAN_DATE = InstancesTable.COLUMN_PLAN_DATE;
 	public static final String COLUMN_CREATE_DATE = InstancesTable.COLUMN_CREATE_DATE;
+	public static final String COLUMN_BLOCKED_BY_CONTEXT = "blocked_by_context";
+	public static final String COLUMN_BLOCKED_BY_TASK = "blocked_by_task";
 	
 	public static void onCreate(SQLiteDatabase db) {
 		db.execSQL("CREATE VIEW "+VIEW
@@ -37,16 +39,16 @@ public class AvailableInstancesView {
 				+ COLUMN_DUE_DATE + ", "
 				+ COLUMN_START_DATE + ", "
 				+ COLUMN_PLAN_DATE + ", "
-				+ COLUMN_CREATE_DATE
-				+ " from instances i inner join tasks t on i.task=t._id " +
-				"where not exists " +
-				"(select * from task_context tc inner join contexts c " +
-				" on tc.context = c._id where tc.task=i.task and c.active <> 1)"
+				+ COLUMN_CREATE_DATE + ", "
+				+ "EXISTS (SELECT * FROM task_context tc INNER JOIN contexts c " +
+				" ON tc.context = c._id WHERE tc.task=i.task AND c.active <> 1) " +
+				"AS "+COLUMN_BLOCKED_BY_CONTEXT + ", " + 
+				"EXISTS " +
+				"(SELECT * FROM instance_dependency AS dep INNER JOIN instances AS prereq "+
+				" ON dep.first = prereq._id WHERE dep.second=i._id and prereq.done_date IS NULL) "+
+				"AS "+COLUMN_BLOCKED_BY_TASK
+				+ " from instances i inner join tasks t on i.task=t._id "
 				);
-		
-		/*
-		select * from instances i inner join tasks t on i.task=t._id where not exists (select * from task_context tc inner join contexts c on tc.context = c._id where tc.task=i.task and c.active <> 1);
-		 */
 	}
 
 	public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){

@@ -24,7 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		ContextsTable.onCreate(db);
 		TaskContextTable.onCreate(db);
 		InstanceDependencyTable.onCreate(db);
-		AvailableInstancesView.onCreate(db);
+		InstancesView.onCreate(db);
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		ContextsTable.onUpgrade(db, oldVersion, newVersion);
 		TaskContextTable.onUpgrade(db, oldVersion, newVersion);
 		InstanceDependencyTable.onUpgrade(db, oldVersion, newVersion);
-		AvailableInstancesView.onUpgrade(db, oldVersion, newVersion);
+		InstancesView.onUpgrade(db, oldVersion, newVersion);
 	}
 	
 	@Override
