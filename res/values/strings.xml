@@ -5,11 +5,28 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_contexts">Contexts</string>
     <string name="title_activity_task">Task</string>
+    <string name="title_activity_settings">Settings</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
     <string name="title_fragment_task_details">Details</string>
     <string name="task_name_hint">Task name</string>
     <string name="task_notes_label">Task notes</string>
     <string name="instance_notes_label">Instance notes</string>
+    <string name="pref_filtering_header">Filtering</string>
+    <string name="pref_show_blocked_by_task_title">Show dependent tasks</string>
+    <string name="pref_show_blocked_by_task_on">Show tasks that are blocked by an incomplete task</string>
+    <string name="pref_show_blocked_by_task_off">Hide tasks that are blocked by an incomplete task</string>
+    <string name="pref_show_blocked_by_context_title">Show inactive tasks</string>
+    <string name="pref_show_blocked_by_context_on">Show tasks that require an inactive context</string>
+    <string name="pref_show_blocked_by_context_off">Hide tasks that require an inactive context</string>
+    <string name="pref_show_done_title">Show completed tasks</string>
+    <string name="pref_show_done_on">Show tasks that are complete</string>
+    <string name="pref_show_done_off">Show only incomplete tasks</string>
+    <string name="pref_show_future_title">Show future tasks</string>
+    <string name="pref_show_future_on">Show tasks with start or plan dates in the future</string>
+    <string name="pref_show_future_off">Show only tasks that have begun</string>
+    <string name="start_date_label">Start date</string>
+    <string name="plan_date_label">Plan date</string>
+    <string name="due_date_label">Due date</string>
 
 </resources>

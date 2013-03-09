@@ -1,5 +1,8 @@
 package fake.domain.adamlopresto.godo.db;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -12,6 +15,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	 * Version history:
 	 * 1: initial release
 	 */	
+	
+	public static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, CURRENT_VERSION);

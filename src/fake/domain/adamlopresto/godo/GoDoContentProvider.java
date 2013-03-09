@@ -9,9 +9,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
-import fake.domain.adamlopresto.godo.db.InstancesView;
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
+import fake.domain.adamlopresto.godo.db.InstancesTable;
+import fake.domain.adamlopresto.godo.db.InstancesView;
+import fake.domain.adamlopresto.godo.db.TasksTable;
 
 public class GoDoContentProvider extends ContentProvider {
 
@@ -23,6 +25,9 @@ public class GoDoContentProvider extends ContentProvider {
 	private static final int INSTANCE_ID = 1;
 	private static final int CONTEXTS = 2;
 	private static final int TOGGLE_CONTEXT = 4;
+	private static final int TASKS = 6;
+	private static final int TASK_ID = 7;
+	
 
 	public static final String AUTHORITY = "fake.domain.adamlopresto.godo.contentprovider";
 	
@@ -37,6 +42,9 @@ public class GoDoContentProvider extends ContentProvider {
 	private static final String TOGGLE_CONTEXT_PATH = "contexts/toggle";
 	public static final Uri TOGGLE_CONTEXT_URI = Uri.withAppendedPath(BASE, TOGGLE_CONTEXT_PATH);
 	
+	private static final String TASK_BASE_PATH = "tasks";
+	public static final Uri TASKS_URI = Uri.withAppendedPath(BASE, TASK_BASE_PATH);
+	
 	/*
 	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
 			+ "/GoShopItems";
@@ -45,11 +53,15 @@ public class GoDoContentProvider extends ContentProvider {
 	 */
 
 	private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+	
 	static {
 		sURIMatcher.addURI(AUTHORITY, INSTANCE_BASE_PATH, INSTANCES);
 		sURIMatcher.addURI(AUTHORITY, INSTANCE_BASE_PATH+"/#", INSTANCE_ID);
 		sURIMatcher.addURI(AUTHORITY, CONTEXTS_BASE_PATH, CONTEXTS);
 		sURIMatcher.addURI(AUTHORITY, TOGGLE_CONTEXT_PATH, TOGGLE_CONTEXT);
+		sURIMatcher.addURI(AUTHORITY, TASK_BASE_PATH, TASKS);
+		sURIMatcher.addURI(AUTHORITY, TASK_BASE_PATH+"/#", TASK_ID);
 	}
 
 	@Override
@@ -238,15 +250,32 @@ public class GoDoContentProvider extends ContentProvider {
 			String[] selectionArgs) {
 		int uriType = sURIMatcher.match(uri);
 		SQLiteDatabase sqlDB = helper.getWritableDatabase();
-		//int rowsUpdated = 0;
-		//String id;
+		int rowsUpdated = 0;
+		
+		//If it's odd, then it has an ID appended.
+		if ((uriType % 2) == 1){
+			String id = uri.getLastPathSegment();
+			selection = appendSelection(selection, "_id = ?");
+			selectionArgs = appendSelectionArg(selectionArgs, id);
+			uriType--;
+		}
+		
 		switch (uriType) {
 		case TOGGLE_CONTEXT:
 			Log.e("GoDo", "Updating (maybe)");
 			sqlDB.execSQL("UPDATE "+ContextsTable.TABLE+" SET "+ContextsTable.COLUMN_ACTIVE+"= NOT "+ContextsTable.COLUMN_ACTIVE + " WHERE "+selection, selectionArgs);
 			getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
 			return 1;
+		case TASKS:
+			rowsUpdated = sqlDB.update(TasksTable.TABLE, values, selection, selectionArgs);
+			getContext().getContentResolver().notifyChange(TASKS_URI, null);
+			return rowsUpdated;
+		case INSTANCES:
+			rowsUpdated = sqlDB.update(InstancesTable.TABLE, values, selection, selectionArgs);
+			getContext().getContentResolver().notifyChange(INSTANCES_URI, null);
+			return rowsUpdated;
 		}
+		
 		/* 
 		 * TODO
 		case ITEMS:

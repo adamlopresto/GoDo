@@ -40,6 +40,17 @@
         <activity
             android:name="fake.domain.adamlopresto.godo.TaskActivity"
             android:label="@string/title_activity_task" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fake.domain.adamlopresto.godo.MainActivity" />
+        </activity>
+        <activity
+            android:name="fake.domain.adamlopresto.godo.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName="fake.domain.adamlopresto.godo.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fake.domain.adamlopresto.godo.MainActivity" />
         </activity>
     </application>
 

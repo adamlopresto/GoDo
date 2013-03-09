@@ -29,7 +29,7 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_contexts);
 		// Show the Up button in the action bar.
-		setupActionBar();
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		adapter = new SimpleCursorAdapter(this, R.layout.item_active_contexts, null,
 				projection,
@@ -50,15 +50,6 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
 		
 		setListAdapter(adapter);
 		getLoaderManager().restartLoader(0, null, this);
-	}
-
-	/**
-	 * Set up the {@link android.app.ActionBar}.
-	 */
-	private void setupActionBar() {
-
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-
 	}
 
 	@Override
