@@ -5,9 +5,12 @@ import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,8 +72,22 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		Uri uri = GoDoContentProvider.INSTANCES_URI;
 		
+		String where = null;
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_BLOCKED_BY_CONTEXT, false))
+			where = "NOT blocked_by_context";
+		
+		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_BLOCKED_BY_TASK, false))
+			where = DatabaseUtils.concatenateWhere(where, "NOT blocked_by_task");
+		
+		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_DONE, false))
+			where = DatabaseUtils.concatenateWhere(where, "done_date IS NULL");
+		
+		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_FUTURE, false))
+			where = DatabaseUtils.concatenateWhere(where, "COALESCE(plan_date, start_date) < current_timestamp");
+		
 		CursorLoader cursorLoader = new CursorLoader(this,
-				uri, new String[]{"_id", "task_name", "task_notes"}, "NOT blocked_by_context AND NOT blocked_by_task AND done_date IS NULL", null, null);
+				uri, new String[]{"_id", "task_name", "task_notes"}, where, null, null);
 		return cursorLoader;
 	}
 

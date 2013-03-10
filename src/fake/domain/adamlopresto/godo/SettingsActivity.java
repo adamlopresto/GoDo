@@ -7,6 +7,11 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
 public class SettingsActivity extends PreferenceActivity {
+	
+	public final static String PREF_SHOW_BLOCKED_BY_TASK = "pref_show_blocked_by_task";
+	public final static String PREF_SHOW_BLOCKED_BY_CONTEXT = "pref_show_blocked_by_context";
+	public final static String PREF_SHOW_DONE = "pref_show_done";
+	public final static String PREF_SHOW_FUTURE = "pref_show_future";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

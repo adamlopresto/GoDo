@@ -20,7 +20,7 @@ public class ContextsTable {
 				+ COLUMN_ID    + " integer primary key autoincrement, "
 				+ COLUMN_NAME  + " text not null collate nocase unique, "
 				+ COLUMN_DESC  + " text, "
-				+ COLUMN_ACTIVE + " boolean"
+				+ COLUMN_ACTIVE + " boolean default 0"
 				+ ")"
 		);
 		

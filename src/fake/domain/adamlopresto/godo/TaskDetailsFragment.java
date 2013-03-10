@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -154,9 +155,13 @@ public class TaskDetailsFragment extends Fragment {
 	
 	@Override
 	public void onPause(){
+		super.onPause();
+		
 		ContentValues cv = new ContentValues();
+		if (TextUtils.isEmpty(taskName.getText().toString()))
+			return;
 		cv.put(TasksTable.COLUMN_NAME, taskName.getText().toString());
-		cv.put(TasksTable.COLUMN_NOTES, taskNotes.getText().toString());
+		putStringOrNull(cv, TasksTable.COLUMN_NOTES, taskNotes.getText().toString());
 		
 		Uri uri;
 		
@@ -169,10 +174,10 @@ public class TaskDetailsFragment extends Fragment {
 		}
 		
 		cv.clear();
-		cv.put(InstancesTable.COLUMN_NOTES, instanceNotes.getText().toString());
-		cv.put(InstancesTable.COLUMN_START_DATE, startDate.getText().toString());
-		cv.put(InstancesTable.COLUMN_PLAN_DATE, planDate.getText().toString());
-		cv.put(InstancesTable.COLUMN_DUE_DATE, dueDate.getText().toString());
+		putStringOrNull(cv, InstancesTable.COLUMN_NOTES, instanceNotes.getText().toString());
+		putStringOrNull(cv, InstancesTable.COLUMN_START_DATE, startDate.getText().toString());
+		putStringOrNull(cv, InstancesTable.COLUMN_PLAN_DATE, planDate.getText().toString());
+		putStringOrNull(cv, InstancesTable.COLUMN_DUE_DATE, dueDate.getText().toString());
 		if (done.isChecked() && doneDate == null){
 			doneDate = DatabaseHelper.dateFormatter.format(new Date());
 			cv.put(InstancesTable.COLUMN_DONE_DATE, doneDate);
@@ -189,6 +194,16 @@ public class TaskDetailsFragment extends Fragment {
 			uri = Uri.withAppendedPath(GoDoContentProvider.INSTANCES_URI, String.valueOf(instance_id));
 			getActivity().getContentResolver().update(uri, cv, null, null);
 		}
-		super.onPause();
+	}
+	
+	/*
+	 * Return null if string is empty
+	 * used to 
+	 */
+	private void putStringOrNull(ContentValues cv, String key, String value){
+		if (TextUtils.isEmpty(value))
+			cv.putNull(key);
+		else
+			cv.put(key, value);
 	}
 }
