@@ -28,5 +28,6 @@
     <string name="start_date_label">Start date</string>
     <string name="plan_date_label">Plan date</string>
     <string name="due_date_label">Due date</string>
+    <string name="new_task">New task</string>
 
 </resources>

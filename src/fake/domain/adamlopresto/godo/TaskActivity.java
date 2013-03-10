@@ -21,8 +21,8 @@ import android.widget.TextView;
 public class TaskActivity extends FragmentActivity implements
 		ActionBar.TabListener {
 	
-	public long task_id;
-	public long instance_id;
+	public long task_id = -1L;
+	public long instance_id = -1L;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -45,8 +45,10 @@ public class TaskActivity extends FragmentActivity implements
 		setContentView(R.layout.activity_task);
 		
 		Bundle extras = getIntent().getExtras();
-		instance_id = extras.getLong("instance", -1L);
-		task_id = extras.getLong("task", -1L);
+		if (extras != null){
+			instance_id = extras.getLong("instance", -1L);
+			task_id = extras.getLong("task", -1L);
+		}
 
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();

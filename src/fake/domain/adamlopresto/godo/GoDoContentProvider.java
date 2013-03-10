@@ -8,7 +8,6 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.util.Log;
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesTable;
@@ -220,29 +219,22 @@ public class GoDoContentProvider extends ContentProvider {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
-		/* TODO
-
 		int uriType = sURIMatcher.match(uri);
 		SQLiteDatabase sqlDB = helper.getWritableDatabase();
 		long id = 0;
 		switch (uriType) {
-		case ITEMS:
-			id = sqlDB.insertOrThrow(ItemsTable.TABLE, null, values);
+		case INSTANCES:
+			id = sqlDB.insertOrThrow(InstancesTable.TABLE, null, values);
 			break;
-		case ITEM_AISLE:
-			id = sqlDB.insertOrThrow(ItemAisleTable.TABLE, null, values);
+		case TASKS:
+			id = sqlDB.insertOrThrow(TasksTable.TABLE, null, values);
 			break;
-		case STORE:
-			id = sqlDB.insertOrThrow(StoresTable.TABLE, null, values);
-			break;
-		case AISLE:
-			id = sqlDB.insertOrThrow(AislesTable.TABLE, null, values);
+		case CONTEXTS:
+			id = sqlDB.insertOrThrow(ContextsTable.TABLE, null, values);
 			break;
 		}
 		getContext().getContentResolver().notifyChange(uri, null);
-		return Uri.parse(uri+"/"+id);
-		*/
-		return null;
+		return Uri.withAppendedPath(uri, String.valueOf(id));
 	}
 
 	@Override
@@ -262,7 +254,6 @@ public class GoDoContentProvider extends ContentProvider {
 		
 		switch (uriType) {
 		case TOGGLE_CONTEXT:
-			Log.e("GoDo", "Updating (maybe)");
 			sqlDB.execSQL("UPDATE "+ContextsTable.TABLE+" SET "+ContextsTable.COLUMN_ACTIVE+"= NOT "+ContextsTable.COLUMN_ACTIVE + " WHERE "+selection, selectionArgs);
 			getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
 			return 1;
