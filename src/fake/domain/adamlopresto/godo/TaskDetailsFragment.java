@@ -1,14 +1,12 @@
 package fake.domain.adamlopresto.godo;
 
 import java.util.Date;
-
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,7 +99,6 @@ public class TaskDetailsFragment extends Fragment {
 			//have an instance, whether or not we have a task
 		
 		Uri uri = Uri.withAppendedPath(GoDoContentProvider.INSTANCES_URI, String.valueOf(instance_id));
-		Log.e("GoDo", uri.toString());
 		String[] projection = new String[]{InstancesView.COLUMN_TASK,
 				InstancesView.COLUMN_TASK_NAME, InstancesView.COLUMN_TASK_NOTES,
 				InstancesView.COLUMN_INSTANCE_NOTES, InstancesView.COLUMN_DONE_DATE, 
@@ -114,6 +111,7 @@ public class TaskDetailsFragment extends Fragment {
 		
 		extractTaskDetails(c);
 		extractInstanceDetails(c);
+		c.close();
 		/*
 		if (c.isNull(5)){
 			startDate.setEnabled(false);
@@ -138,7 +136,7 @@ public class TaskDetailsFragment extends Fragment {
 	}
 	
 	private void extractInstanceDetails(Cursor c){
-		task_id = c.getLong(c.getColumnIndexOrThrow(InstancesView.COLUMN_TASK));
+		((TaskActivity)getActivity()).task_id = task_id = c.getLong(c.getColumnIndexOrThrow(InstancesView.COLUMN_TASK));
 		instanceNotes.setText(c.getString(c.getColumnIndexOrThrow(InstancesView.COLUMN_INSTANCE_NOTES)));
 		int doneCol = c.getColumnIndexOrThrow(InstancesView.COLUMN_DONE_DATE);
 		if (c.isNull(doneCol)){
@@ -156,7 +154,10 @@ public class TaskDetailsFragment extends Fragment {
 	@Override
 	public void onPause(){
 		super.onPause();
+		saveData();
+	}
 		
+	public void saveData(){
 		ContentValues cv = new ContentValues();
 		if (TextUtils.isEmpty(taskName.getText().toString()))
 			return;

@@ -1,9 +1,18 @@
 package fake.domain.adamlopresto.godo;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Locale;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.content.ContentValues;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -11,12 +20,16 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import fake.domain.adamlopresto.godo.db.ContextsTable;
+import fake.domain.adamlopresto.godo.db.DatabaseHelper;
+import fake.domain.adamlopresto.godo.db.TaskContextTable;
 
 public class TaskActivity extends FragmentActivity implements
 		ActionBar.TabListener {
@@ -106,6 +119,67 @@ public class TaskActivity extends FragmentActivity implements
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
 			NavUtils.navigateUpFromSameTask(this);
+			return true;
+		case R.id.action_settings:
+			startActivity(new Intent(this, SettingsActivity.class));
+			return true;
+		case R.id.action_contexts:
+			//TODO
+			final SQLiteDatabase db = new DatabaseHelper(this).getReadableDatabase();
+			Log.e("GoDo", task_id+", "+instance_id);
+			Cursor cursor = db.query(ContextsTable.TABLE, new String[]{ContextsTable.COLUMN_ID, ContextsTable.COLUMN_NAME, 
+					"exists (select * from "+TaskContextTable.TABLE+" where "+TaskContextTable.COLUMN_TASK+"="+task_id+" and context=contexts._id) AS selected"}, null, null, null, null, null);
+			final ArrayList<Long> orig = new ArrayList<Long>(cursor.getCount());
+			cursor.moveToFirst();
+			while (!cursor.isAfterLast()){
+				orig.add(Long.valueOf(cursor.getLong(0)));
+				cursor.moveToNext();
+			}
+			cursor.moveToFirst();
+			Log.e("GoDo", DatabaseUtils.dumpCursorToString(cursor));
+			
+			final HashSet<Long> toAdd = new HashSet<Long>();
+			final HashSet<Long> toDel = new HashSet<Long>();
+			
+			new AlertDialog.Builder(this)
+				.setMultiChoiceItems(cursor, "selected", ContextsTable.COLUMN_NAME, 
+						new DialogInterface.OnMultiChoiceClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+								Long id = orig.get(which);
+								if (isChecked){
+									if (!toDel.remove(id))
+										toAdd.add(id);
+								} else {
+									if (!toAdd.remove(id))
+										toDel.add(id);
+								}
+							}
+						})
+				.setTitle(R.string.title_activity_contexts)
+				.setNegativeButton("Cancel", null)
+				.setPositiveButton("Set", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						String[] whereArgs = new String[]{String.valueOf(task_id), null};
+						for (Long id : toDel){
+							whereArgs[1]=String.valueOf(id);
+							db.delete(TaskContextTable.TABLE, 
+									TaskContextTable.COLUMN_TASK + "=? AND "+TaskContextTable.COLUMN_CONTEXT + "=?", 
+									whereArgs);
+						}
+						
+						ContentValues cv = new ContentValues(2);
+						cv.put(TaskContextTable.COLUMN_TASK, task_id);
+						for (Long id : toAdd){
+							cv.put(TaskContextTable.COLUMN_CONTEXT, id);
+							db.insert(TaskContextTable.TABLE, null, cv);
+						}
+					}
+				})
+				.show();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
