@@ -41,6 +41,14 @@
         android:layout_gravity="fill_horizontal"
         android:inputType="textMultiLine|textCapSentences" />
     
+    <TextView android:text="@string/notification_label" />
+    <Spinner
+        android:id="@+id/notification"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill_horizontal"
+        android:entries="@array/notification_levels" />
+    
     <TextView android:text="@string/start_date_label" />
     <EditText android:id="@+id/start_date" 
         android:layout_width="0dp"

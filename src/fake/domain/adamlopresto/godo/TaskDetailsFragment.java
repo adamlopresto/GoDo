@@ -1,6 +1,7 @@
 package fake.domain.adamlopresto.godo;
 
 import java.util.Date;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesTable;
 import fake.domain.adamlopresto.godo.db.InstancesView;
@@ -28,6 +30,7 @@ public class TaskDetailsFragment extends Fragment {
 	private EditText startDate;
 	private EditText planDate;
 	private EditText dueDate;
+	private Spinner notification;
 	private String doneDate;
 	
 	@Override
@@ -44,8 +47,9 @@ public class TaskDetailsFragment extends Fragment {
 		taskNotes     = (EditText) v.findViewById(R.id.task_notes);
 		instanceNotes = (EditText) v.findViewById(R.id.instance_notes);
 		startDate     = (EditText) v.findViewById(R.id.start_date);
-		planDate     = (EditText) v.findViewById(R.id.plan_date);
-		dueDate     = (EditText) v.findViewById(R.id.due_date);
+		planDate      = (EditText) v.findViewById(R.id.plan_date);
+		dueDate       = (EditText) v.findViewById(R.id.due_date);
+		notification  = (Spinner)  v.findViewById(R.id.notification);
 		
 		/*
 		final Calendar cal = Calendar.getInstance();
@@ -87,7 +91,7 @@ public class TaskDetailsFragment extends Fragment {
 			}
 			//We have a task, but are creating a new instance for it.
 			Uri uri = Uri.withAppendedPath(GoDoContentProvider.TASKS_URI, String.valueOf(task_id));
-			String[] projection = new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES};
+			String[] projection = new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES, TasksTable.COLUMN_NOTIFICATION};
 			
 			Cursor c = getActivity().getContentResolver().query(uri, projection, null, null, null);
 			if (c == null || !c.moveToFirst()){
@@ -103,7 +107,7 @@ public class TaskDetailsFragment extends Fragment {
 				InstancesView.COLUMN_TASK_NAME, InstancesView.COLUMN_TASK_NOTES,
 				InstancesView.COLUMN_INSTANCE_NOTES, InstancesView.COLUMN_DONE_DATE, 
 				InstancesView.COLUMN_START_DATE, InstancesView.COLUMN_PLAN_DATE, 
-				InstancesView.COLUMN_DUE_DATE};
+				InstancesView.COLUMN_DUE_DATE, InstancesView.COLUMN_NOTIFICATION};
 		Cursor c = getActivity().getContentResolver().query(uri, projection, null, null, null);
 		if (c == null || !c.moveToFirst()){
 			return;
@@ -133,6 +137,7 @@ public class TaskDetailsFragment extends Fragment {
 	private void extractTaskDetails(Cursor c){
 		taskName.setText(c.getString(c.getColumnIndexOrThrow(InstancesView.COLUMN_TASK_NAME)));
 		taskNotes.setText(c.getString(c.getColumnIndexOrThrow(InstancesView.COLUMN_TASK_NOTES)));
+		notification.setSelection(c.getInt(c.getColumnIndexOrThrow(InstancesView.COLUMN_NOTIFICATION)));
 	}
 	
 	private void extractInstanceDetails(Cursor c){
@@ -149,6 +154,7 @@ public class TaskDetailsFragment extends Fragment {
 		startDate.setText(c.getString(c.getColumnIndexOrThrow(InstancesView.COLUMN_START_DATE)));
 		planDate.setText(c.getString(c.getColumnIndexOrThrow(InstancesView.COLUMN_PLAN_DATE)));
 		dueDate.setText(c.getString(c.getColumnIndexOrThrow(InstancesView.COLUMN_DUE_DATE)));
+		
 	}
 	
 	@Override
@@ -163,6 +169,7 @@ public class TaskDetailsFragment extends Fragment {
 			return;
 		cv.put(TasksTable.COLUMN_NAME, taskName.getText().toString());
 		putStringOrNull(cv, TasksTable.COLUMN_NOTES, taskNotes.getText().toString());
+		cv.put(TasksTable.COLUMN_NOTIFICATION, notification.getSelectedItemPosition());
 		
 		Uri uri;
 		
