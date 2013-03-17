@@ -115,12 +115,14 @@ public class TasksNotification {
 
 				// Show an expanded list of items on devices running Android 4.1
 				// or later.
-				.setStyle(
+				/*.setStyle(
 						new NotificationCompat.InboxStyle()
 								.addLine(exampleItem).addLine(exampleItem)
 								.addLine(exampleItem).addLine(exampleItem)
 								.setBigContentTitle(title)
 								.setSummaryText("Dummy summary text"))
+								*/
+				.setStyle(new NotificationCompat.BigTextStyle().bigText(exampleString))
 
 				// Example additional actions for this notification. These will
 				// only show on devices running Android 4.1 or later, so you

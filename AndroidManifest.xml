@@ -58,11 +58,18 @@
             android:name="fake.domain.adamlopresto.godo.TaskerPluginEditActivity"
             android:label="@string/title_activity_tasker_plugin_edit" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name="fake.domain.adamlopresto.godo.TaskerPluginReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.FIRE_SETTING" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

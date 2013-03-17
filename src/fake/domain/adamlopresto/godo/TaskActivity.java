@@ -126,7 +126,6 @@ public class TaskActivity extends FragmentActivity implements
 		case R.id.action_contexts:
 			//TODO
 			final SQLiteDatabase db = new DatabaseHelper(this).getReadableDatabase();
-			Log.e("GoDo", task_id+", "+instance_id);
 			Cursor cursor = db.query(ContextsTable.TABLE, new String[]{ContextsTable.COLUMN_ID, ContextsTable.COLUMN_NAME, 
 					"exists (select * from "+TaskContextTable.TABLE+" where "+TaskContextTable.COLUMN_TASK+"="+task_id+" and context=contexts._id) AS selected"}, null, null, null, null, null);
 			final ArrayList<Long> orig = new ArrayList<Long>(cursor.getCount());
