@@ -141,74 +141,34 @@ public class GoDoContentProvider extends ContentProvider {
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		/* TODO
 		int uriType = sURIMatcher.match(uri);
 		SQLiteDatabase sqlDB = helper.getWritableDatabase();
-		int rowsDeleted = 0;
-		String id;
+		int rowsUpdated = 0;
+		
+		//If it's odd, then it has an ID appended.
+		if ((uriType % 2) == 1){
+			String id = uri.getLastPathSegment();
+			selection = appendSelection(selection, "_id = ?");
+			selectionArgs = appendSelectionArg(selectionArgs, id);
+			uriType--;
+		}
+		
 		switch (uriType) {
-		case ITEM_ID:
-			id = uri.getLastPathSegment();
-			selection = DatabaseUtils.concatenateWhere(ItemsTable.COLUMN_ID + "=?", selection);
-			selectionArgs = appendSelectionArgs(new String[]{id}, selectionArgs);
-			//notify of this particular item
-			getContext().getContentResolver().notifyChange(uri, null);
-			//fall through
-		case ITEMS:
-			rowsDeleted = sqlDB.delete(ItemsTable.TABLE, selection,
-					selectionArgs);
-			if (rowsDeleted > 0) {
-				getContext().getContentResolver().notifyChange(ITEM_URI, null);
-				getContext().getContentResolver().notifyChange(ITEM_AISLE_URI, null);
-			}
-			break;
-		case ITEM_AISLE_ID:
-			id = uri.getLastPathSegment();
-			selection = DatabaseUtils.concatenateWhere(ItemAisleTable.COLUMN_ID + "=?", selection);
-			selectionArgs = appendSelectionArgs(new String[]{id}, selectionArgs);
-			getContext().getContentResolver().notifyChange(uri, null);
-			//fall through
-		case ITEM_AISLE:
-			rowsDeleted = sqlDB.delete(ItemAisleTable.TABLE, selection,
-					selectionArgs);
-			if (rowsDeleted > 0)
-				getContext().getContentResolver().notifyChange(ITEM_AISLE_URI, null);
-			break;
-		case STORE_ID:
-			id = uri.getLastPathSegment();
-			selection = DatabaseUtils.concatenateWhere(StoresTable.COLUMN_ID + "=?", selection);
-			selectionArgs = appendSelectionArgs(new String[]{id}, selectionArgs);
-			getContext().getContentResolver().notifyChange(uri, null);
-			//fall through
-		case STORE:
-			rowsDeleted = sqlDB.delete(StoresTable.TABLE, selection,
-					selectionArgs);
-			if (rowsDeleted > 0){
-				getContext().getContentResolver().notifyChange(ITEM_AISLE_URI, null);
-				getContext().getContentResolver().notifyChange(STORES_URI, null);
-			}
-			break;
-		case AISLE_ID:
-			id = uri.getLastPathSegment();
-			selection = DatabaseUtils.concatenateWhere(AislesTable.COLUMN_ID + "=?", selection);
-			selectionArgs = appendSelectionArgs(new String[]{id}, selectionArgs);
-			getContext().getContentResolver().notifyChange(uri, null);
-			//fall through
-		case AISLE:
-			rowsDeleted = sqlDB.delete(AislesTable.TABLE, selection,
-					selectionArgs);
-			if (rowsDeleted > 0){
-				getContext().getContentResolver().notifyChange(ITEM_AISLE_URI, null);
-				getContext().getContentResolver().notifyChange(AISLES_URI, null);
-			}
-			break;
+		case TASKS:
+			rowsUpdated = sqlDB.delete(TasksTable.TABLE, selection, selectionArgs);
+			getContext().getContentResolver().notifyChange(TASKS_URI, null);
+			return rowsUpdated;
+		case INSTANCES:
+			rowsUpdated = sqlDB.delete(InstancesTable.TABLE, selection, selectionArgs);
+			getContext().getContentResolver().notifyChange(INSTANCES_URI, null);
+			return rowsUpdated;
+		case CONTEXTS:
+			rowsUpdated = sqlDB.delete(ContextsTable.TABLE, selection, selectionArgs);
+			getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
+			return rowsUpdated;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
-		
-		return rowsDeleted;
-		*/
-		return 0;
 	}
 
 	@Override
@@ -265,60 +225,13 @@ public class GoDoContentProvider extends ContentProvider {
 			rowsUpdated = sqlDB.update(InstancesTable.TABLE, values, selection, selectionArgs);
 			getContext().getContentResolver().notifyChange(INSTANCES_URI, null);
 			return rowsUpdated;
-		}
-		
-		/* 
-		 * TODO
-		case ITEMS:
-			rowsUpdated = sqlDB.update(ItemsTable.TABLE, 
-					values, 
-					selection,
-					selectionArgs);
-			
-			getContext().getContentResolver().notifyChange(ITEM_AISLE_URI, null);
-			break;
-		case ITEM_ID:
-			id = uri.getLastPathSegment();
-			if (TextUtils.isEmpty(selection)) {
-				rowsUpdated = sqlDB.update(ItemsTable.TABLE, 
-						values,
-						ItemsTable.COLUMN_ID + "=" + id, 
-						null);
-			} else {
-				rowsUpdated = sqlDB.update(ItemsTable.TABLE, 
-						values,
-						ItemsTable.COLUMN_ID + "=" + id 
-						+ " and " 
-						+ selection,
-						selectionArgs);
-			}
-			getContext().getContentResolver().notifyChange(ITEM_AISLE_URI, null);
-			getContext().getContentResolver().notifyChange(ITEM_URI, null);
-			break;
-		case AISLE_ID:
-			id = uri.getLastPathSegment();
-			if (TextUtils.isEmpty(selection)) {
-				rowsUpdated = sqlDB.update(AislesTable.TABLE, 
-						values,
-						AislesTable.COLUMN_ID + "=" + id, 
-						null);
-			} else {
-				rowsUpdated = sqlDB.update(AislesTable.TABLE, 
-						values,
-						AislesTable.COLUMN_ID + "=" + id 
-						+ " and " 
-						+ selection,
-						selectionArgs);
-			}
-			getContext().getContentResolver().notifyChange(ITEM_AISLE_URI, null);
-			break;
+		case CONTEXTS:
+			rowsUpdated = sqlDB.update(ContextsTable.TABLE, values, selection, selectionArgs);
+			getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
+			return rowsUpdated;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
-		getContext().getContentResolver().notifyChange(uri, null);
-		return rowsUpdated;
-		*/
-		return 0;
 	}
 
 	private static String appendSelection(String original, String newSelection){
