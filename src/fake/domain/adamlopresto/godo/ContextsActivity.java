@@ -25,7 +25,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.SimpleCursorAdapter.ViewBinder;
-import android.widget.Toast;
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 
 public class ContextsActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
