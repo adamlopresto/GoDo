@@ -56,6 +56,9 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 		case R.id.action_new_task:
 			startActivity(new Intent(this, TaskActivity.class));
 			return true;
+		case R.id.action_notify:
+			TasksNotification.notify(this, "Main notification", 5);
+			return true;
 		}
 		
 		return super.onOptionsItemSelected(item);
