@@ -72,7 +72,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 	}
 
 	@Override
-	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		Uri uri = GoDoContentProvider.INSTANCES_URI;
 		
 		String where = null;
@@ -95,12 +95,12 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> arg0, Cursor c) {
+	public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
 		adapter.swapCursor(c);
 	}
 
 	@Override
-	public void onLoaderReset(Loader<Cursor> arg0) {
+	public void onLoaderReset(Loader<Cursor> loader) {
 		adapter.swapCursor(null);
 	}
 

@@ -1,4 +1,4 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
     <item
         android:id="@+id/action_settings"
@@ -7,6 +7,6 @@
         android:title="@string/action_settings"/>
     <item android:id="@+id/action_contexts" android:showAsAction="always" android:title="@string/title_activity_contexts" android:icon="@drawable/collections_labels"></item>
     <item android:id="@+id/action_new_task" android:icon="@drawable/content_new" android:title="@string/new_task" android:showAsAction="ifRoom"></item>
-    <item android:id="@+id/action_notify" android:title="Notify" />
+    <item android:id="@+id/action_notify" android:title="Notify" tools:ignore="HardcodedText"/>
 
 </menu>

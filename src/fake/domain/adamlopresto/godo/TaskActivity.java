@@ -34,8 +34,8 @@ import fake.domain.adamlopresto.godo.db.TaskContextTable;
 public class TaskActivity extends FragmentActivity implements
 		ActionBar.TabListener {
 	
-	public long task_id = -1L;
-	public long instance_id = -1L;
+	public Task task;
+	public Instance instance;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -59,8 +59,17 @@ public class TaskActivity extends FragmentActivity implements
 		
 		Bundle extras = getIntent().getExtras();
 		if (extras != null){
-			instance_id = extras.getLong("instance", -1L);
-			task_id = extras.getLong("task", -1L);
+			DatabaseHelper helper = new DatabaseHelper(this);
+			long instance_id = extras.getLong("instance", -1L);
+			if (instance_id != -1L){
+				instance = Instance.get(helper, instance_id);
+				task = instance.getTask();
+			} else {
+				long task_id = extras.getLong("task", -1L);
+				if (task_id != -1L){
+					task = Task.get(helper, task_id);
+				}
+			}
 		}
 
 		// Set up the action bar.
@@ -125,6 +134,7 @@ public class TaskActivity extends FragmentActivity implements
 			return true;
 		case R.id.action_contexts:
 			//TODO
+			final long task_id = task.getId();
 			final SQLiteDatabase db = new DatabaseHelper(this).getReadableDatabase();
 			Cursor cursor = db.query(ContextsTable.TABLE, new String[]{ContextsTable.COLUMN_ID, ContextsTable.COLUMN_NAME, 
 					"exists (select * from "+TaskContextTable.TABLE+" where "+TaskContextTable.COLUMN_TASK+"="+task_id+" and context=contexts._id) AS selected"}, null, null, null, null, null);
@@ -181,6 +191,7 @@ public class TaskActivity extends FragmentActivity implements
 				.show();
 			return true;
 		}
+		
 		return super.onOptionsItemSelected(item);
 	}
 	
@@ -218,10 +229,10 @@ public class TaskActivity extends FragmentActivity implements
 			switch (position){
 			case 0:{
 				Fragment f = new TaskDetailsFragment();
-				Bundle args = new Bundle(2);
-				args.putLong("instance_id", instance_id);
-				args.putLong("task_id", task_id);
-				f.setArguments(args);
+				return f;
+			}
+			case 1:{
+				Fragment f = new TaskRepetitionRuleFragment();
 				return f;
 			}
 			default:
@@ -248,7 +259,7 @@ public class TaskActivity extends FragmentActivity implements
 			case 0:
 				return getString(R.string.title_fragment_task_details).toUpperCase(l);
 			case 1:
-				return getString(R.string.title_section2).toUpperCase(l);
+				return getString(R.string.title_fragment_task_repetitions).toUpperCase(l);
 			case 2:
 				return getString(R.string.title_section3).toUpperCase(l);
 			}

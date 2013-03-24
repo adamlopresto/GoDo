@@ -12,6 +12,7 @@ import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesTable;
 import fake.domain.adamlopresto.godo.db.InstancesView;
+import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
 import fake.domain.adamlopresto.godo.db.TasksTable;
 
 public class GoDoContentProvider extends ContentProvider {
@@ -26,6 +27,8 @@ public class GoDoContentProvider extends ContentProvider {
 	private static final int TOGGLE_CONTEXT = 4;
 	private static final int TASKS = 6;
 	private static final int TASK_ID = 7;
+	private static final int REPETITION_RULES = 8;
+	private static final int REPETITION_RULE_ID = 9;
 	
 
 	public static final String AUTHORITY = "fake.domain.adamlopresto.godo.contentprovider";
@@ -44,6 +47,9 @@ public class GoDoContentProvider extends ContentProvider {
 	private static final String TASK_BASE_PATH = "tasks";
 	public static final Uri TASKS_URI = Uri.withAppendedPath(BASE, TASK_BASE_PATH);
 	
+	private static final String REPETITION_RULES_BASE_PATH = "repetition_rules";
+	public static final Uri REPETITION_RULES_URI = Uri.withAppendedPath(BASE, REPETITION_RULES_BASE_PATH);
+	
 	/*
 	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
 			+ "/GoShopItems";
@@ -61,6 +67,8 @@ public class GoDoContentProvider extends ContentProvider {
 		sURIMatcher.addURI(AUTHORITY, TOGGLE_CONTEXT_PATH, TOGGLE_CONTEXT);
 		sURIMatcher.addURI(AUTHORITY, TASK_BASE_PATH, TASKS);
 		sURIMatcher.addURI(AUTHORITY, TASK_BASE_PATH+"/#", TASK_ID);
+		sURIMatcher.addURI(AUTHORITY, REPETITION_RULES_BASE_PATH, REPETITION_RULES);
+		sURIMatcher.addURI(AUTHORITY, REPETITION_RULES_BASE_PATH+"/#", REPETITION_RULE_ID);
 	}
 
 	@Override
@@ -72,7 +80,7 @@ public class GoDoContentProvider extends ContentProvider {
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
-	
+		
 		// Using SQLiteQueryBuilder instead of query() method
 		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 		
@@ -93,39 +101,9 @@ public class GoDoContentProvider extends ContentProvider {
 		case CONTEXTS:
 			queryBuilder.setTables(ContextsTable.TABLE);
 			break;
-		/*	
-		case ITEMS:
-			// Adding the ID to the original query
-			queryBuilder.setTables(ItemsTable.TABLE);
+		case REPETITION_RULES:
+			queryBuilder.setTables(RepetitionRulesTable.TABLE);
 			break;
-		case ITEM_AISLE_ID:
-			queryBuilder.appendWhere(ItemAisleDetailView.COLUMN_ID + "="
-					+ uri.getLastPathSegment());
-			//fall through
-		case ITEM_AISLE:
-			queryBuilder.setTables(ItemAisleDetailView.VIEW);
-			break;
-		case STORE_ID:
-			queryBuilder.appendWhere(StoresTable.COLUMN_ID + "="
-					+ uri.getLastPathSegment());
-			//fall through
-		case STORE:
-			queryBuilder.setTables(StoresTable.TABLE);
-			break;
-		case STORES_WITH_ALL:
-			Cursor c = helper.getReadableDatabase().rawQuery(
-					//"SELECT _id, list, store_name FROM (SELECT -1 AS _id, 0 AS list, 'All' AS store_name, 0 as sortfield UNION SELECT _id, list, store_name, 1 as sortfield FROM stores ORDER BY sortfield, store_name)", null);
-					"SELECT _id, list, store_name FROM (SELECT -1 AS _id, 0 AS list, 'All' AS store_name, 0 as sortfield UNION SELECT store as _id, list, store_name, 1 as sortfield FROM item_aisle_detail WHERE status <> 'H' GROUP BY store HAVING count(item) > 0 ORDER BY sortfield, store_name)", null);
-			c.setNotificationUri(getContext().getContentResolver(), ITEM_AISLE_URI);
-			return c;
-		case AISLE_ID:
-			queryBuilder.appendWhere(AislesTable.COLUMN_ID + "="
-					+ uri.getLastPathSegment());
-			//fall through
-		case AISLE:
-			queryBuilder.setTables(AislesTable.TABLE);
-			break;
-			*/
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
@@ -192,6 +170,11 @@ public class GoDoContentProvider extends ContentProvider {
 		case CONTEXTS:
 			id = sqlDB.insertOrThrow(ContextsTable.TABLE, null, values);
 			break;
+		case REPETITION_RULES:
+			id = sqlDB.insertOrThrow(RepetitionRulesTable.TABLE, null, values);
+			break;
+		default:
+			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
 		getContext().getContentResolver().notifyChange(uri, null);
 		return Uri.withAppendedPath(uri, String.valueOf(id));
@@ -228,6 +211,10 @@ public class GoDoContentProvider extends ContentProvider {
 		case CONTEXTS:
 			rowsUpdated = sqlDB.update(ContextsTable.TABLE, values, selection, selectionArgs);
 			getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
+			return rowsUpdated;
+		case REPETITION_RULES:
+			rowsUpdated = sqlDB.update(RepetitionRulesTable.TABLE, values, selection, selectionArgs);
+			getContext().getContentResolver().notifyChange(REPETITION_RULES_URI, null);
 			return rowsUpdated;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);

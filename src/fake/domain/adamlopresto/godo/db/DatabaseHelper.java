@@ -10,10 +10,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	private static final String DATABASE_NAME = "GoDo";
-	private static final int CURRENT_VERSION = 1;
+	private static final int CURRENT_VERSION = 2;
 	/*
 	 * Version history:
 	 * 1: initial release
+	 * 2: add repetition rules
 	 */	
 	
 	public static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -30,6 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		TaskContextTable.onCreate(db);
 		InstanceDependencyTable.onCreate(db);
 		InstancesView.onCreate(db);
+		RepetitionRulesTable.onCreate(db);
 	}
 
 	@Override
@@ -40,6 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		TaskContextTable.onUpgrade(db, oldVersion, newVersion);
 		InstanceDependencyTable.onUpgrade(db, oldVersion, newVersion);
 		InstancesView.onUpgrade(db, oldVersion, newVersion);
+		RepetitionRulesTable.onUpgrade(db, oldVersion, newVersion);
 	}
 	
 	@Override
