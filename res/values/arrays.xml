@@ -8,4 +8,24 @@
         <item >Spoken</item>
     </string-array>
     
+    <string-array name="to_columns">
+        <item>New Start Date</item>
+        <item>New Plan Date</item>
+        <item>New Due Date</item>
+    </string-array>
+    
+    <string-array name="from_columns">
+        <item>New Start Date</item>
+        <item>New Plan Date</item>
+        <item>New Due Date</item>
+        <item>Now</item>
+        <item>Old Start Date</item>
+        <item>Old Plan Date</item>
+        <item>Old Due Date</item>
+    </string-array>
+    <array name="repetition_directions">
+        <item>Forward</item>
+        <item>Backward</item>
+    </array>
+    
 </resources>

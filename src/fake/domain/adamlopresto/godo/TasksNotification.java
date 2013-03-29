@@ -60,9 +60,10 @@ public class TasksNotification {
 		final String ticker = exampleString;
 		final String title = res.getString(
 				R.string.tasks_notification_title_template, exampleString);
-		final String text = res.getString(
+		/*final String text = res.getString(
 				R.string.tasks_notification_placeholder_text_template,
 				exampleString);
+				*/
 
 		final NotificationCompat.Builder builder = new NotificationCompat.Builder(
 				context)
@@ -75,7 +76,7 @@ public class TasksNotification {
 				// notification title, and text.
 				.setSmallIcon(R.drawable.ic_stat_tasks)
 				.setContentTitle(title)
-				.setContentText(text)
+				//.setContentText(text)
 
 				// All fields below this line are optional.
 

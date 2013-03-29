@@ -73,7 +73,7 @@ public class GoDoContentProvider extends ContentProvider {
 
 	@Override
 	public boolean onCreate() {
-		helper = new DatabaseHelper(getContext());
+		helper = DatabaseHelper.getInstance(getContext());
 		return true;
 	}
 

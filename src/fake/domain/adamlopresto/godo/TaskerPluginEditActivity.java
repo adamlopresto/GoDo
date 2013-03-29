@@ -120,7 +120,7 @@ public class TaskerPluginEditActivity extends Activity {
 		}
 		
 		public void onClick(View ignored){
-				SQLiteDatabase db = new DatabaseHelper(TaskerPluginEditActivity.this).getReadableDatabase();
+				SQLiteDatabase db = DatabaseHelper.getInstance(TaskerPluginEditActivity.this).getReadableDatabase();
 				Cursor cursor = db.query(ContextsTable.TABLE, new String[]{ContextsTable.COLUMN_NAME 
 					}, null, null, null, null, null);
 				

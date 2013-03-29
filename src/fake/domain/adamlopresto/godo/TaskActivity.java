@@ -57,20 +57,8 @@ public class TaskActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_task);
 		
-		Bundle extras = getIntent().getExtras();
-		if (extras != null){
-			DatabaseHelper helper = new DatabaseHelper(this);
-			long instance_id = extras.getLong("instance", -1L);
-			if (instance_id != -1L){
-				instance = Instance.get(helper, instance_id);
-				task = instance.getTask();
-			} else {
-				long task_id = extras.getLong("task", -1L);
-				if (task_id != -1L){
-					task = Task.get(helper, task_id);
-				}
-			}
-		}
+		if (!extractTaskAndOrInstanceFromBundle(getIntent().getExtras()))
+			extractTaskAndOrInstanceFromBundle(savedInstanceState);
 
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
@@ -109,6 +97,24 @@ public class TaskActivity extends FragmentActivity implements
 		}
 	}
 
+	private boolean extractTaskAndOrInstanceFromBundle(Bundle bundle) {
+		if (bundle == null)
+			return false;
+		long instance_id = bundle.getLong("instance", -1L);
+		if (instance_id != -1L){
+			instance = Instance.get(DatabaseHelper.getInstance(this), instance_id);
+			task = instance.getTask();
+			return true;
+		} else {
+			long task_id = bundle.getLong("task", -1L);
+			if (task_id != -1L){
+				task = Task.get(DatabaseHelper.getInstance(this), task_id);
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -135,7 +141,7 @@ public class TaskActivity extends FragmentActivity implements
 		case R.id.action_contexts:
 			//TODO
 			final long task_id = task.getId();
-			final SQLiteDatabase db = new DatabaseHelper(this).getReadableDatabase();
+			final SQLiteDatabase db = DatabaseHelper.getInstance(this).getWritableDatabase();
 			Cursor cursor = db.query(ContextsTable.TABLE, new String[]{ContextsTable.COLUMN_ID, ContextsTable.COLUMN_NAME, 
 					"exists (select * from "+TaskContextTable.TABLE+" where "+TaskContextTable.COLUMN_TASK+"="+task_id+" and context=contexts._id) AS selected"}, null, null, null, null, null);
 			final ArrayList<Long> orig = new ArrayList<Long>(cursor.getCount());
@@ -195,6 +201,18 @@ public class TaskActivity extends FragmentActivity implements
 		return super.onOptionsItemSelected(item);
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.FragmentActivity#onSaveInstanceState(android.os.Bundle)
+	 */
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if (task != null)
+			outState.putLong("task", task.getId());
+		if (instance != null)
+			outState.putLong("instance", instance.getId());
+	}
+
 	@Override
 	public void onTabSelected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
@@ -249,7 +267,7 @@ public class TaskActivity extends FragmentActivity implements
 		@Override
 		public int getCount() {
 			// total number of pages
-			return 3;
+			return 2;
 		}
 
 		@Override

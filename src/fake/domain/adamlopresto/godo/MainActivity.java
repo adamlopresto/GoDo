@@ -34,8 +34,18 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 				0);
 		
 		setListAdapter(adapter);
+	}
+	
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onResume()
+	 */
+	@Override
+	protected void onResume() {
+		super.onResume();
 		getLoaderManager().restartLoader(0, null, this);
 	}
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

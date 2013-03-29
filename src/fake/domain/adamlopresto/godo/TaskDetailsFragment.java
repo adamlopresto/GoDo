@@ -114,7 +114,7 @@ public class TaskDetailsFragment extends Fragment {
 		DatabaseHelper helper = null;
 		Task task = ((TaskActivity)getActivity()).task;
 		if (task == null){
-			helper = new DatabaseHelper(getActivity());
+			helper = DatabaseHelper.getInstance(getActivity());
 			task = ((TaskActivity)getActivity()).task = new Task(helper);
 		}
 		
@@ -126,7 +126,7 @@ public class TaskDetailsFragment extends Fragment {
 		Instance instance = ((TaskActivity)getActivity()).instance;
 		if (instance == null){
 			if (helper == null)
-				helper = new DatabaseHelper(getActivity());
+				helper = DatabaseHelper.getInstance(getActivity());
 			instance = ((TaskActivity)getActivity()).instance = new Instance(helper, task);
 		}
 		

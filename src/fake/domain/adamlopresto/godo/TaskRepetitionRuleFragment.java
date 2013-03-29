@@ -1,5 +1,6 @@
 package fake.domain.adamlopresto.godo;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.os.Bundle;
@@ -7,7 +8,9 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -45,13 +48,30 @@ public class TaskRepetitionRuleFragment extends ListFragment
 			@Override
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 				((TextView)view).setText(DatabaseUtils.dumpCurrentRowToString(cursor));
-				Log.e("GoDo", "Setting value: "+DatabaseUtils.dumpCurrentRowToString(cursor));
 				return true;
 			}
 		});
 		
 		setListAdapter(adapter);
 		getLoaderManager().restartLoader(0, null, this);
+		setHasOptionsMenu(true);
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.task_repetition, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+    }
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item){
+		switch(item.getItemId()){
+		case R.id.action_new:
+			startActivity(new Intent(getActivity(), TaskRepetitionRuleActivity.class));
+			//TODO: start activity
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -70,7 +90,6 @@ public class TaskRepetitionRuleFragment extends ListFragment
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-		Log.e("GoDo", "Load finished. Count: "+data.getCount());
 		adapter.swapCursor(data);
 	}
 
