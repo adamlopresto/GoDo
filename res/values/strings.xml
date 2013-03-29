@@ -45,8 +45,16 @@
     <string name="new_context">New context</string>
     <string name="new_repetition">New repetition rule</string>
     <string name="title_activity_task_repetition_rule">Repetition Rule</string>
-    <string name="repetition_to">Field to set</string>
-    <string name="repetition_from">By starting with</string>
+    <string name="repetition_to">Set field</string>
+    <string name="repetition_from">Starting at</string>
     <string name="repetition_direction">And moving</string>
+    <string name="repetition_number">By number</string>
+    <string name="sunday">Sunday</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
 
 </resources>

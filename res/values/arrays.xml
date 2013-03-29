@@ -9,23 +9,28 @@
     </string-array>
     
     <string-array name="to_columns">
-        <item>New Start Date</item>
-        <item>New Plan Date</item>
-        <item>New Due Date</item>
+        <item>new start date</item>
+        <item>new plan date</item>
+        <item>new due date</item>
     </string-array>
     
     <string-array name="from_columns">
-        <item>New Start Date</item>
-        <item>New Plan Date</item>
-        <item>New Due Date</item>
-        <item>Now</item>
-        <item>Old Start Date</item>
-        <item>Old Plan Date</item>
-        <item>Old Due Date</item>
+        <item>new start date</item>
+        <item>new plan date</item>
+        <item>new due date</item>
+        <item>now</item>
+        <item>old start date</item>
+        <item>old plan date</item>
+        <item>old due date</item>
     </string-array>
     <array name="repetition_directions">
-        <item>Forward</item>
-        <item>Backward</item>
+        <item>forward</item>
+        <item>backward</item>
+    </array>
+    <array name="rule_types">
+        <item>by days</item>
+        <item>by months</item>
+        <item>to day of week</item>
     </array>
     
 </resources>

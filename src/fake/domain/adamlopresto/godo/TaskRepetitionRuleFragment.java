@@ -64,11 +64,11 @@ public class TaskRepetitionRuleFragment extends ListFragment
     }
 	
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item){
-		switch(item.getItemId()){
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
 		case R.id.action_new:
-			startActivity(new Intent(getActivity(), TaskRepetitionRuleActivity.class));
-			//TODO: start activity
+			startActivity(new Intent(getActivity(), TaskRepetitionRuleActivity.class)
+				.putExtra("task", ((TaskActivity) getActivity()).task.getId()));
 			return true;
 		}
 		return false;
@@ -77,6 +77,9 @@ public class TaskRepetitionRuleFragment extends ListFragment
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
+		Intent i = new Intent(getActivity(), TaskRepetitionRuleActivity.class);
+		i.putExtra("rule", id);
+		startActivity(i);
 	}
 
 	@Override

@@ -1,17 +1,165 @@
 package fake.domain.adamlopresto.godo;
 
 import android.app.Activity;
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
 
 public class TaskRepetitionRuleActivity extends Activity {
+
+	private Spinner to;
+	private Spinner from;
+	private Spinner direction;
+	private Spinner ruleType;
+	private TextView numberLabel;
+	private EditText number;
+	private LinearLayout weekdayLayout;
+	private CheckBox[] weekdays = new CheckBox[7];
+
+	private boolean weekdaysHidden = true;
+
+	private long task_id = -1L;
+	private long rule_id = -1L;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_task_repetition_rule);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+
+		to = (Spinner) findViewById(R.id.to);
+		from = (Spinner) findViewById(R.id.from);
+		direction = (Spinner) findViewById(R.id.direction);
+		ruleType = (Spinner) findViewById(R.id.rule_type);
+		numberLabel = (TextView) findViewById(R.id.number_label);
+		number = (EditText) findViewById(R.id.number);
+		weekdayLayout = (LinearLayout) findViewById(R.id.weekdays);
+		weekdays[0] = (CheckBox) findViewById(R.id.sunday);
+		weekdays[1] = (CheckBox) findViewById(R.id.monday);
+		weekdays[2] = (CheckBox) findViewById(R.id.tuesday);
+		weekdays[3] = (CheckBox) findViewById(R.id.wednesday);
+		weekdays[4] = (CheckBox) findViewById(R.id.thursday);
+		weekdays[5] = (CheckBox) findViewById(R.id.friday);
+		weekdays[6] = (CheckBox) findViewById(R.id.saturday);
+
+		ruleType.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int position, long arg3) {
+				Log.e("GoDo", "" + position + "," + weekdaysHidden);
+				if (position < 2 && !weekdaysHidden) {
+					weekdayLayout.setVisibility(View.GONE);
+					numberLabel.setVisibility(View.VISIBLE);
+					number.setVisibility(View.VISIBLE);
+					weekdaysHidden = true;
+				} else if (position == 2 && weekdaysHidden) {
+					weekdayLayout.setVisibility(View.VISIBLE);
+					numberLabel.setVisibility(View.GONE);
+					number.setVisibility(View.GONE);
+					weekdaysHidden = false;
+				}
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+			}
+
+		});
+
+		if (!extractFromBundle(getIntent().getExtras())) {
+			if (!extractFromBundle(savedInstanceState)) {
+				Toast.makeText(
+						this,
+						"Error: must have either an existing rule, or at least a task to bind to",
+						Toast.LENGTH_LONG).show();
+				finish();
+			}
+		}
+
+		if (rule_id == -1L) {
+			from.setSelection(3);
+			number.setText("1");
+		} else {
+			Cursor c = getContentResolver().query(
+					GoDoContentProvider.REPETITION_RULES_URI,
+					new String[] { RepetitionRulesTable.COLUMN_ID,
+							RepetitionRulesTable.COLUMN_TASK,
+							RepetitionRulesTable.COLUMN_TYPE,
+							RepetitionRulesTable.COLUMN_SUBVALUE,
+							RepetitionRulesTable.COLUMN_FROM,
+							RepetitionRulesTable.COLUMN_TO },
+					RepetitionRulesTable.COLUMN_TASK + "=?",
+					new String[] { String.valueOf(rule_id) }, null);
+			c.moveToFirst();
+
+			to.setSelection(c.getInt(c
+					.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TO)));
+			from.setSelection(c.getInt(c
+					.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_FROM)));
+			int ruleTypeNumber = c.getInt(c
+					.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TYPE));
+			ruleType.setSelection(ruleTypeNumber);
+			String subValue = c
+					.getString(c
+							.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_SUBVALUE));
+			if (subValue.startsWith("-")) {
+				direction.setSelection(1);
+				subValue = subValue.substring(1);
+			} else {
+				direction.setSelection(0);
+			}
+			switch (RepetitionRuleTypes.values()[ruleTypeNumber]) {
+			case ADD_DAY:
+			case ADD_MONTH:
+				number.setText(subValue);
+				break;
+			case WEEKDAY:
+				for (String s : subValue.split(",")) {
+					if ("Su".equals(s))
+						weekdays[0].setChecked(true);
+					else if ("M".equals(s))
+						weekdays[1].setChecked(true);
+					else if ("Tu".equals(s))
+						weekdays[2].setChecked(true);
+					else if ("W".equals(s))
+						weekdays[3].setChecked(true);
+					else if ("Th".equals(s))
+						weekdays[4].setChecked(true);
+					else if ("F".equals(s))
+						weekdays[5].setChecked(true);
+					else if ("Sa".equals(s))
+						weekdays[6].setChecked(true);
+				}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	private boolean extractFromBundle(Bundle bundle) {
+		if (bundle == null)
+			return false;
+		else if ((rule_id = bundle.getLong("rule", -1L)) != -1L)
+			return true;
+		else if ((task_id = bundle.getLong("task", -1L)) != -1L)
+			return true;
+		else
+			return false;
 	}
 
 	@Override
@@ -20,7 +168,7 @@ public class TaskRepetitionRuleActivity extends Activity {
 		getMenuInflater().inflate(R.menu.task_repetition_rule, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -37,4 +185,75 @@ public class TaskRepetitionRuleActivity extends Activity {
 		}
 		return false;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onPause()
+	 */
+	@Override
+	protected void onPause() {
+		super.onPause();
+		ContentValues values = new ContentValues();
+		values.put(RepetitionRulesTable.COLUMN_TO, to.getSelectedItemPosition());
+		values.put(RepetitionRulesTable.COLUMN_FROM,
+				from.getSelectedItemPosition());
+		values.put(RepetitionRulesTable.COLUMN_TYPE,
+				ruleType.getSelectedItemPosition());
+		String subValue = "";
+		switch (ruleType.getSelectedItemPosition()) {
+		case 2:
+			StringBuffer b = new StringBuffer();
+			if (weekdays[0].isChecked())
+				b.append(",Su");
+			if (weekdays[1].isChecked())
+				b.append(",M");
+			if (weekdays[2].isChecked())
+				b.append(",Tu");
+			if (weekdays[3].isChecked())
+				b.append(",W");
+			if (weekdays[4].isChecked())
+				b.append(",Th");
+			if (weekdays[5].isChecked())
+				b.append(",F");
+			if (weekdays[6].isChecked())
+				b.append(",Sa");
+			if (b.length() > 0)
+				subValue = b.substring(1);
+			break;
+		default:
+			subValue = number.getText().toString();
+		}
+		if (direction.getSelectedItemPosition() == 1) {
+			subValue = "-" + subValue;
+		}
+
+		values.put(RepetitionRulesTable.COLUMN_SUBVALUE, subValue);
+		if (rule_id == -1L) {
+			values.put(RepetitionRulesTable.COLUMN_TASK, task_id);
+			rule_id = Long.valueOf(getContentResolver().insert(
+					GoDoContentProvider.REPETITION_RULES_URI, values)
+					.getLastPathSegment());
+		} else {
+			getContentResolver().update(
+					GoDoContentProvider.REPETITION_RULES_URI, values,
+					RepetitionRulesTable.COLUMN_ID + "=?",
+					new String[] { String.valueOf(rule_id) });
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see android.app.Activity#onSaveInstanceState(android.os.Bundle)
+	 */
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if (task_id != -1L)
+			outState.putLong("task", task_id);
+		if (rule_id != -1L)
+			outState.putLong("rule", rule_id);
+	}
+
 }
