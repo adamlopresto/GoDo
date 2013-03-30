@@ -102,7 +102,7 @@ public class TaskRepetitionRuleActivity extends Activity {
 							RepetitionRulesTable.COLUMN_SUBVALUE,
 							RepetitionRulesTable.COLUMN_FROM,
 							RepetitionRulesTable.COLUMN_TO },
-					RepetitionRulesTable.COLUMN_TASK + "=?",
+					RepetitionRulesTable.COLUMN_ID + "=?",
 					new String[] { String.valueOf(rule_id) }, null);
 			c.moveToFirst();
 
