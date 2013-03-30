@@ -144,6 +144,10 @@ public class GoDoContentProvider extends ContentProvider {
 			rowsUpdated = sqlDB.delete(ContextsTable.TABLE, selection, selectionArgs);
 			getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
 			return rowsUpdated;
+		case REPETITION_RULES:
+			rowsUpdated = sqlDB.delete(RepetitionRulesTable.TABLE, selection, selectionArgs);
+			getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
+			return rowsUpdated;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
