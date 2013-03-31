@@ -60,7 +60,7 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
 	    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 	        // Inflate a menu resource providing context menu items
 	        MenuInflater inflater = mode.getMenuInflater();
-	        inflater.inflate(R.menu.context_context, menu);
+	        inflater.inflate(R.menu.context_edit_delete, menu);
 	        editItem = menu.findItem(R.id.edit);
 	        mode.setTitle("Contexts");
 	        return true;
