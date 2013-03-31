@@ -126,7 +126,7 @@ public class TaskDetailsFragment extends Fragment {
 		instance.setDueDate(nullDate(dueDate));
 		instance.updateDone(done.isChecked());
 		
-		instance.flush();
+		instance.flushNow();
 		
 	}
 	

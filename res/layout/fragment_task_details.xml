@@ -16,16 +16,17 @@
         android:layout_centerVertical="true"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <EditText 
+    <EditText
         android:id="@+id/task_name"
         android:layout_width="fill_parent"
-        android:layout_gravity="fill_horizontal"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_height="wrap_content"
-        android:inputType="textCapSentences" 
+        android:layout_gravity="fill_horizontal"
         android:layout_toRightOf="@id/check"
         android:hint="@string/task_name_hint"
-        />
+        android:inputType="textCapSentences|textMultiLine"
+        android:singleLine="false"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
     </RelativeLayout>
     
     <TextView android:text="@string/task_notes_label" />
