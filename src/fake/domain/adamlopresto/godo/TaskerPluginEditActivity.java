@@ -52,15 +52,6 @@ public class TaskerPluginEditActivity extends Activity {
 				deactivate.addAll(Arrays.asList(temp));
 		}	
 		update();
-		/*
-		 * TODO:
-		 * Four TextViews, two being labels "Contexts to Activate" and "Contexts to Deactivate"
-		 * The other two will be comma separated lists of contexts, or the text "None".
-		 * There will be Select buttons for each.
-		 * use multi-select dialog like the contexts dialog for a task
-		 * 
-		 * Should we refactor that dialog into its own class? Seems to show up a lot.
-		 */
 	}
 	
 	private void update(){
@@ -73,7 +64,7 @@ public class TaskerPluginEditActivity extends Activity {
 			activate_view.setText(R.string.none);
 		} else {
 			states = TextUtils.join(", ", activate);
-			builder.append("Activate: ");
+			builder.append("On: ");
 			builder.append(states);
 			activate_view.setText(states);
 			b.putStringArray("activate", activate.toArray(new String[1]));
@@ -86,7 +77,7 @@ public class TaskerPluginEditActivity extends Activity {
 			if (builder.length() > 0)
 				builder.append('\n');
 			
-			builder.append("Deactivate: ");
+			builder.append("Off: ");
 			builder.append(states);
 			deactivate_view.setText(states);
 			b.putStringArray("deactivate", deactivate.toArray(new String[1]));
