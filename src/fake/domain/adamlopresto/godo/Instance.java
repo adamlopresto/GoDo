@@ -12,7 +12,7 @@ import fake.domain.adamlopresto.godo.db.InstancesTable;
 public class Instance {
 
 	private DatabaseHelper helper;
-	private boolean dirty = false;
+	private boolean dirty = true;
 	private long id=-1L;
 	private Task task;
 	private String notes;
@@ -58,7 +58,7 @@ public class Instance {
 	}
 	
 	public Instance(DatabaseHelper helper) {
-		this.helper=helper;
+		this(helper, new Task(helper));
 	}
 	
 	public Instance(DatabaseHelper helper, Task task){
@@ -80,6 +80,12 @@ public class Instance {
 	}
 
 	public long getId() {
+		return id;
+	}
+	
+	public long forceId() {
+		if (id == -1L)
+			flushNow();
 		return id;
 	}
 
@@ -150,27 +156,36 @@ public class Instance {
 			new Thread(new Runnable(){
 				@Override
 				public void run() {
-					SQLiteDatabase db = helper.getWritableDatabase();
-					ContentValues values = new ContentValues(7);
-					values.put(InstancesTable.COLUMN_TASK, task.getId());
-					values.put(InstancesTable.COLUMN_NOTES, notes);
-					putDate(values, InstancesTable.COLUMN_START_DATE, startDate);
-					putDate(values, InstancesTable.COLUMN_PLAN_DATE, planDate);
-					putDate(values, InstancesTable.COLUMN_DUE_DATE, dueDate);
-					putDate(values, InstancesTable.COLUMN_DONE_DATE, doneDate);
-					putDate(values, InstancesTable.COLUMN_CREATE_DATE, createDate);
-					
-					if (id == -1L)
-						id = db.insert(InstancesTable.TABLE, null, values);
-					else
-						db.update(InstancesTable.TABLE, values, InstancesTable.COLUMN_ID+"=?", 
-								new String[]{String.valueOf(id)});
-					db.close();
-					dirty=false;
+					flushNow();
 				}
 			}).start();
 		}
 	}
+	
+	public void flushNow(){
+		SQLiteDatabase db = helper.getWritableDatabase();
+		ContentValues values = new ContentValues(7);
+		long taskId = task.forceId();
+		if (taskId == -1L)
+			return; //Can't save task; abort
+		values.put(InstancesTable.COLUMN_TASK, taskId);
+		values.put(InstancesTable.COLUMN_NOTES, notes);
+		putDate(values, InstancesTable.COLUMN_START_DATE, startDate);
+		putDate(values, InstancesTable.COLUMN_PLAN_DATE, planDate);
+		putDate(values, InstancesTable.COLUMN_DUE_DATE, dueDate);
+		putDate(values, InstancesTable.COLUMN_DONE_DATE, doneDate);
+		putDate(values, InstancesTable.COLUMN_CREATE_DATE, createDate);
+
+		if (id == -1L)
+			id = db.insert(InstancesTable.TABLE, null, values);
+		else
+			db.update(InstancesTable.TABLE, values, InstancesTable.COLUMN_ID+"=?", 
+					new String[]{String.valueOf(id)});
+		db.close();
+		dirty=false;
+	}
+				
+	
 	
 	private static void putDate(ContentValues values, String key, Date date){
 		if (date == null)

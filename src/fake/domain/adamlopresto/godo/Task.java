@@ -20,8 +20,8 @@ public class Task {
 	private long id = -1L;
 	private String name;
 	private String notes;
-	private NotificationLevels notification;
-	private RepeatTypes repeat;
+	private NotificationLevels notification = NotificationLevels.NONE;
+	private RepeatTypes repeat = RepeatTypes.NONE;
 	
 	public static Task get(DatabaseHelper helper, long id){
 		Task task = cache.get(Long.valueOf(id));
@@ -58,7 +58,20 @@ public class Task {
 		this.repeat=repeat;
 	}
 	
+	/**
+	 * Gets the current id, as recorded in the database. Returns -1 for a new Task not yet saved
+	 * @return the id
+	 */
 	public long getId() {
+		return id;
+	}
+	
+	/**
+	 * Gets the current id. If there isn't one yet, it first attempts to write the task to the 
+	 * database, and only returns -1 if the task cannot be written (usually empty name).
+	 * @return the id;
+	 */
+	public long forceId() {
 		if (id == -1L)
 			flushNow();
 		return id;

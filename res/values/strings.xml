@@ -34,7 +34,6 @@
     <string name="action_share">Share</string>
     <string name="action_reply">Reply</string>
     <string name="title_activity_tasker_plugin_edit">GoDo Contexts</string>
-    <string name="hello_world">Hello world!</string>
     <string name="contexts_to_activate">Contexts to activate</string>
     <string name="none">None</string>
     <string name="edit">Edit</string>

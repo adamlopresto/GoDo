@@ -111,12 +111,7 @@ public class TaskDetailsFragment extends Fragment {
 	}
 		
 	public void saveData(){
-		DatabaseHelper helper = null;
 		Task task = ((TaskActivity)getActivity()).task;
-		if (task == null){
-			helper = DatabaseHelper.getInstance(getActivity());
-			task = ((TaskActivity)getActivity()).task = new Task(helper);
-		}
 		
 		task.setName(nullString(taskName));
 		task.setNotes(nullString(taskNotes));
@@ -124,11 +119,6 @@ public class TaskDetailsFragment extends Fragment {
 		task.flushNow();
 		
 		Instance instance = ((TaskActivity)getActivity()).instance;
-		if (instance == null){
-			if (helper == null)
-				helper = DatabaseHelper.getInstance(getActivity());
-			instance = ((TaskActivity)getActivity()).instance = new Instance(helper, task);
-		}
 		
 		instance.setNotes(nullString(instanceNotes));
 		instance.setStartDate(nullDate(startDate));

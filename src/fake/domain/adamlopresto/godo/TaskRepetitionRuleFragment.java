@@ -20,6 +20,7 @@ import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
 
 public class TaskRepetitionRuleFragment extends ListFragment 
@@ -174,8 +175,12 @@ public class TaskRepetitionRuleFragment extends ListFragment
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_new:
-			startActivity(new Intent(getActivity(), TaskRepetitionRuleActivity.class)
-				.putExtra("task", ((TaskActivity) getActivity()).task.getId()));
+			long taskId = ((TaskActivity)getActivity()).task.forceId();
+			if (taskId == -1L)
+				Toast.makeText(getActivity(), "Enter a task name first", Toast.LENGTH_LONG).show();
+			else
+				startActivity(new Intent(getActivity(), TaskRepetitionRuleActivity.class)
+					.putExtra("task", taskId));
 			return true;
 		}
 		return false;

@@ -21,12 +21,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.TaskContextTable;
@@ -57,8 +53,13 @@ public class TaskActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_task);
 		
-		if (!extractTaskAndOrInstanceFromBundle(getIntent().getExtras()))
-			extractTaskAndOrInstanceFromBundle(savedInstanceState);
+		if (!extractTaskAndOrInstanceFromBundle(getIntent().getExtras())){
+			if(!extractTaskAndOrInstanceFromBundle(savedInstanceState)){
+				instance = new Instance(DatabaseHelper.getInstance(this));
+				task = instance.getTask();
+			}
+		}
+				
 
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
@@ -108,7 +109,9 @@ public class TaskActivity extends FragmentActivity implements
 		} else {
 			long task_id = bundle.getLong("task", -1L);
 			if (task_id != -1L){
-				task = Task.get(DatabaseHelper.getInstance(this), task_id);
+				DatabaseHelper helper = DatabaseHelper.getInstance(this);
+				task = Task.get(helper, task_id);
+				instance = new Instance(helper, task);
 				return true;
 			}
 		}
@@ -207,10 +210,8 @@ public class TaskActivity extends FragmentActivity implements
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		if (task != null)
-			outState.putLong("task", task.getId());
-		if (instance != null)
-			outState.putLong("instance", instance.getId());
+		outState.putLong("task", task.forceId());
+		outState.putLong("instance", instance.forceId());
 	}
 
 	@Override
@@ -254,13 +255,7 @@ public class TaskActivity extends FragmentActivity implements
 				return f;
 			}
 			default:
-				// Return a DummySectionFragment (defined as a static inner class
-				// below) with the page number as its lone argument.
-				Fragment fragment = new DummySectionFragment();
-				Bundle args = new Bundle();
-				args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-				fragment.setArguments(args);
-				return fragment;
+				throw new IllegalArgumentException();
 			}
 		}
 
@@ -284,32 +279,4 @@ public class TaskActivity extends FragmentActivity implements
 			return null;
 		}
 	}
-
-	/**
-	 * A dummy fragment representing a section of the app, but that simply
-	 * displays dummy text.
-	 */
-	public static class DummySectionFragment extends Fragment {
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
-		public static final String ARG_SECTION_NUMBER = "section_number";
-
-		public DummySectionFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_task_dummy,
-					container, false);
-			TextView dummyTextView = (TextView) rootView
-					.findViewById(R.id.section_label);
-			dummyTextView.setText(Integer.toString(getArguments().getInt(
-					ARG_SECTION_NUMBER)));
-			return rootView;
-		}
-	}
-
 }
