@@ -143,7 +143,7 @@ public class TaskActivity extends FragmentActivity implements
 			return true;
 		case R.id.action_contexts:
 			//TODO
-			final long task_id = task.getId();
+			final long task_id = task.forceId();
 			final SQLiteDatabase db = DatabaseHelper.getInstance(this).getWritableDatabase();
 			Cursor cursor = db.query(ContextsTable.TABLE, new String[]{ContextsTable.COLUMN_ID, ContextsTable.COLUMN_NAME, 
 					"exists (select * from "+TaskContextTable.TABLE+" where "+TaskContextTable.COLUMN_TASK+"="+task_id+" and context=contexts._id) AS selected"}, null, null, null, null, null);
