@@ -1,5 +1,8 @@
 package fake.domain.adamlopresto.godo;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -11,17 +14,22 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.InstancesView;
 
 public class TaskerPluginReceiver extends BroadcastReceiver {
 	public TaskerPluginReceiver() {
 	}
+	
+	private static TextToSpeech tts;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -73,6 +81,7 @@ public class TaskerPluginReceiver extends BroadcastReceiver {
 		String name = null;
 		String taskNotes = null;
 		String instanceNotes = null;
+		final ArrayList<String> spoken = new ArrayList<String>();
 		long id = -1L;
 		while (!c.isAfterLast()){
 			SpannableStringBuilder sb = new SpannableStringBuilder();
@@ -95,7 +104,8 @@ public class TaskerPluginReceiver extends BroadcastReceiver {
 			
 			switch(NotificationLevels.values()[c.getInt(3)]){
 			case SPOKEN:
-				//TODO: speech
+				spoken.add(name);
+				break;
 			case NOISY:
 				audible = true;
 			case VIBRATE:
@@ -109,6 +119,45 @@ public class TaskerPluginReceiver extends BroadcastReceiver {
 		}
 		
 		if (numToNotify > 0){
+			if (!spoken.isEmpty()){
+				tts = new TextToSpeech(context, new TextToSpeech.OnInitListener(){
+					@Override
+					public void onInit(int status) {
+						if (status == TextToSpeech.SUCCESS){
+							for (int i = 0; i < spoken.size()-1; i++){
+								tts.speak(spoken.get(i), TextToSpeech.QUEUE_ADD, null);
+							}
+							HashMap<String, String> params = new HashMap<String, String>(1);
+							params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "Last");
+							tts.speak(spoken.get(spoken.size()-1), TextToSpeech.QUEUE_ADD, params);
+						}
+						Log.e("GoDo", "Successful at shutting down tts "+tts);
+					}
+				});
+				tts.setOnUtteranceProgressListener(new UtteranceProgressListener(){
+
+					@Override
+					public void onDone(String utteranceId) {
+						if ("Last".equals(utteranceId)){
+							tts.shutdown();
+							tts = null;
+						}
+					}
+
+					@Override
+					public void onError(String utteranceId) {
+						if ("Last".equals(utteranceId)){
+							tts.shutdown();
+							tts = null;
+						}
+					}
+
+					@Override
+					public void onStart(String utteranceId) {
+					}
+					
+				});
+			}
 			NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
 
 					// Set required fields, including the small icon, the
