@@ -1,5 +1,5 @@
 package fake.domain.adamlopresto.godo;
 
 public enum RepeatTypes {
-	NONE, TEMPLATE, AUTOMATIC;
+	NONE, AUTOMATIC, TEMPLATE;
 }

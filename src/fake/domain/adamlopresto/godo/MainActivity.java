@@ -29,6 +29,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 	private SimpleCursorAdapter adapter;
 	
 	private String[] projection = new String[]{"task_name", "task_notes"};
+	private boolean paused = false;
 	
 	private AbsListView.MultiChoiceModeListener mActionModeCallback = new AbsListView.MultiChoiceModeListener() {
 		private MenuItem editItem;
@@ -131,6 +132,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 				0);
 		
 		setListAdapter(adapter);
+		getLoaderManager().restartLoader(0, null, this);
 	}
 	
 
@@ -140,7 +142,16 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 	@Override
 	protected void onResume() {
 		super.onResume();
-		getLoaderManager().restartLoader(0, null, this);
+		if (paused){
+			getLoaderManager().restartLoader(0, null, this);
+			paused = false;
+		}
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		paused = true;
 	}
 
 

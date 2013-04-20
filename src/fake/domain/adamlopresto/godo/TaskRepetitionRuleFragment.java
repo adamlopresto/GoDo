@@ -12,13 +12,16 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.ActionMode;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
@@ -114,6 +117,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
 	};
 
 	private SimpleCursorAdapter adapter;
+	private Spinner header;
 
 	public static TaskRepetitionRuleFragment newInstance() {
 		TaskRepetitionRuleFragment fragment = new TaskRepetitionRuleFragment();
@@ -144,19 +148,43 @@ public class TaskRepetitionRuleFragment extends ListFragment
 				return true;
 			}
 		});
-		
-		setListAdapter(adapter);
 	}
 	
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.ListFragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
+	 */
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		header = (Spinner)inflater.inflate(R.layout.fragment_task_repetition_header, null);
+		return super.onCreateView(inflater, container, savedInstanceState);
+	}
+
 	/* (non-Javadoc)
 	 * @see android.support.v4.app.Fragment#onActivityCreated(android.os.Bundle)
 	 */
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
-		getListView().setMultiChoiceModeListener(mActionModeCallback);
+		ListView lv = getListView();
+		lv.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
+		lv.setMultiChoiceModeListener(mActionModeCallback);
+		setListAdapter(null);
+		header.setSelection(((TaskActivity)getActivity()).task.getRepeat().ordinal());
+		lv.addHeaderView(header, null, false);
+		setListAdapter(adapter);
 		setHasOptionsMenu(true);
+	}
+
+	/* (non-Javadoc)
+	 * @see android.support.v4.app.Fragment#onPause()
+	 */
+	@Override
+	public void onPause() {
+		Task task = ((TaskActivity)getActivity()).task;
+		task.setRepeat(RepeatTypes.values()[header.getSelectedItemPosition()]);
+		task.flush();
+		super.onPause();
 	}
 
 	@Override
@@ -200,7 +228,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
 				new String[]{RepetitionRulesTable.COLUMN_ID, RepetitionRulesTable.COLUMN_TASK,
 			RepetitionRulesTable.COLUMN_TYPE, RepetitionRulesTable.COLUMN_SUBVALUE, 
 			RepetitionRulesTable.COLUMN_FROM, RepetitionRulesTable.COLUMN_TO},
-			RepetitionRulesTable.COLUMN_TASK+"=?", new String[]{String.valueOf((((TaskActivity)getActivity()).task).getId())}, null);
+			RepetitionRulesTable.COLUMN_TASK+"=?", new String[]{String.valueOf((((TaskActivity)getActivity()).task).forceId())}, null);
 	}
 
 	@Override

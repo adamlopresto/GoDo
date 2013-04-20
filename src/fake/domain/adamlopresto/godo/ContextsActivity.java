@@ -12,7 +12,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -219,8 +218,6 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
 	
 	@Override
 	protected void onListItemClick (ListView l, View v, int position, long id){
-		Log.e("GoDo", "ListView "+l+","+v+","+position+","+id);
-		
 		getContentResolver().update(GoDoContentProvider.TOGGLE_CONTEXT_URI, null, ContextsTable.COLUMN_ID + "=?", new String[]{Long.toString(id)});
 	}
 	

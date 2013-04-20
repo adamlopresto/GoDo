@@ -32,5 +32,10 @@
         <item>by months</item>
         <item>to day of week</item>
     </array>
+    <array name = "when_to_repeat">
+        <item>Never repeat</item>
+        <item>Repeat on completion</item>
+        <item>Manually</item>
+    </array>
     
 </resources>

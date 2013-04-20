@@ -118,6 +118,8 @@ public class TaskerPluginReceiver extends BroadcastReceiver {
 			c.moveToNext();
 		}
 		
+		c.close();
+		
 		if (numToNotify > 0){
 			if (!spoken.isEmpty()){
 				tts = new TextToSpeech(context, new TextToSpeech.OnInitListener(){
@@ -126,12 +128,15 @@ public class TaskerPluginReceiver extends BroadcastReceiver {
 						if (status == TextToSpeech.SUCCESS){
 							for (int i = 0; i < spoken.size()-1; i++){
 								tts.speak(spoken.get(i), TextToSpeech.QUEUE_ADD, null);
+								Log.e("GoDo", "Saying "+spoken.get(i));
 							}
 							HashMap<String, String> params = new HashMap<String, String>(1);
 							params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "Last");
 							tts.speak(spoken.get(spoken.size()-1), TextToSpeech.QUEUE_ADD, params);
+								Log.e("GoDo", "Saying "+spoken.get(spoken.size()-1));
+						} else {
+							Log.e("GoDo", "Error "+status);
 						}
-						Log.e("GoDo", "Successful at shutting down tts "+tts);
 					}
 				});
 				tts.setOnUtteranceProgressListener(new UtteranceProgressListener(){
@@ -150,6 +155,7 @@ public class TaskerPluginReceiver extends BroadcastReceiver {
 							tts.shutdown();
 							tts = null;
 						}
+						Log.e("GoDo", "Error with "+utteranceId);
 					}
 
 					@Override

@@ -1,18 +1,22 @@
 package fake.domain.adamlopresto.godo;
 
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesTable;
+import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
 
 public class Instance {
 
 	private DatabaseHelper helper;
 	private boolean dirty = true;
+	private boolean needsRepeat = false;
 	private long id=-1L;
 	private Task task;
 	private String notes;
@@ -116,7 +120,7 @@ public class Instance {
 	}
 
 	public void setPlanDate(Date planDate) {
-		if (different(this.startDate, startDate))
+		if (different(this.planDate, planDate))
 			this.planDate = planDate;
 	}
 
@@ -125,7 +129,7 @@ public class Instance {
 	}
 
 	public void setDueDate(Date dueDate) {
-		if (different(this.startDate, startDate))
+		if (different(this.dueDate, dueDate))
 			this.dueDate = dueDate;
 	}
 
@@ -134,7 +138,7 @@ public class Instance {
 	}
 
 	public void setDoneDate(Date doneDate) {
-		if (different(this.startDate, startDate))
+		if (different(this.doneDate, doneDate))
 			this.doneDate = doneDate;
 	}
 
@@ -143,7 +147,7 @@ public class Instance {
 	}
 
 	public void setCreateDate(Date createDate) {
-		if (different(this.startDate, startDate))
+		if (different(this.createDate, createDate))
 			this.createDate = createDate;
 	}
 	
@@ -181,8 +185,133 @@ public class Instance {
 		else
 			db.update(InstancesTable.TABLE, values, InstancesTable.COLUMN_ID+"=?", 
 					new String[]{String.valueOf(id)});
+		
+		if (needsRepeat){
+			if (RepeatTypes.AUTOMATIC.equals(task.getRepeat())){
+				Instance next = new Instance(helper, task);
+				Cursor rules = db.query(RepetitionRulesTable.TABLE, 
+						new String[]{
+							RepetitionRulesTable.COLUMN_FROM, RepetitionRulesTable.COLUMN_TO,
+							RepetitionRulesTable.COLUMN_TYPE, RepetitionRulesTable.COLUMN_SUBVALUE
+						}, 
+						RepetitionRulesTable.COLUMN_TASK+"=?", 
+						new String[]{String.valueOf(task.forceId())}, null, null, null 
+						);
+				rules.moveToFirst();
+				RepetitionRuleColumns[] cols = RepetitionRuleColumns.values();
+				RepetitionRuleTypes[] types = RepetitionRuleTypes.values();
+				while (!rules.isAfterLast()){
+					RepetitionRuleColumns from = cols[rules.getInt(0)];
+					RepetitionRuleColumns to = cols[rules.getInt(1)];
+					RepetitionRuleTypes type = types[rules.getInt(2)];
+					Date date = null;
+					switch(from){
+					case NEW_DUE:
+						date = next.getDueDate();
+						break;
+					case NEW_PLAN:
+						date = next.getPlanDate();
+						break;
+					case NEW_START:
+						date = next.getStartDate();
+						break;
+					case NOW:
+						break;
+					case OLD_DUE:
+						date = getDueDate();
+						break;
+					case OLD_PLAN:
+						date = getPlanDate();
+						break;
+					case OLD_START:
+						date = getStartDate();
+						break;
+					default:
+						break;
+					}
+					if (date == null)
+						date = new Date();
+					
+					GregorianCalendar cal = new GregorianCalendar();
+					cal.setTime(date);
+					
+					switch(type){
+					case ADD_DAY:
+						cal.add(Calendar.DAY_OF_MONTH, rules.getInt(3));
+						break;
+					case ADD_MONTH:
+						cal.add(Calendar.MONTH, rules.getInt(3));
+						break;
+					case WEEKDAY:
+						int step = 1;
+						String days = rules.getString(3);
+						if (days.startsWith("-"))
+							step = -1;
+						
+						boolean done = false;
+						for (int failsafe = 0; failsafe < 7 && !done; failsafe++){
+							cal.add(Calendar.DAY_OF_WEEK, step);
+							switch (cal.get(Calendar.DAY_OF_WEEK)){
+							case Calendar.SUNDAY:
+								if (days.contains("Su"))
+									done = true;
+								break;
+							case Calendar.MONDAY:
+								if (days.contains("M"))
+									done = true;
+								break;
+							case Calendar.TUESDAY:
+								if (days.contains("Tu"))
+									done = true;
+								break;
+							case Calendar.WEDNESDAY:
+								if (days.contains("W"))
+									done = true;
+								break;
+							case Calendar.THURSDAY:
+								if (days.contains("Th"))
+									done = true;
+								break;
+							case Calendar.FRIDAY:
+								if (days.contains("F"))
+									done = true;
+								break;
+							case Calendar.SATURDAY:
+								if (days.contains("Sa"))
+									done = true;
+								break;
+							}
+						}
+						break;
+					default:
+						break;
+					}
+					
+					date = cal.getTime();
+					
+					switch(to){
+					case NEW_DUE:
+						next.setDueDate(date);
+						break;
+					case NEW_PLAN:
+						next.setPlanDate(date);
+						break;
+					case NEW_START:
+						next.setStartDate(date);
+						break;
+					default:
+						break;
+					}
+					rules.moveToNext();
+				}
+				rules.close();
+				next.flush();
+			}
+		}
+		
 		db.close();
 		dirty=false;
+		needsRepeat = false;
 	}
 				
 	
@@ -199,8 +328,10 @@ public class Instance {
 			if (doneDate == null){
 				doneDate = new Date();
 				dirty = true;
+				needsRepeat = true;
 			}
 		} else {
+			needsRepeat = false;
 			if (doneDate != null){
 				doneDate = null;
 				dirty = true;
