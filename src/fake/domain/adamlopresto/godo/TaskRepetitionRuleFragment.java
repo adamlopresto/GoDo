@@ -5,7 +5,6 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -144,7 +143,65 @@ public class TaskRepetitionRuleFragment extends ListFragment
 			
 			@Override
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-				((TextView)view).setText(DatabaseUtils.dumpCurrentRowToString(cursor));
+				String to = null;
+				switch(cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TO))){
+					case 0:
+						to = "Starts ";
+						break;
+					case 1:
+						to = "Planned for ";
+						break;
+					case 2:
+						to = "Due ";
+						break;
+					default:
+						to = "Error: to column is unexpectedly "+cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TO));
+				}
+				
+				String from = null; 
+				switch(cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_FROM))){
+					case 0:
+						from = "new start date";
+						break;
+					case 1:
+						from = "new plan date";
+						break;
+					case 2:
+						from = "new due date";
+						break;
+					case 3:
+						from = "now";
+						break;
+					case 4:
+						from = "old start date";
+						break;
+					case 5:
+						from = "old plan date";
+						break;
+					case 6:
+						from = "old due date";
+						break;
+					default:
+						from = "\nError: from column is unexpectedly "+cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_FROM));
+				}
+				
+				String subvalue = cursor.getString(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_SUBVALUE));
+				String direction = subvalue.startsWith("-") ? " before " : " after ";
+				subvalue = subvalue.replace("-", "");
+				String s = subvalue.equals("1") ? "" : "s";
+				
+				String full = null;
+				switch (cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TYPE))){
+				case 0:
+					full = to + subvalue+" day"+s+direction+from;
+					break;
+				case 1:
+					full = to + subvalue+" month"+s+direction+from;
+					break;
+				case 2:
+					full = to+"next "+subvalue+direction+from;
+				}
+				((TextView)view).setText(full);
 				return true;
 			}
 		});

@@ -309,7 +309,6 @@ public class Instance {
 			}
 		}
 		
-		db.close();
 		dirty=false;
 		needsRepeat = false;
 	}

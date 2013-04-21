@@ -144,7 +144,6 @@ public class Task {
 		else
 			db.update(TasksTable.TABLE, values, TasksTable.COLUMN_ID+"=?", 
 					new String[]{String.valueOf(id)});
-		db.close();
 		dirty=false;
 	}
 
