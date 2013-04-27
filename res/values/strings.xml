@@ -38,6 +38,7 @@
     <string name="none">None</string>
     <string name="edit">Edit</string>
     <string name="contexts_to_deactivate">Contexts to deactivate</string>
+    <string name="max_notification_level">Maximum notification level</string>
     <string name="delete">Delete</string>
     <string name="context_description">Context description</string>
     <string name="context_name">Context name</string>

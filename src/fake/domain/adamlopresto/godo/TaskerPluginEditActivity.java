@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
@@ -26,6 +28,7 @@ public class TaskerPluginEditActivity extends Activity {
 	private ArrayList<String> deactivate = new ArrayList<String>();
 	private TextView activate_view;
 	private TextView deactivate_view;
+	private Spinner maxNotify;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,7 @@ public class TaskerPluginEditActivity extends Activity {
 		
 		activate_view = (TextView)findViewById(R.id.activate);
 		deactivate_view = (TextView)findViewById(R.id.deactivate);
+		maxNotify = (Spinner)findViewById(R.id.max_notify);
 		
 		Bundle extras;
 		Intent i;
@@ -50,10 +54,15 @@ public class TaskerPluginEditActivity extends Activity {
 			temp = extras.getStringArray("deactivate");
 			if (temp != null)
 				deactivate.addAll(Arrays.asList(temp));
-		}	
+			
+			maxNotify.setSelection(extras.getInt("max_notify", 4));
+		} else {
+			maxNotify.setSelection(4);
+		}
 		update();
 	}
 	
+	@SuppressLint("DefaultLocale")
 	private void update(){
 		
 		Bundle b = new Bundle();
@@ -83,9 +92,14 @@ public class TaskerPluginEditActivity extends Activity {
 			b.putStringArray("deactivate", deactivate.toArray(new String[1]));
 		}
 		
-		if (b.isEmpty()){
+		int maxLevel = maxNotify.getSelectedItemPosition();
+		builder.append("\nNotify: ");
+		builder.append(NotificationLevels.values()[maxLevel].toString().toLowerCase());
+		
+		if (b.isEmpty() && maxLevel == 0){
 			setResult(RESULT_CANCELED);
 		} else {
+			b.putInt("max_notification", maxLevel);
 			setResult(RESULT_OK, new Intent()
 				.putExtra("com.twofortyfouram.locale.intent.extra.BLURB", builder.toString())
 				.putExtra("com.twofortyfouram.locale.intent.extra.BUNDLE", b));

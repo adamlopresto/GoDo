@@ -40,5 +40,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/edit" />
+    
+        
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/max_notification_level"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Spinner
+        android:id="@+id/max_notify"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/notification_levels" />
 
 </LinearLayout>
