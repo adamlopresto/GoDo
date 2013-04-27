@@ -31,6 +31,15 @@ public class NotificationService extends Service {
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		
+		int max = 4;
+		if (intent != null) 
+			max = intent.getIntExtra("max_notify", 4);
+		if (max == 0){
+			stopSelf();
+			return START_NOT_STICKY;
+		}
+		
 		ContentResolver res = getContentResolver();
 		Cursor c = res.query(GoDoContentProvider.INSTANCES_URI, 
 				new String[]{
@@ -71,7 +80,7 @@ public class NotificationService extends Service {
 			}
 			inbox.addLine(sb);
 			
-			switch(NotificationLevels.values()[c.getInt(3)]){
+			switch(NotificationLevels.values()[Math.min(c.getInt(3), max)]){
 			case SPOKEN:
 				spoken.add(name);
 				break;
@@ -97,12 +106,10 @@ public class NotificationService extends Service {
 						if (status == TextToSpeech.SUCCESS){
 							for (int i = 0; i < spoken.size()-1; i++){
 								tts.speak(spoken.get(i), TextToSpeech.QUEUE_ADD, null);
-								Log.e("GoDo", "Saying "+spoken.get(i));
 							}
 							HashMap<String, String> params = new HashMap<String, String>(1);
 							params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "Last");
 							tts.speak(spoken.get(spoken.size()-1), TextToSpeech.QUEUE_ADD, params);
-								Log.e("GoDo", "Saying "+spoken.get(spoken.size()-1));
 						} else {
 							Log.e("GoDo", "Error "+status);
 						}

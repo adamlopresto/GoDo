@@ -39,7 +39,9 @@ public class TaskerPluginReceiver extends BroadcastReceiver {
 			}
 		}
 		
-		context.startService(new Intent(context, NotificationService.class));
+		int max = extras.getInt("max_notify", 4);
+		if (max > 0)
+			context.startService(new Intent(context, NotificationService.class).putExtra("max_notify", max));
 	}
 		
 }

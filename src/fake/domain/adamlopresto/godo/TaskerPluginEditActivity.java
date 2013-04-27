@@ -16,6 +16,8 @@ import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -42,6 +44,21 @@ public class TaskerPluginEditActivity extends Activity {
 		activate_view = (TextView)findViewById(R.id.activate);
 		deactivate_view = (TextView)findViewById(R.id.deactivate);
 		maxNotify = (Spinner)findViewById(R.id.max_notify);
+		
+		maxNotify.setOnItemSelectedListener(new OnItemSelectedListener(){
+
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				update();
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				update();
+			}
+			
+		});
 		
 		Bundle extras;
 		Intent i;
@@ -99,7 +116,7 @@ public class TaskerPluginEditActivity extends Activity {
 		if (b.isEmpty() && maxLevel == 0){
 			setResult(RESULT_CANCELED);
 		} else {
-			b.putInt("max_notification", maxLevel);
+			b.putInt("max_notify", maxLevel);
 			setResult(RESULT_OK, new Intent()
 				.putExtra("com.twofortyfouram.locale.intent.extra.BLURB", builder.toString())
 				.putExtra("com.twofortyfouram.locale.intent.extra.BUNDLE", b));
