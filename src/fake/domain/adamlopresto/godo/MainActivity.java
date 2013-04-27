@@ -175,7 +175,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 			startActivity(new Intent(this, TaskActivity.class));
 			return true;
 		case R.id.action_notify:
-			TaskerPluginReceiver.notify(this);
+			startService(new Intent(this, NotificationService.class));
 			return true;
 		}
 		
