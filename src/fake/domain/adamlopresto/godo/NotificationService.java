@@ -99,48 +99,7 @@ public class NotificationService extends Service {
 		c.close();
 		
 		if (numToNotify > 0){
-			if (!spoken.isEmpty()){
-				tts = new TextToSpeech(this, new TextToSpeech.OnInitListener(){
-					@Override
-					public void onInit(int status) {
-						if (status == TextToSpeech.SUCCESS){
-							for (int i = 0; i < spoken.size()-1; i++){
-								tts.speak(spoken.get(i), TextToSpeech.QUEUE_ADD, null);
-							}
-							HashMap<String, String> params = new HashMap<String, String>(1);
-							params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "Last");
-							tts.speak(spoken.get(spoken.size()-1), TextToSpeech.QUEUE_ADD, params);
-						} else {
-							Log.e("GoDo", "Error "+status);
-						}
-					}
-				});
-				tts.setOnUtteranceProgressListener(new UtteranceProgressListener(){
 
-					@Override
-					public void onDone(String utteranceId) {
-						if ("Last".equals(utteranceId)){
-							tts.shutdown();
-							tts = null;
-							stopSelf();
-						}
-					}
-
-					@Override
-					public void onError(String utteranceId) {
-						if ("Last".equals(utteranceId)){
-							tts.shutdown();
-							tts = null;
-						}
-						Log.e("GoDo", "Error with "+utteranceId);
-					}
-
-					@Override
-					public void onStart(String utteranceId) {
-					}
-					
-				});
-			}
 			NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
 
 					// Set required fields, including the small icon, the
@@ -208,6 +167,54 @@ public class NotificationService extends Service {
 			NotificationManager nm = (NotificationManager) this
 					.getSystemService(Context.NOTIFICATION_SERVICE);
 			nm.notify("Tasks", 0, builder.build());
+			
+			if (spoken.isEmpty()){
+				stopSelf();
+			} else {
+				tts = new TextToSpeech(this, new TextToSpeech.OnInitListener(){
+					@Override
+					public void onInit(int status) {
+						if (status == TextToSpeech.SUCCESS){
+							for (int i = 0; i < spoken.size()-1; i++){
+								tts.speak(spoken.get(i), TextToSpeech.QUEUE_ADD, null);
+							}
+							HashMap<String, String> params = new HashMap<String, String>(1);
+							params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "Last");
+							tts.speak(spoken.get(spoken.size()-1), TextToSpeech.QUEUE_ADD, params);
+						} else {
+							Log.e("GoDo", "Error "+status);
+						}
+					}
+				});
+				tts.setOnUtteranceProgressListener(new UtteranceProgressListener(){
+
+					@Override
+					public void onDone(String utteranceId) {
+						if ("Last".equals(utteranceId)){
+							tts.shutdown();
+							tts = null;
+							stopSelf();
+						}
+					}
+
+					@Override
+					public void onError(String utteranceId) {
+						if ("Last".equals(utteranceId)){
+							tts.shutdown();
+							tts = null;
+							stopSelf();
+						}
+						Log.e("GoDo", "Error with "+utteranceId);
+					}
+
+					@Override
+					public void onStart(String utteranceId) {
+					}
+					
+				});
+			}
+		} else {
+			stopSelf();
 		}
 		return START_NOT_STICKY;
 	}
