@@ -22,13 +22,13 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import fake.domain.adamlopresto.godo.db.TasksTable;
 
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
 	private SimpleCursorAdapter adapter;
 	
-	private String[] projection = new String[]{"task_name", "task_notes"};
 	private boolean paused = false;
 	
 	private AbsListView.MultiChoiceModeListener mActionModeCallback = new AbsListView.MultiChoiceModeListener() {
@@ -126,10 +126,32 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 		getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 		getListView().setMultiChoiceModeListener(mActionModeCallback);
 		
-		adapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_activated_2, null,
-				projection,
-				new int[]{android.R.id.text1, android.R.id.text2}, 
+		adapter = new SimpleCursorAdapter(this, R.layout.main_list_item, null,
+				new String[]{ "task_name",    "task_notes",    "instance_notes",    "due_date",    "plan_date"},
+				new int[]{R.id.task_name, R.id.task_notes, R.id.instance_notes, R.id.due_date, R.id.plan_date}, 
 				0);
+		adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder(){
+
+			@Override
+			public boolean setViewValue(View view, Cursor cursor,
+					int columnIndex) {
+				if (cursor.isNull(columnIndex)){
+					view.setVisibility(View.GONE);
+					return true;
+				}
+				view.setVisibility(View.VISIBLE);
+				switch (columnIndex){
+				case 4:
+					((TextView)view).setText("D: "+DateCalc.relativeDaysOrDate(cursor.getString(columnIndex)));
+					return true;
+				case 5:
+					((TextView)view).setText("P: "+DateCalc.relativeDaysOrDate(cursor.getString(columnIndex)));
+					return true;
+				}
+				return false;
+			}
+			
+		});
 		
 		setListAdapter(adapter);
 		getLoaderManager().restartLoader(0, null, this);
@@ -208,7 +230,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 			where = DatabaseUtils.concatenateWhere(where, "COALESCE(plan_date, start_date, '') < current_timestamp");
 		
 		CursorLoader cursorLoader = new CursorLoader(this,
-				uri, new String[]{"_id", "task_name", "task_notes"}, where, null, null);
+				uri, new String[]{"_id", "task_name", "task_notes", "instance_notes", "due_date", "plan_date"}, where, null, null);
 		return cursorLoader;
 	}
 
