@@ -20,7 +20,7 @@ public class Task {
 	private long id = -1L;
 	private String name;
 	private String notes;
-	private NotificationLevels notification = NotificationLevels.NONE;
+	private NotificationLevels notification = NotificationLevels.SILENT;
 	private RepeatTypes repeat = RepeatTypes.NONE;
 	
 	public static Task get(DatabaseHelper helper, long id){
