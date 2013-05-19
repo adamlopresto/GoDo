@@ -263,9 +263,12 @@ public class TaskRepetitionRuleFragment extends ListFragment
 			long taskId = ((TaskActivity)getActivity()).task.forceId();
 			if (taskId == -1L)
 				Toast.makeText(getActivity(), "Enter a task name first", Toast.LENGTH_LONG).show();
-			else
+			else {
+				if (header.getSelectedItemPosition() == 0)
+					header.setSelection(1);
 				startActivity(new Intent(getActivity(), TaskRepetitionRuleActivity.class)
 					.putExtra("task", taskId));
+			}
 			return true;
 		}
 		return false;
