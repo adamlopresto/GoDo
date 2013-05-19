@@ -47,7 +47,8 @@ public class NotificationService extends Service {
 					InstancesView.COLUMN_INSTANCE_NOTES, InstancesView.COLUMN_NOTIFICATION, 
 					InstancesView.COLUMN_ID
 				}, 
-				"NOT blocked_by_context AND NOT blocked_by_task AND done_date IS NULL " +
+				"NOT task_name IS NULL AND NOT blocked_by_context AND NOT blocked_by_task " +
+				"AND done_date IS NULL " +
 				"AND COALESCE(plan_date, start_date, '') < current_timestamp AND notification > 0",
 				null, null);
 		c.moveToFirst();
