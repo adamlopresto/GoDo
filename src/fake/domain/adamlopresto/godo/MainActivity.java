@@ -227,7 +227,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 			where = DatabaseUtils.concatenateWhere(where, "done_date IS NULL");
 		
 		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_FUTURE, false))
-			where = DatabaseUtils.concatenateWhere(where, "coalesce(start_date, 0) <= current_timestamp");
+			where = DatabaseUtils.concatenateWhere(where, "coalesce(start_date, 0) <= DATETIME('now', 'localtime')");
 		
 		CursorLoader cursorLoader = new CursorLoader(this, uri, 
 				new String[]{"_id", "task_name", "task_notes", "instance_notes", "due_date", "plan_date"}, 
