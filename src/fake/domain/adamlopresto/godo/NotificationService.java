@@ -50,7 +50,10 @@ public class NotificationService extends Service {
 				"NOT task_name IS NULL AND NOT blocked_by_context AND NOT blocked_by_task " +
 				"AND done_date IS NULL " +
 				"AND COALESCE(plan_date, start_date, '') < DATETIME('now', 'localtime') AND notification > 0",
-				null, null);
+				null, 
+				"case when due_date <= current_timestamp then due_date else '9999-99-99' end, " +
+				"coalesce(plan_date, current_timestamp), due_date, notification DESC, random()"
+				);
 		c.moveToFirst();
 		
 		int numToNotify = 0;
