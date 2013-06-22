@@ -177,7 +177,7 @@ public class Instance {
 		putDate(values, InstancesTable.COLUMN_START_DATE, startDate);
 		putDate(values, InstancesTable.COLUMN_PLAN_DATE, planDate);
 		putDate(values, InstancesTable.COLUMN_DUE_DATE, dueDate);
-		putDate(values, InstancesTable.COLUMN_DONE_DATE, doneDate);
+		putDateTime(values, InstancesTable.COLUMN_DONE_DATE, doneDate);
 		putDate(values, InstancesTable.COLUMN_CREATE_DATE, createDate);
 
 		if (id == -1L)
@@ -320,6 +320,13 @@ public class Instance {
 			values.putNull(key);
 		else 
 			values.put(key, DatabaseHelper.dateFormatter.format(date));
+	}
+	
+	private static void putDateTime(ContentValues values, String key, Date date){
+		if (date == null)
+			values.putNull(key);
+		else 
+			values.put(key, DatabaseHelper.dateTimeFormatter.format(date));
 	}
 
 	public void updateDone(boolean checked) {

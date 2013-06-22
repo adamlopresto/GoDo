@@ -11,6 +11,7 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -130,8 +131,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 				new String[]{ "task_name",    "task_notes",    "instance_notes",    "due_date",    "plan_date"},
 				new int[]{R.id.task_name, R.id.task_notes, R.id.instance_notes, R.id.due_date, R.id.plan_date}, 
 				0);
-		adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder(){
-
+		adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder(){ 
 			@Override
 			public boolean setViewValue(View view, Cursor cursor,
 					int columnIndex) {
@@ -139,7 +139,13 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 					view.setVisibility(View.GONE);
 					return true;
 				}
+				TextView tv = (TextView)view;
 				view.setVisibility(View.VISIBLE);
+				if (cursor.isNull(cursor.getColumnIndex("done_date"))){
+					tv.setPaintFlags(tv.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG); 
+				} else { 
+					tv.setPaintFlags(tv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+				}
 				switch (columnIndex){
 				case 4:
 					((TextView)view).setText("D: "+DateCalc.relativeDaysOrDate(cursor.getString(columnIndex)));
@@ -224,15 +230,16 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 			where = DatabaseUtils.concatenateWhere(where, "NOT blocked_by_task");
 		
 		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_DONE, false))
-			where = DatabaseUtils.concatenateWhere(where, "done_date IS NULL");
+			where = DatabaseUtils.concatenateWhere(where, "(done_date IS NULL OR done_date > DATETIME('now', '-1 hours'))");
 		
 		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_FUTURE, false))
 			where = DatabaseUtils.concatenateWhere(where, "coalesce(start_date, 0) <= DATETIME('now', 'localtime')");
 		
 		CursorLoader cursorLoader = new CursorLoader(this, uri, 
-				new String[]{"_id", "task_name", "task_notes", "instance_notes", "due_date", "plan_date"}, 
+				new String[]{"_id", "task_name", "task_notes", "instance_notes", "due_date", "plan_date", "done_date"}, 
 				where, null, 
 				//sort order
+				"done_date is not null, "+
 				"case when due_date <= current_timestamp then due_date else '9999-99-99' end, " +
 				"coalesce(plan_date, current_timestamp), due_date, notification DESC, random()"
 				);
