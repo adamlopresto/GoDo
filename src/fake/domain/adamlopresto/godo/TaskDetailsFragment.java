@@ -184,7 +184,7 @@ public class TaskDetailsFragment extends Fragment {
 			dp.setSpinnersShown(false);
 			dp.setCalendarViewShown(true);
 			dp.getCalendarView().setShowWeekNumber(false);
-			dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Done", new DialogInterface.OnClickListener(){
+			dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Set", new DialogInterface.OnClickListener(){
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					//this is called *BEFORE* the onDateSet, meaning we can't get the current date here.
