@@ -21,9 +21,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.TasksTable;
 
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
@@ -128,32 +130,37 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 		getListView().setMultiChoiceModeListener(mActionModeCallback);
 		
 		adapter = new SimpleCursorAdapter(this, R.layout.main_list_item, null,
-				new String[]{ "task_name",    "task_notes",    "instance_notes",    "due_date",    "plan_date"},
-				new int[]{R.id.task_name, R.id.task_notes, R.id.instance_notes, R.id.due_date, R.id.plan_date}, 
+				new String[]{ "task_name",    "task_notes",    "instance_notes",    "due_date",    "plan_date", "done_date"},
+				new int[]{R.id.task_name, R.id.task_notes, R.id.instance_notes, R.id.due_date, R.id.plan_date, R.id.check}, 
 				0);
 		adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder(){ 
 			@Override
 			public boolean setViewValue(View view, Cursor cursor,
 					int columnIndex) {
-				if (cursor.isNull(columnIndex)){
+				if (cursor.isNull(columnIndex) && columnIndex != 6){
 					view.setVisibility(View.GONE);
 					return true;
 				}
 				TextView tv = (TextView)view;
 				view.setVisibility(View.VISIBLE);
-				if (cursor.isNull(cursor.getColumnIndex("done_date"))){
+				boolean done = !cursor.isNull(cursor.getColumnIndex("done_date"));
+				if (!done){
 					tv.setPaintFlags(tv.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG); 
 				} else { 
 					tv.setPaintFlags(tv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 				}
 				switch (columnIndex){
 				case 4:
-					((TextView)view).setText("D: "+DateCalc.relativeDaysOrDate(cursor.getString(columnIndex)));
+					tv.setText("D: "+DateCalc.relativeDaysOrDate(cursor.getString(columnIndex)));
 					return true;
 				case 5:
-					((TextView)view).setText("P: "+DateCalc.relativeDaysOrDate(cursor.getString(columnIndex)));
+					tv.setText("P: "+DateCalc.relativeDaysOrDate(cursor.getString(columnIndex)));
+					return true;
+				case 6:
+					((CheckBox)view).setChecked(done);
 					return true;
 				}
+					
 				return false;
 			}
 			
@@ -215,6 +222,15 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 		Intent i = new Intent(this, TaskActivity.class);
 		i.putExtra("instance", id);
 		startActivity(i);
+	}
+	
+	public void checkBoxClick(View v){
+		ListView lv = getListView();
+		CheckBox cb = (CheckBox)v;
+		Instance inst = Instance.get(DatabaseHelper.getInstance(this), lv.getItemIdAtPosition(lv.getPositionForView(v)));
+		inst.updateDone(cb.isChecked());
+		inst.flush();
+		getContentResolver().notifyChange(GoDoContentProvider.INSTANCES_URI, null);
 	}
 
 	@Override
