@@ -1,6 +1,5 @@
 package fake.domain.adamlopresto.godo;
 
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -21,8 +20,11 @@ public class Instance {
 	private Task task;
 	private String notes;
 	private Date startDate;
+	private boolean hasStartTime;
 	private Date planDate;
+	private boolean hasPlanTime;
 	private Date dueDate;
+	private boolean hasDueTime;
 	private Date doneDate;
 	private Date createDate;
 	
@@ -37,18 +39,43 @@ public class Instance {
 		if (!c.moveToFirst()){
 			return null;
 		}
+		String s = c.getString(2);
+		Date startDate = getDate(s);
+		boolean hasStartTime = hasTime(s);
+		
+		s = c.getString(3);
+		Date planDate = getDate(s);
+		boolean hasPlanTime = hasTime(s);
+		
+		s = c.getString(4);
+		Date dueDate = getDate(s);
+		boolean hasDueTime = hasTime(s);
+		
+		s = c.getString(5);
+		Date doneDate = getDate(s);
+		
+		s = c.getString(6);
+		Date createDate = getDate(s);
+		
 		return new Instance(helper, id, Task.get(helper, c.getLong(0)), c.getString(1),
-				getDate(c, 2), getDate(c, 3), getDate(c, 4), getDate(c, 5), getDate(c, 6));
+				startDate, hasStartTime, planDate, hasPlanTime, dueDate, hasDueTime,
+				doneDate, createDate);
 	}
 	
-	private static Date getDate(Cursor c, int col){
-		if (c.isNull(col))
-			return null;
+	private static Date getDate(String dateString){
 		try {
-			return DatabaseHelper.dateFormatter.parse(c.getString(col));
-		} catch (ParseException e) {
-			return null;
+			return DatabaseHelper.dateTimeFormatter.parse(dateString);
+		} catch (Exception e) {
+			try {
+				return DatabaseHelper.dateFormatter.parse(dateString);
+			} catch (Exception e2) {
+				return null;
+			}
 		}
+	}
+	
+	private static boolean hasTime(String dateString){
+		return dateString != null && dateString.length() > 10;
 	}
 	
 	private boolean different(Object o1, Object o2){
@@ -68,17 +95,24 @@ public class Instance {
 	public Instance(DatabaseHelper helper, Task task){
 		this.helper=helper;
 		this.task = task;
+		this.createDate = new Date();
+		
 	}
 	
-	private Instance(DatabaseHelper helper, long id, Task task, String notes, Date startDate, 
-			Date planDate, Date dueDate, Date doneDate, Date createDate){
+	private Instance(DatabaseHelper helper, long id, Task task, String notes, 
+			Date startDate, boolean hasStartTime, Date planDate, boolean hasPlanTime, 
+			Date dueDate, boolean hasDueTime, 
+			Date doneDate, Date createDate){
 		this.helper = helper;
 		this.id = id;
 		this.notes = notes;
 		this.task = task;
 		this.startDate = startDate;
+		this.hasStartTime = hasStartTime;
 		this.planDate = planDate;
+		this.hasPlanTime = hasPlanTime;
 		this.dueDate=dueDate;
+		this.hasDueTime = hasPlanTime;
 		this.doneDate=doneDate;
 		this.createDate=createDate;
 	}
@@ -114,6 +148,16 @@ public class Instance {
 		if (different(this.startDate, startDate))
 			this.startDate = startDate;
 	}
+	
+	public boolean hasStartTime() {
+		return hasStartTime();
+	}
+	
+	public void setHasStartTime(boolean b){
+		if (b != hasStartTime)
+			dirty = true;
+		hasStartTime = b;
+	}
 
 	public Date getPlanDate() {
 		return planDate;
@@ -123,6 +167,16 @@ public class Instance {
 		if (different(this.planDate, planDate))
 			this.planDate = planDate;
 	}
+	
+	public boolean hasPlanTime() {
+		return hasPlanTime();
+	}
+	
+	public void setHasPlanTime(boolean b){
+		if (b != hasPlanTime)
+			dirty = true;
+		hasPlanTime = b;
+	}
 
 	public Date getDueDate() {
 		return dueDate;
@@ -131,6 +185,16 @@ public class Instance {
 	public void setDueDate(Date dueDate) {
 		if (different(this.dueDate, dueDate))
 			this.dueDate = dueDate;
+	}
+	
+	public boolean hasDueTime() {
+		return hasDueTime();
+	}
+	
+	public void setHasDueTime(boolean b){
+		if (b != hasDueTime)
+			dirty = true;
+		hasDueTime = b;
 	}
 
 	public Date getDoneDate() {

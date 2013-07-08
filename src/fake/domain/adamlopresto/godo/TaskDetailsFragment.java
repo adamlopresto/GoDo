@@ -17,7 +17,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 
 public class TaskDetailsFragment extends Fragment {
 	
@@ -91,7 +90,7 @@ public class TaskDetailsFragment extends Fragment {
 		if (date == null)
 			return "None";
 		else {
-			return DatabaseHelper.dateFormatter.format(date);
+			return DateCalc.relativeDaysOrDate(date);
 		}
 	}
 	

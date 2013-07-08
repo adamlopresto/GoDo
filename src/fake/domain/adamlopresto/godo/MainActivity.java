@@ -246,7 +246,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 			where = DatabaseUtils.concatenateWhere(where, "NOT blocked_by_task");
 		
 		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_DONE, false))
-			where = DatabaseUtils.concatenateWhere(where, "(done_date IS NULL OR done_date > DATETIME('now', '-1 hours'))");
+			where = DatabaseUtils.concatenateWhere(where, "(done_date IS NULL OR done_date > DATETIME('now', '-1 hours', 'localtime'))");
 		
 		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_FUTURE, false))
 			where = DatabaseUtils.concatenateWhere(where, "coalesce(start_date, 0) <= DATETIME('now', 'localtime')");

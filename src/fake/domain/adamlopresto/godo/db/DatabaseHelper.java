@@ -2,7 +2,6 @@ package fake.domain.adamlopresto.godo.db;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,11 +19,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	public static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 	public static SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-	static {
-		TimeZone utc = TimeZone.getTimeZone("UTC");
-		//dateFormatter.setTimeZone(utc);
-		dateTimeFormatter.setTimeZone(utc);
-	}
 	
 	private static DatabaseHelper mInstance;
 	

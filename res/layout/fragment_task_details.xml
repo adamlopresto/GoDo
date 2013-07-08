@@ -10,7 +10,8 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:columnCount="2">
+    android:columnCount="2"
+    >
     
     <RelativeLayout android:layout_columnSpan="2">
 
@@ -60,28 +61,25 @@
         android:entries="@array/notification_levels" />
     
     <TextView android:text="@string/start_date_label" />
-    <TextView android:id="@+id/start_date" 
+    <Button android:id="@+id/start_date" 
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="fill_horizontal"
-        android:textIsSelectable="false"
         />    
         
     <TextView android:text="@string/plan_date_label" />
-    <TextView android:id="@+id/plan_date" 
+    <Button android:id="@+id/plan_date" 
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="fill_horizontal"
-        android:textIsSelectable="false"
         />    
 
     <TextView android:text="@string/due_date_label" />
-    <TextView android:id="@+id/due_date" 
+    <Button android:id="@+id/due_date" 
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="fill_horizontal"
-        android:textIsSelectable="false"
-        />    
+        /> 
         
 </GridLayout>
 </ScrollView>

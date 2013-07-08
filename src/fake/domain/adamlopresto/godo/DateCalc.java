@@ -43,15 +43,15 @@ public abstract class DateCalc {
 	public static String relativeDaysOrDate(Date then){
 		int diff = dateDiff(then);
 		if (diff == 0)
-			return "today";
+			return "Today";
 		else if (diff == -1)
-			return "yesterday";
+			return "Yesterday";
 		else if (diff == 1)
-			return "tomorrow";
+			return "Tomorrow";
 		else if (diff > 0 && diff <= 7)
 			return weekday.format(then);
 		else if (diff < 0 && diff >= -7)
-			return "last "+weekday.format(then);
+			return "Last "+weekday.format(then);
 		else
 			return shorttime.format(then);
 	}
