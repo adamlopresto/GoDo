@@ -26,6 +26,8 @@ public class Instance {
 	private Date dueDate;
 	private boolean hasDueTime;
 	private Date doneDate;
+	
+	@SuppressWarnings("unused")
 	private Date createDate;
 	
 	public static Instance get(DatabaseHelper helper, long id){
@@ -95,8 +97,6 @@ public class Instance {
 	public Instance(DatabaseHelper helper, Task task){
 		this.helper=helper;
 		this.task = task;
-		this.createDate = new Date();
-		
 	}
 	
 	private Instance(DatabaseHelper helper, long id, Task task, String notes, 
@@ -150,7 +150,7 @@ public class Instance {
 	}
 	
 	public boolean hasStartTime() {
-		return hasStartTime();
+		return hasStartTime;
 	}
 	
 	public void setHasStartTime(boolean b){
@@ -169,7 +169,7 @@ public class Instance {
 	}
 	
 	public boolean hasPlanTime() {
-		return hasPlanTime();
+		return hasPlanTime;
 	}
 	
 	public void setHasPlanTime(boolean b){
@@ -188,7 +188,7 @@ public class Instance {
 	}
 	
 	public boolean hasDueTime() {
-		return hasDueTime();
+		return hasDueTime;
 	}
 	
 	public void setHasDueTime(boolean b){
@@ -205,7 +205,8 @@ public class Instance {
 		if (different(this.doneDate, doneDate))
 			this.doneDate = doneDate;
 	}
-
+	
+/*
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -214,6 +215,7 @@ public class Instance {
 		if (different(this.createDate, createDate))
 			this.createDate = createDate;
 	}
+ */
 	
 	/**
 	 * Pushes any updates to the database. 
@@ -238,11 +240,11 @@ public class Instance {
 			return; //Can't save task; abort
 		values.put(InstancesTable.COLUMN_TASK, taskId);
 		values.put(InstancesTable.COLUMN_NOTES, notes);
-		putDate(values, InstancesTable.COLUMN_START_DATE, startDate);
-		putDate(values, InstancesTable.COLUMN_PLAN_DATE, planDate);
-		putDate(values, InstancesTable.COLUMN_DUE_DATE, dueDate);
-		putDateTime(values, InstancesTable.COLUMN_DONE_DATE, doneDate);
-		putDate(values, InstancesTable.COLUMN_CREATE_DATE, createDate);
+		putDate(values, InstancesTable.COLUMN_START_DATE, startDate, hasStartTime);
+		putDate(values, InstancesTable.COLUMN_PLAN_DATE, planDate, hasPlanTime);
+		putDate(values, InstancesTable.COLUMN_DUE_DATE, dueDate, hasDueTime);
+		putDate(values, InstancesTable.COLUMN_DONE_DATE, doneDate, true);
+		//putDate(values, InstancesTable.COLUMN_CREATE_DATE, createDate, true);
 
 		if (id == -1L)
 			id = db.insert(InstancesTable.TABLE, null, values);
@@ -379,18 +381,13 @@ public class Instance {
 				
 	
 	
-	private static void putDate(ContentValues values, String key, Date date){
+	private static void putDate(ContentValues values, String key, Date date, boolean hasTime){
 		if (date == null)
 			values.putNull(key);
-		else 
-			values.put(key, DatabaseHelper.dateFormatter.format(date));
-	}
-	
-	private static void putDateTime(ContentValues values, String key, Date date){
-		if (date == null)
-			values.putNull(key);
-		else 
+		else if (hasTime)
 			values.put(key, DatabaseHelper.dateTimeFormatter.format(date));
+		else
+			values.put(key, DatabaseHelper.dateFormatter.format(date));
 	}
 
 	public void updateDone(boolean checked) {

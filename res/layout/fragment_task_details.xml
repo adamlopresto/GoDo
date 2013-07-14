@@ -67,6 +67,15 @@
         android:layout_gravity="fill_horizontal"
         />    
         
+    <Space />
+    <Button android:id="@+id/start_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill_horizontal"
+        android:text="no time"
+        android:visibility="gone"
+        />
+        
     <TextView android:text="@string/plan_date_label" />
     <Button android:id="@+id/plan_date" 
         android:layout_width="0dp"
@@ -74,12 +83,30 @@
         android:layout_gravity="fill_horizontal"
         />    
 
+    <Space />
+    <Button android:id="@+id/plan_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill_horizontal"
+        android:text="no time"
+        android:visibility="gone"
+        />
+    
     <TextView android:text="@string/due_date_label" />
     <Button android:id="@+id/due_date" 
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="fill_horizontal"
-        /> 
+        />
+        
+    <Space />
+    <Button android:id="@+id/due_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill_horizontal"
+        android:text="no time"
+        android:visibility="gone"
+        />
         
 </GridLayout>
 </ScrollView>
