@@ -151,10 +151,10 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 				}
 				switch (columnIndex){
 				case 4:
-					tv.setText("D: "+DateCalc.relativeDaysOrDate(cursor.getString(columnIndex)));
+					tv.setText("D: "+DateCalc.formatShortRelativeDate(cursor.getString(columnIndex)));
 					return true;
 				case 5:
-					tv.setText("P: "+DateCalc.relativeDaysOrDate(cursor.getString(columnIndex)));
+					tv.setText("P: "+DateCalc.formatShortRelativeDate(cursor.getString(columnIndex)));
 					return true;
 				case 6:
 					((CheckBox)view).setChecked(done);

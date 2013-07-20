@@ -1,6 +1,5 @@
 package fake.domain.adamlopresto.godo;
 
-import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -124,14 +123,14 @@ public class TaskDetailsFragment extends Fragment {
 		if (date == null)
 			return "No date";
 		else 
-			return DateCalc.relativeDaysOrDate(date);
+			return DateCalc.formatLongRelativeDate(date);
 	}
 	
 	private String timeString(boolean hasTime, Date date){
 		if (!hasTime || date == null)
 			return "No time";
 		else
-			return DateFormat.getTimeInstance().format(date);
+			return DateCalc.SHORTTIME.format(date);
 	}
 	
 	@Override

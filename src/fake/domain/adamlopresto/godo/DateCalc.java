@@ -11,14 +11,17 @@ import android.annotation.SuppressLint;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 
 
+@SuppressLint("SimpleDateFormat")
 public abstract class DateCalc {
-
-	/**
-	 * Returns the number of days from now to then. If then is the future, the result is positive.
-	 * @param then The date to end up at
-	 * @return number of days
-	 */
-	public static int dateDiff(Date then){
+	
+	private static SimpleDateFormat weekday = new SimpleDateFormat("EEEE");
+	private static final DateFormat SHORTDATE = new SimpleDateFormat("MMM d");
+	private static final DateFormat SHORTDATEWITHYEAR = new SimpleDateFormat("MMM d, yyyy");
+	private static final DateFormat REALLYSHORTTIME = new SimpleDateFormat("h a");
+	public  static final DateFormat SHORTTIME = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT);
+	
+	
+	public static String formatShortRelativeDate(Date then, boolean hasTime){
 		Calendar now = new GregorianCalendar();
 		now.set(Calendar.HOUR_OF_DAY, 0);
 		now.set(Calendar.MINUTE, 0);
@@ -32,16 +35,57 @@ public abstract class DateCalc {
 		thenCal.set(Calendar.SECOND, 0);
 		thenCal.set(Calendar.MILLISECOND, 0);
 		
-		return (int)((thenCal.getTimeInMillis()-now.getTimeInMillis()) / 24 / 60 / 60 / 1000);
+		String date;
 		
+		// diff is the number of days from now to then. If then is the future, the result is positive.
+		int diff = (int)((thenCal.getTimeInMillis()-now.getTimeInMillis()) / 24 / 60 / 60 / 1000);
+		if (diff == 0)
+			date="Today";
+		else if (diff == -1)
+			date="Yesterday";
+		else if (diff == 1)
+			date="Tomorrow";
+		else if (diff > 0 && diff <= 7)
+			date=weekday.format(then);
+		else if (diff < 0 && diff >= -7)
+			date="Last "+weekday.format(then);
+		else if (thenCal.get(Calendar.YEAR) == now.get(Calendar.YEAR))
+			date=SHORTDATE.format(then);
+		else
+			date=SHORTDATEWITHYEAR.format(then);
+		
+		if (!hasTime)
+			return date;
+		
+		thenCal.setTime(then);
+		String time;
+		if (thenCal.get(Calendar.MINUTE) == 0)
+			time = REALLYSHORTTIME.format(then);
+		else 
+			time = SHORTTIME.format(then);
+		
+		if (diff == 0)
+			return time;
+		else 
+			return date + " " + time;
 	}
 	
-	@SuppressLint("SimpleDateFormat")
-	private static SimpleDateFormat weekday = new SimpleDateFormat("EEEE");
-	private static DateFormat shorttime = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT);
-	
-	public static String relativeDaysOrDate(Date then){
-		int diff = dateDiff(then);
+	public static String formatLongRelativeDate(Date then){
+		Calendar now = new GregorianCalendar();
+		now.set(Calendar.HOUR_OF_DAY, 0);
+		now.set(Calendar.MINUTE, 0);
+		now.set(Calendar.SECOND, 0);
+		now.set(Calendar.MILLISECOND, 0);
+		
+		Calendar thenCal = new GregorianCalendar();
+		thenCal.setTime(then);
+		thenCal.set(Calendar.HOUR_OF_DAY, 0);
+		thenCal.set(Calendar.MINUTE, 0);
+		thenCal.set(Calendar.SECOND, 0);
+		thenCal.set(Calendar.MILLISECOND, 0);
+		
+		// diff is the number of days from now to then. If then is the future, the result is positive.
+		int diff = (int)((thenCal.getTimeInMillis()-now.getTimeInMillis()) / 24 / 60 / 60 / 1000);
 		if (diff == 0)
 			return "Today";
 		else if (diff == -1)
@@ -52,13 +96,18 @@ public abstract class DateCalc {
 			return weekday.format(then);
 		else if (diff < 0 && diff >= -7)
 			return "Last "+weekday.format(then);
+		else if (thenCal.get(Calendar.YEAR) == now.get(Calendar.YEAR))
+			return SHORTDATE.format(then);
 		else
-			return shorttime.format(then);
+			return SHORTDATEWITHYEAR.format(then);
 	}
-	
-	public static String relativeDaysOrDate(String formattedDate){
+
+	public static String formatShortRelativeDate(String formattedDate){
 		try {
-			return relativeDaysOrDate(DatabaseHelper.dateFormatter.parse(formattedDate));
+			if (formattedDate.length() <= 10)
+				return formatShortRelativeDate(DatabaseHelper.dateFormatter.parse(formattedDate), false);
+			else
+				return formatShortRelativeDate(DatabaseHelper.dateTimeFormatter.parse(formattedDate), true);
 		} catch (ParseException e) {
 			return "Invalid date: "+formattedDate;
 		}
