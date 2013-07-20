@@ -10,7 +10,6 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -204,9 +203,6 @@ public class TaskDetailsFragment extends Fragment {
 			dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Set", new DialogInterface.OnClickListener(){
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					//this is called *BEFORE* the onDateSet, meaning we can't get the current date here.
-					//Who thought that was a good idea?
-					Log.e("GoDo", "Confirm");
 					cal.set(dp.getYear(),  dp.getMonth(), dp.getDayOfMonth());
 					switch(col){			
 					case NEW_START:
@@ -226,7 +222,6 @@ public class TaskDetailsFragment extends Fragment {
 			dlg.setButton(DialogInterface.BUTTON_NEUTRAL, "None", new DialogInterface.OnClickListener(){
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					Log.e("GoDo", "None");
 					switch(col){			
 					case NEW_START:
 						getInstance().setStartDate(null);
@@ -255,7 +250,7 @@ public class TaskDetailsFragment extends Fragment {
 
 		private RepetitionRuleColumns col;
 		private Calendar cal = GregorianCalendar.getInstance();
-		private boolean confirm = false;
+		private boolean confirm = true;
 
 		TimeOnClickListener(RepetitionRuleColumns col){
 			this.col = col;
@@ -264,7 +259,7 @@ public class TaskDetailsFragment extends Fragment {
 		@Override
 		public void onClick(View v) {
 			Date date = null;
-			confirm = false;
+			confirm = true;
 			Boolean hasTime = true;
 			switch (col){
 			case NEW_START:
@@ -320,19 +315,21 @@ public class TaskDetailsFragment extends Fragment {
 				}
 			}, 
 			cal.get(Calendar.HOUR), cal.get(Calendar.MINUTE), false);
-			dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Set", new DialogInterface.OnClickListener(){
+			
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN){
+				dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Set", (DialogInterface.OnClickListener)null);
+			}
+			dlg.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener(){ 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					//this is called *BEFORE* the onDateSet, meaning we can't get the current date here.
-					//Who thought that was a good idea?
-					confirm = true;
+					// TODO Auto-generated method stub
+					confirm = false;
 				}
 			});
-			dlg.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", (DialogInterface.OnClickListener)null);
 			dlg.setButton(DialogInterface.BUTTON_NEUTRAL, "None", new DialogInterface.OnClickListener(){
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					Log.e("GoDo", "None");
+					confirm = false;
 					switch(col){			
 					case NEW_START:
 						getInstance().setHasStartTime(false);
