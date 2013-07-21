@@ -112,7 +112,7 @@ public class Instance {
 		this.planDate = planDate;
 		this.hasPlanTime = hasPlanTime;
 		this.dueDate=dueDate;
-		this.hasDueTime = hasPlanTime;
+		this.hasDueTime = hasDueTime;
 		this.doneDate=doneDate;
 		this.createDate=createDate;
 	}

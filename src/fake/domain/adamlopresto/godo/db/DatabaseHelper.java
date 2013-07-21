@@ -2,6 +2,7 @@ package fake.domain.adamlopresto.godo.db;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,15 +11,19 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	private static final String DATABASE_NAME = "GoDo";
-	private static final int CURRENT_VERSION = 2;
+	private static final int CURRENT_VERSION = 3;
 	/*
 	 * Version history:
 	 * 1: initial release
 	 * 2: add repetition rules
+	 * 3: add due notification
 	 */	
 	
 	public static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
 	public static SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+	static {
+		dateTimeFormatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+	}
 	
 	private static DatabaseHelper mInstance;
 	

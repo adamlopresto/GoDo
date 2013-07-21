@@ -29,7 +29,8 @@
     <string name="plan_date_label">Plan date</string>
     <string name="due_date_label">Due date</string>
     <string name="new_task">New task</string>
-    <string name="notification_label">Notification</string>
+    <string name="notification_label">Active notification</string>
+    <string name="due_notification_label">Due notification</string>
     <string name="tasks_notification_title_template">Tasks: %1$s</string>
     <string name="action_share">Share</string>
     <string name="action_reply">Reply</string>

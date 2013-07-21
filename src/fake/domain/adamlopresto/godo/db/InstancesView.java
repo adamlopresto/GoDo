@@ -16,6 +16,7 @@ public class InstancesView {
 	public static final String COLUMN_TASK_NOTES = TasksTable.COLUMN_NOTES;
 	public static final String COLUMN_INSTANCE_NOTES = InstancesTable.COLUMN_NOTES;
 	public static final String COLUMN_NOTIFICATION = TasksTable.COLUMN_NOTIFICATION;
+	public static final String COLUMN_DUE_NOTIFICATION = TasksTable.COLUMN_DUE_NOTIFICATION;
 	public static final String COLUMN_REPEAT = TasksTable.COLUMN_REPEAT;
 	public static final String COLUMN_DONE_DATE = InstancesTable.COLUMN_DONE_DATE;
 	public static final String COLUMN_DUE_DATE = InstancesTable.COLUMN_DUE_DATE;
@@ -34,6 +35,7 @@ public class InstancesView {
 				+ COLUMN_TASK_NOTES + ", "
 				+ COLUMN_INSTANCE_NOTES + ", "
 				+ COLUMN_NOTIFICATION + ", "
+				+ COLUMN_DUE_NOTIFICATION + ", "
 				+ COLUMN_REPEAT + ", "
 				+ COLUMN_DONE_DATE + ", "
 				+ COLUMN_DUE_DATE + ", "
@@ -52,6 +54,10 @@ public class InstancesView {
 	}
 
 	public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
+		if (oldVersion < 3){
+			db.execSQL("DROP VIEW "+VIEW);
+			onCreate(db);
+		}
 	}
 
 	public static void checkColumns(String[] projection) {

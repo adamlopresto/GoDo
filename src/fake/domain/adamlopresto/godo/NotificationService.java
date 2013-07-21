@@ -44,15 +44,24 @@ public class NotificationService extends Service {
 		Cursor c = res.query(GoDoContentProvider.INSTANCES_URI, 
 				new String[]{
 					InstancesView.COLUMN_TASK_NAME, InstancesView.COLUMN_TASK_NOTES, 
-					InstancesView.COLUMN_INSTANCE_NOTES, InstancesView.COLUMN_NOTIFICATION, 
+					InstancesView.COLUMN_INSTANCE_NOTES, 
+					"max(0, " +
+					"	(case when (length(due_date) > 10 and due_date <= current_timestamp) then due_notification else 0 end), " +
+					"   (case when (NOT blocked_by_context AND NOT blocked_by_task AND COALESCE(plan_date, start_date, '') < DATETIME('now', 'localtime')) then notification else 0 end)) " +
+					"as notification",
 					InstancesView.COLUMN_ID
 				}, 
-				"NOT task_name IS NULL AND NOT blocked_by_context AND NOT blocked_by_task " +
+				"NOT task_name IS NULL " +
 				"AND done_date IS NULL " +
-				"AND COALESCE(plan_date, start_date, '') < DATETIME('now', 'localtime') AND notification > 0",
+				"AND ((NOT blocked_by_context AND NOT blocked_by_task " +
+					  "AND COALESCE(plan_date, start_date, '') < DATETIME('now', 'localtime') " +
+					  "AND notification > 0" +
+				"     ) OR "+
+					 "(length(due_date) > 10 and due_date <= current_timestamp AND due_notification > 0)" +
+				"    )",
 				null, 
-				"case when due_date <= current_timestamp then due_date else '9999-99-99' end, " +
-				"coalesce(plan_date, current_timestamp), due_date, notification DESC, random()"
+				"case when due_date <= current_timestamp then due_date || ' 23:59:59' else '9999-99-99' end, " +
+				"coalesce(plan_date || ' 23:59:59', current_timestamp), due_date || ' 23:59:59' , notification DESC, random()"
 				);
 		c.moveToFirst();
 		

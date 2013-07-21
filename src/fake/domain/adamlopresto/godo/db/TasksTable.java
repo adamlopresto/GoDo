@@ -16,9 +16,12 @@ public class TasksTable {
 	//drawn from NotificationLevels
 	public static final String COLUMN_NOTIFICATION = "notification";
 	
+	//as of version 2
 	//drawn from RepeatTypes
 	public static final String COLUMN_REPEAT = "repeat";
 	
+	//as of version 3
+	public static final String COLUMN_DUE_NOTIFICATION = "due_notification";
 
 	public static void onCreate(SQLiteDatabase db) {
 		db.execSQL("CREATE TABLE "+TABLE
@@ -27,12 +30,18 @@ public class TasksTable {
 				+ COLUMN_NAME + " TEXT COLLATE NOCASE, "
 				+ COLUMN_NOTES + " TEXT, "
 				+ COLUMN_NOTIFICATION + " INTEGER, "
-				+ COLUMN_REPEAT + " INTEGER"
+				+ COLUMN_REPEAT + " INTEGER, "
+				+ COLUMN_DUE_NOTIFICATION + " INTEGER"
 				+ ")"
 		);
 	}
 
 	public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
+		if (oldVersion < 3){
+			db.execSQL("ALTER TABLE "+TABLE
+					+ " ADD COLUMN "+COLUMN_DUE_NOTIFICATION+" INTEGER"
+					);
+		}
 	}
 
 	public static void checkColumns(String[] projection) {
@@ -41,6 +50,7 @@ public class TasksTable {
 				COLUMN_NAME,
 				COLUMN_NOTES,
 				COLUMN_NOTIFICATION,
+				COLUMN_DUE_NOTIFICATION,
 		};
 		if (projection != null) {
 			HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));

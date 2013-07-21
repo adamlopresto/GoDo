@@ -21,6 +21,7 @@ public class Task {
 	private String name;
 	private String notes;
 	private NotificationLevels notification = NotificationLevels.SILENT;
+	private NotificationLevels dueNotification = NotificationLevels.NOISY;
 	private RepeatTypes repeat = RepeatTypes.NONE;
 	
 	public static Task get(DatabaseHelper helper, long id){
@@ -30,13 +31,13 @@ public class Task {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		Cursor c = db.query(TasksTable.TABLE, 
 				new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES, 
-				             TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT}, 
+				             TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT, TasksTable.COLUMN_DUE_NOTIFICATION}, 
 				TasksTable.COLUMN_ID+"=?", new String[]{String.valueOf(id)}, null, null, null);
 		if (!c.moveToFirst()){
 			return null;
 		}
 		task = new Task(helper, id, c.getString(0), c.getString(1), 
-				NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)]);
+				NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)], NotificationLevels.values()[c.getInt(4)]);
 		cache.put(Long.valueOf(id), task);
 		return task;
 	}
@@ -49,13 +50,15 @@ public class Task {
 	}
 	
 	private Task(DatabaseHelper helper, long id, String name, String notes, 
-			NotificationLevels notification, RepeatTypes repeat){
+			NotificationLevels notification, RepeatTypes repeat, 
+			NotificationLevels dueNotification){
 		this.helper = helper;
 		this.id=id;
 		this.name=name;
 		this.notes=notes;
 		this.notification=notification;
 		this.repeat=repeat;
+		this.dueNotification = dueNotification;
 	}
 	
 	/**
@@ -103,6 +106,15 @@ public class Task {
 		this.notification = notification;
 		dirty = true;
 	}
+	
+	public NotificationLevels getDueNotification() {
+		return dueNotification;
+	}
+
+	public void setDueNotification(NotificationLevels dueNotification) {
+		this.dueNotification = dueNotification;
+		dirty = true;
+	}
 
 	public RepeatTypes getRepeat() {
 		return repeat;
@@ -138,6 +150,7 @@ public class Task {
 		values.put(TasksTable.COLUMN_NOTES, notes);
 		values.put(TasksTable.COLUMN_NOTIFICATION, notification.ordinal());
 		values.put(TasksTable.COLUMN_REPEAT, repeat.ordinal());
+		values.put(TasksTable.COLUMN_DUE_NOTIFICATION, dueNotification.ordinal());
 
 		if (id == -1L)
 			id = db.insert(TasksTable.TABLE, null, values);

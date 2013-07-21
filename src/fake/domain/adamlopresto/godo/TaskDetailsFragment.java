@@ -32,6 +32,7 @@ public class TaskDetailsFragment extends Fragment {
 	private TextView dueDate;
 	private TextView dueTime;
 	private Spinner notification;
+	private Spinner dueNotification;
 	private Date doneDate;
 	
 	@Override
@@ -49,6 +50,7 @@ public class TaskDetailsFragment extends Fragment {
 		dueDate       = (TextView) v.findViewById(R.id.due_date);
 		dueTime       = (TextView) v.findViewById(R.id.due_time);
 		notification  = (Spinner)  v.findViewById(R.id.notification);
+		dueNotification  = (Spinner)  v.findViewById(R.id.due_notification);
 		
 		startDate.setOnClickListener(new DateOnClickListener(RepetitionRuleColumns.NEW_START));
 		planDate.setOnClickListener(new DateOnClickListener(RepetitionRuleColumns.NEW_PLAN));
@@ -80,6 +82,7 @@ public class TaskDetailsFragment extends Fragment {
 			taskName.setText(task.getName());
 			taskNotes.setText(task.getNotes());
 			notification.setSelection(task.getNotification().ordinal());
+			dueNotification.setSelection(task.getDueNotification().ordinal());
 		}
 	}
 	
@@ -145,6 +148,7 @@ public class TaskDetailsFragment extends Fragment {
 		task.setName(nullString(taskName));
 		task.setNotes(nullString(taskNotes));
 		task.setNotification(NotificationLevels.values()[notification.getSelectedItemPosition()]);
+		task.setDueNotification(NotificationLevels.values()[dueNotification.getSelectedItemPosition()]);
 		task.flushNow();
 		
 		Instance instance = getInstance();
