@@ -289,6 +289,7 @@ public class TaskDetailsFragment extends Fragment {
 				//Hard coded to Carrie's preference.
 				cal.set(Calendar.HOUR_OF_DAY, 8);
 				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
 			}
 
 			TimePickerDialog dlg = new TimePickerDialog(getActivity(), 
@@ -317,7 +318,7 @@ public class TaskDetailsFragment extends Fragment {
 					}
 				}
 			}, 
-			cal.get(Calendar.HOUR), cal.get(Calendar.MINUTE), false);
+			cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false);
 			
 			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN){
 				dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Set", (DialogInterface.OnClickListener)null);

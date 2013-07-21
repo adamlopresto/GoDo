@@ -36,6 +36,10 @@ public class NotificationService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		
+		int max = 4;
+		if (intent != null) 
+			max = intent.getIntExtra("max_notify", 4);
+		
 		ContentResolver res = getContentResolver();
 		Cursor c = res.query(GoDoContentProvider.INSTANCES_URI, 
 				new String[]{InstancesView.COLUMN_DUE_DATE}, 
@@ -82,11 +86,11 @@ public class NotificationService extends Service {
 		    	Intent alarmIntent = new Intent(this, TaskerPluginReceiver.class);
 		    	if (quiet)
 		    		alarmIntent.putExtra("max_notify", 1);
-		    	PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+		    	else
+		    		alarmIntent.putExtra("max_notify", 4);
+		    	PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		    	
 		    	manager.set(AlarmManager.RTC_WAKEUP, date.getTime(), contentIntent);
-		    	
-		    	Log.e("GoDo", "Next wakeup "+date);
 			}
 		} catch (ParseException ignored) {
 			//if we can't parse the date, give up.
@@ -96,9 +100,6 @@ public class NotificationService extends Service {
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 		nm.cancelAll();
 		
-		int max = 4;
-		if (intent != null) 
-			max = intent.getIntExtra("max_notify", 4);
 		if (max == 0){
 			stopSelf();
 			return START_NOT_STICKY;
@@ -110,14 +111,14 @@ public class NotificationService extends Service {
 					InstancesView.COLUMN_INSTANCE_NOTES, 
 					"max(0, " +
 					"	(case when (length(due_date) > 10 and due_date <= current_timestamp) then due_notification else 0 end), " +
-					"   (case when (NOT blocked_by_context AND NOT blocked_by_task AND COALESCE(plan_date, start_date, '') < DATETIME('now', 'localtime')) then notification else 0 end)) " +
+					"   (case when (NOT blocked_by_context AND NOT blocked_by_task AND COALESCE(plan_date, start_date, '') <= current_timestamp) then notification else 0 end)) " +
 					"as notification",
 					InstancesView.COLUMN_ID
 				}, 
 				"NOT task_name IS NULL " +
 				"AND done_date IS NULL " +
 				"AND ((NOT blocked_by_context AND NOT blocked_by_task " +
-					  "AND COALESCE(plan_date, start_date, '') < DATETIME('now', 'localtime') " +
+					  "AND COALESCE(plan_date, start_date, '') <= current_timestamp " +
 					  "AND notification > 0" +
 				"     ) OR "+
 					 "(length(due_date) > 10 and due_date <= current_timestamp AND due_notification > 0)" +
