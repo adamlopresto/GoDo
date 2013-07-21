@@ -40,6 +40,10 @@ public class NotificationService extends Service {
 			return START_NOT_STICKY;
 		}
 		
+		NotificationManager nm = (NotificationManager) this
+				.getSystemService(Context.NOTIFICATION_SERVICE);
+		nm.cancelAll();
+		
 		ContentResolver res = getContentResolver();
 		Cursor c = res.query(GoDoContentProvider.INSTANCES_URI, 
 				new String[]{
@@ -177,8 +181,6 @@ public class NotificationService extends Service {
 							*/
 			} // end switch on numToNotify
 
-			NotificationManager nm = (NotificationManager) this
-					.getSystemService(Context.NOTIFICATION_SERVICE);
 			nm.notify("Tasks", 0, builder.build());
 			
 			if (spoken.isEmpty()){
