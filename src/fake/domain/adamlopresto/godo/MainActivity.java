@@ -171,12 +171,10 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 	}
 	
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onResume()
-	 */
 	@Override
 	protected void onResume() {
 		super.onResume();
+		startService(new Intent(this, NotificationService.class).putExtra("max_notify", 0));
 		if (paused){
 			getLoaderManager().restartLoader(0, null, this);
 			paused = false;

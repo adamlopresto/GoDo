@@ -1,8 +1,11 @@
 package fake.domain.adamlopresto.godo;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -21,6 +24,7 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesView;
 
 public class NotificationService extends Service {
@@ -32,6 +36,66 @@ public class NotificationService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		
+		ContentResolver res = getContentResolver();
+		Cursor c = res.query(GoDoContentProvider.INSTANCES_URI, 
+				new String[]{InstancesView.COLUMN_DUE_DATE}, 
+				"due_date > current_timestamp AND done_date is null", 
+				null, "due_date LIMIT 1");
+		c.moveToFirst();
+		String nextDueString = null;
+		if (!c.isAfterLast())
+			nextDueString = c.getString(0);
+		c.close();
+		
+		c = res.query(GoDoContentProvider.INSTANCES_URI, 
+				new String[]{"coalesce(plan_date, start_date)"}, 
+				"NOT blocked_by_context AND NOT blocked_by_task AND coalesce(plan_date, start_date) > current_timestamp AND done_date is null", 
+				null, "coalesce(plan_date, start_date) LIMIT 1");
+		String nextPlanString = null;
+		c.moveToFirst();
+		if (!c.isAfterLast())
+			nextPlanString = c.getString(0);
+		c.close();
+		
+		String nextDateString;
+		if (nextDueString == null)
+			nextDateString = nextPlanString;
+		else if (nextPlanString == null) 
+			nextDateString = nextDueString;
+		else if (nextDueString.compareTo(nextPlanString) < 0)
+			nextDateString = nextDueString;
+		else
+			nextDateString = nextPlanString;
+					                                   
+		try {
+			if (nextDateString != null){
+				Date date = null;
+				boolean quiet = false;
+				if (nextDateString.length() > 10){
+					date = DatabaseHelper.dateTimeFormatter.parse(nextDateString);
+				} else {
+					date = DatabaseHelper.dateFormatter.parse(nextDateString);
+					quiet = true;
+				}
+				AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
+		    	
+		    	Intent alarmIntent = new Intent(this, TaskerPluginReceiver.class);
+		    	if (quiet)
+		    		alarmIntent.putExtra("max_notify", 1);
+		    	PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0);
+		    	
+		    	manager.set(AlarmManager.RTC_WAKEUP, date.getTime(), contentIntent);
+		    	
+		    	Log.e("GoDo", "Next wakeup "+date);
+			}
+		} catch (ParseException ignored) {
+			//if we can't parse the date, give up.
+		}	
+		
+		NotificationManager nm = (NotificationManager) this
+				.getSystemService(Context.NOTIFICATION_SERVICE);
+		nm.cancelAll();
+		
 		int max = 4;
 		if (intent != null) 
 			max = intent.getIntExtra("max_notify", 4);
@@ -40,12 +104,7 @@ public class NotificationService extends Service {
 			return START_NOT_STICKY;
 		}
 		
-		NotificationManager nm = (NotificationManager) this
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-		nm.cancelAll();
-		
-		ContentResolver res = getContentResolver();
-		Cursor c = res.query(GoDoContentProvider.INSTANCES_URI, 
+		c = res.query(GoDoContentProvider.INSTANCES_URI, 
 				new String[]{
 					InstancesView.COLUMN_TASK_NAME, InstancesView.COLUMN_TASK_NOTES, 
 					InstancesView.COLUMN_INSTANCE_NOTES, 
