@@ -21,25 +21,28 @@ public class TaskerPluginReceiver extends BroadcastReceiver {
 		String where = ContextsTable.COLUMN_NAME+"=?";
 		String[] selectionArgs = new String[1];
 		
-		String[] deactivate = extras.getStringArray("deactivate");
-		if (deactivate != null){
-			values.put(ContextsTable.COLUMN_ACTIVE, 0);
-			for (String d : deactivate){
-				selectionArgs[0] = d;
-				res.update(GoDoContentProvider.CONTEXTS_URI, values, where, selectionArgs);
+		int max = 4;
+		if (extras != null){
+			String[] deactivate = extras.getStringArray("deactivate");
+			if (deactivate != null){
+				values.put(ContextsTable.COLUMN_ACTIVE, 0);
+				for (String d : deactivate){
+					selectionArgs[0] = d;
+					res.update(GoDoContentProvider.CONTEXTS_URI, values, where, selectionArgs);
+				}
 			}
-		}
-		
-		String[] activate = extras.getStringArray("activate");
-		if (activate != null){
-			values.put(ContextsTable.COLUMN_ACTIVE, 1);
-			for (String a : activate){
-				selectionArgs[0] = a;
-				res.update(GoDoContentProvider.CONTEXTS_URI, values, where, selectionArgs);
+			
+			String[] activate = extras.getStringArray("activate");
+			if (activate != null){
+				values.put(ContextsTable.COLUMN_ACTIVE, 1);
+				for (String a : activate){
+					selectionArgs[0] = a;
+					res.update(GoDoContentProvider.CONTEXTS_URI, values, where, selectionArgs);
+				}
 			}
-		}
 		
-		int max = extras.getInt("max_notify", 4);
+			max = extras.getInt("max_notify", 4);
+		}
 		if (max > 0)
 			context.startService(new Intent(context, NotificationService.class).putExtra("max_notify", max));
 	}
