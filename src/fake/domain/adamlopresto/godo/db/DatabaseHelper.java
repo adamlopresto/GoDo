@@ -7,11 +7,14 @@ import java.util.TimeZone;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	private static final String DATABASE_NAME = "GoDo";
 	private static final int CURRENT_VERSION = 3;
+	private Context context;
+	
 	/*
 	 * Version history:
 	 * 1: initial release
@@ -40,6 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	private DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, CURRENT_VERSION);
+		this.context = context;
 	}
 	
 	@Override
@@ -69,4 +73,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL("PRAGMA foreign_keys = ON;");
 	}
 
+	public void notifyChange(Uri uri){
+		context.getContentResolver().notifyChange(uri, null);
+	}
 }

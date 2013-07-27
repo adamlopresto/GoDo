@@ -272,32 +272,42 @@ public class Instance {
 					RepetitionRuleColumns to = cols[rules.getInt(1)];
 					RepetitionRuleTypes type = types[rules.getInt(2)];
 					Date date = null;
+					boolean hasTime = false;
 					switch(from){
 					case NEW_DUE:
 						date = next.getDueDate();
+						hasTime = next.hasDueTime();
 						break;
 					case NEW_PLAN:
 						date = next.getPlanDate();
+						hasTime = next.hasPlanTime();
 						break;
 					case NEW_START:
 						date = next.getStartDate();
+						hasTime = next.hasStartTime();
 						break;
 					case NOW:
+						hasTime = false;
 						break;
 					case OLD_DUE:
 						date = getDueDate();
+						hasTime = hasDueTime();
 						break;
 					case OLD_PLAN:
 						date = getPlanDate();
+						hasTime = hasPlanTime();
 						break;
 					case OLD_START:
 						date = getStartDate();
+						hasTime = hasStartTime();
 						break;
 					default:
 						break;
 					}
-					if (date == null)
+					if (date == null){
 						date = new Date();
+						hasTime = false;
+					}
 					
 					GregorianCalendar cal = new GregorianCalendar();
 					cal.setTime(date);
@@ -359,12 +369,15 @@ public class Instance {
 					switch(to){
 					case NEW_DUE:
 						next.setDueDate(date);
+						next.setHasDueTime(hasTime);
 						break;
 					case NEW_PLAN:
 						next.setPlanDate(date);
+						next.setHasPlanTime(hasTime);
 						break;
 					case NEW_START:
 						next.setStartDate(date);
+						next.setHasStartTime(hasTime);
 						break;
 					default:
 						break;
@@ -372,10 +385,11 @@ public class Instance {
 					rules.moveToNext();
 				}
 				rules.close();
-				next.flush();
+				next.flushNow();
 			}
 		}
 		
+		helper.notifyChange(GoDoContentProvider.INSTANCES_URI);
 		dirty=false;
 		needsRepeat = false;
 	}
