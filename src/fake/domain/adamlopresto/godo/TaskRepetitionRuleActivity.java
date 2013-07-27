@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,7 +59,6 @@ public class TaskRepetitionRuleActivity extends Activity {
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int position, long arg3) {
-				Log.e("GoDo", "" + position + "," + weekdaysHidden);
 				if (position < 2 && !weekdaysHidden) {
 					weekdayLayout.setVisibility(View.GONE);
 					numberLabel.setVisibility(View.VISIBLE);
@@ -80,8 +78,8 @@ public class TaskRepetitionRuleActivity extends Activity {
 
 		});
 
-		if (!extractFromBundle(getIntent().getExtras())) {
-			if (!extractFromBundle(savedInstanceState)) {
+		if (!extractFromBundle(savedInstanceState)) {
+			if (!extractFromBundle(getIntent().getExtras())) {
 				Toast.makeText(
 						this,
 						"Error: must have either an existing rule, or at least a task to bind to",
@@ -186,14 +184,13 @@ public class TaskRepetitionRuleActivity extends Activity {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onPause()
-	 */
 	@Override
 	protected void onPause() {
 		super.onPause();
+		saveData();
+	}
+
+	private void saveData() {
 		ContentValues values = new ContentValues();
 		values.put(RepetitionRulesTable.COLUMN_TO, to.getSelectedItemPosition());
 		values.put(RepetitionRulesTable.COLUMN_FROM,
@@ -242,14 +239,10 @@ public class TaskRepetitionRuleActivity extends Activity {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onSaveInstanceState(android.os.Bundle)
-	 */
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+		saveData();
 		if (task_id != -1L)
 			outState.putLong("task", task_id);
 		if (rule_id != -1L)
