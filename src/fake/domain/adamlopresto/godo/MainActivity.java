@@ -15,6 +15,7 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -242,12 +243,8 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 		
 		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_BLOCKED_BY_TASK, false))
 			where = DatabaseUtils.concatenateWhere(where, "NOT blocked_by_task");
-		
-		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_DONE, false))
-			where = DatabaseUtils.concatenateWhere(where, "(done_date IS NULL OR done_date > DATETIME('now', '-1 hours', 'localtime'))");
-		
 		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_FUTURE, false))
-			where = DatabaseUtils.concatenateWhere(where, "coalesce(start_date, 0) <= DATETIME('now', 'localtime')");
+			where = DatabaseUtils.concatenateWhere(where, "coalesce(start_date, 0) <= current_timestamp");
 		
 		if (where == null)
 			where = "";
@@ -255,6 +252,10 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 			where = "("+where+") or ";
 		where = where+"(length(due_date) > 10 and due_date <= current_timestamp)";
 		
+		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_DONE, false))
+			where = DatabaseUtils.concatenateWhere(where, "(done_date IS NULL OR done_date > DATETIME('now', '-1 hours'))");
+		
+		Log.e("GoDo", "Loading: where "+where);
 		CursorLoader cursorLoader = new CursorLoader(this, uri, 
 				new String[]{"_id", "task_name", "task_notes", "instance_notes", "due_date", "plan_date", "done_date"}, 
 				where, null, 
