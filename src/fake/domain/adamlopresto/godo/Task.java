@@ -1,8 +1,11 @@
 package fake.domain.adamlopresto.godo;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.util.LruCache;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.TasksTable;
@@ -20,8 +23,8 @@ public class Task {
 	private long id = -1L;
 	private String name;
 	private String notes;
-	private NotificationLevels notification = NotificationLevels.SILENT;
-	private NotificationLevels dueNotification = NotificationLevels.NOISY;
+	private NotificationLevels notification;
+	private NotificationLevels dueNotification;
 	private RepeatTypes repeat = RepeatTypes.NONE;
 	
 	public static Task get(DatabaseHelper helper, long id){
@@ -31,13 +34,15 @@ public class Task {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		Cursor c = db.query(TasksTable.TABLE, 
 				new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES, 
-				             TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT, TasksTable.COLUMN_DUE_NOTIFICATION}, 
+				             TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT, 
+				             TasksTable.COLUMN_DUE_NOTIFICATION}, 
 				TasksTable.COLUMN_ID+"=?", new String[]{String.valueOf(id)}, null, null, null);
 		if (!c.moveToFirst()){
 			return null;
 		}
 		task = new Task(helper, id, c.getString(0), c.getString(1), 
-				NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)], NotificationLevels.values()[c.getInt(4)]);
+				NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)], 
+				NotificationLevels.values()[c.getInt(4)]);
 		cache.put(Long.valueOf(id), task);
 		return task;
 	}
@@ -45,8 +50,11 @@ public class Task {
 	/*
 	 * Constructor to create a new, empty task
 	 */
-	public Task(DatabaseHelper helper) {
+	public Task(DatabaseHelper helper, Context context) {
 		this.helper=helper;
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		this.notification = NotificationLevels.valueOf(prefs.getString(SettingsActivity.PREF_DEFAULT_NOTIFICATION, "NONE"));
+		this.dueNotification = NotificationLevels.valueOf(prefs.getString(SettingsActivity.PREF_DEFAULT_DUE_NOTIFICATION, "NONE"));
 	}
 	
 	private Task(DatabaseHelper helper, long id, String name, String notes, 

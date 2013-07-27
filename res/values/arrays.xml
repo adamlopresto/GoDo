@@ -37,5 +37,12 @@
         <item>Repeat on completion</item>
         <item>Manually</item>
     </array>
+    <string-array name="notification_levels_backend">
+        <item >NONE</item>
+        <item >SILENT</item>
+        <item >VIBRATE</item>
+        <item >NOISY</item>
+        <item >SPOKEN</item>
+    </string-array>
     
 </resources>

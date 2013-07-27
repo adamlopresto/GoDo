@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
@@ -90,8 +91,8 @@ public class Instance {
 		return false;
 	}
 	
-	public Instance(DatabaseHelper helper) {
-		this(helper, new Task(helper));
+	public Instance(DatabaseHelper helper, Context context) {
+		this(helper, new Task(helper, context));
 	}
 	
 	public Instance(DatabaseHelper helper, Task task){

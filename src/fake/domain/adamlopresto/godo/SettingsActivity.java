@@ -12,6 +12,8 @@ public class SettingsActivity extends PreferenceActivity {
 	public final static String PREF_SHOW_BLOCKED_BY_CONTEXT = "pref_show_blocked_by_context";
 	public final static String PREF_SHOW_DONE = "pref_show_done";
 	public final static String PREF_SHOW_FUTURE = "pref_show_future";
+	public final static String PREF_DEFAULT_NOTIFICATION = "pref_default_notification";
+	public final static String PREF_DEFAULT_DUE_NOTIFICATION = "pref_default_due_notification";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

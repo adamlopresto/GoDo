@@ -55,7 +55,7 @@ public class TaskActivity extends FragmentActivity implements
 		
 		if (!extractTaskAndOrInstanceFromBundle(getIntent().getExtras())){
 			if(!extractTaskAndOrInstanceFromBundle(savedInstanceState)){
-				instance = new Instance(DatabaseHelper.getInstance(this));
+				instance = new Instance(DatabaseHelper.getInstance(this), this);
 				task = instance.getTask();
 			}
 		}
