@@ -1,6 +1,11 @@
-<GridLayout
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools" 
+    tools:context=".TaskRepetitionRuleActivity" 
+    >
+<GridLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:columnCount="3"
@@ -8,7 +13,6 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".TaskRepetitionRuleActivity" 
     >
 
     <TextView
@@ -122,3 +126,4 @@
     </LinearLayout>
 
 </GridLayout>
+</ScrollView>
