@@ -170,7 +170,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
 						from = "new due date";
 						break;
 					case 3:
-						from = "now";
+						from = "completion date";
 						break;
 					case 4:
 						from = "old start date";
