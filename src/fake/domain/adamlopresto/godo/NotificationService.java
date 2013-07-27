@@ -199,11 +199,11 @@ public class NotificationService extends Service {
 				       .setSubText(instanceNotes)
 				       .setTicker(name);
 				TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-				stackBuilder.addParentStack(TaskActivity.class);
-				stackBuilder.addNextIntent(
+				//stackBuilder.addParentStack(TaskActivity.class);
+				stackBuilder.addNextIntentWithParentStack(
 						new Intent(this, TaskActivity.class).putExtra("instance", id));
 				builder.setContentIntent(stackBuilder.getPendingIntent(0,
-									PendingIntent.FLAG_UPDATE_CURRENT));
+									PendingIntent.FLAG_CANCEL_CURRENT));
 			} else {
 				builder.setContentTitle(numToNotify+" tasks")
 				       .setContentText("GoDo")
@@ -215,7 +215,7 @@ public class NotificationService extends Service {
 									this,
 									0,
 									new Intent(this, MainActivity.class),
-									PendingIntent.FLAG_UPDATE_CURRENT))
+									PendingIntent.FLAG_CANCEL_CURRENT))
 
 					.setStyle(inbox);
 

@@ -11,7 +11,6 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,7 +19,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import fake.domain.adamlopresto.godo.db.ContextsTable;
@@ -53,8 +51,8 @@ public class TaskActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_task);
 		
-		if (!extractTaskAndOrInstanceFromBundle(getIntent().getExtras())){
-			if(!extractTaskAndOrInstanceFromBundle(savedInstanceState)){
+		if(!extractTaskAndOrInstanceFromBundle(savedInstanceState)){
+			if (!extractTaskAndOrInstanceFromBundle(getIntent().getExtras())){
 				instance = new Instance(DatabaseHelper.getInstance(this), this);
 				task = instance.getTask();
 			}
@@ -142,7 +140,6 @@ public class TaskActivity extends FragmentActivity implements
 			startActivity(new Intent(this, SettingsActivity.class));
 			return true;
 		case R.id.action_contexts:
-			//TODO
 			final long task_id = task.forceId();
 			final SQLiteDatabase db = DatabaseHelper.getInstance(this).getWritableDatabase();
 			Cursor cursor = db.query(ContextsTable.TABLE, new String[]{ContextsTable.COLUMN_ID, ContextsTable.COLUMN_NAME, 
@@ -154,7 +151,6 @@ public class TaskActivity extends FragmentActivity implements
 				cursor.moveToNext();
 			}
 			cursor.moveToFirst();
-			Log.e("GoDo", DatabaseUtils.dumpCursorToString(cursor));
 			
 			final HashSet<Long> toAdd = new HashSet<Long>();
 			final HashSet<Long> toDel = new HashSet<Long>();
