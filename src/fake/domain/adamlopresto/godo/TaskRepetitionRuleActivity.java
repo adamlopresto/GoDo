@@ -123,6 +123,8 @@ public class TaskRepetitionRuleActivity extends Activity {
 			switch (RepetitionRuleTypes.values()[ruleTypeNumber]) {
 			case ADD_DAY:
 			case ADD_MONTH:
+			case ADD_WEEK:
+			case ADD_YEAR:
 				number.setText(subValue);
 				break;
 			case WEEKDAY:

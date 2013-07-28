@@ -200,6 +200,16 @@ public class TaskRepetitionRuleFragment extends ListFragment
 					break;
 				case 2:
 					full = to+"next "+subvalue+direction+from;
+					break;
+				case 3:
+					full = to + subvalue+" week"+s+direction+from;
+					break;
+				case 4:
+					full = to + subvalue+" year"+s+direction+from;
+					break;
+				default:
+					full = "Error: unknown rule type";
+					break;
 				}
 				((TextView)view).setText(full);
 				return true;

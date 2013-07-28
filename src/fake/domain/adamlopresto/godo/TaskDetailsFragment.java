@@ -202,6 +202,7 @@ public class TaskDetailsFragment extends Fragment {
 			final DatePicker dp = dlg.getDatePicker();
 			dp.setSpinnersShown(false);
 			dp.setCalendarViewShown(true);
+			dlg.setTitle(null);
 			dp.getCalendarView().setShowWeekNumber(false);
 			dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Set", new DialogInterface.OnClickListener(){
 				@Override

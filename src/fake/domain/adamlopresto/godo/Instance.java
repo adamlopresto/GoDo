@@ -360,6 +360,12 @@ public class Instance {
 							}
 						}
 						break;
+					case ADD_WEEK:
+						cal.add(Calendar.DAY_OF_MONTH, 7*rules.getInt(3));
+						break;
+					case ADD_YEAR:
+						cal.add(Calendar.MONTH, 12*rules.getInt(3));
+						break;
 					default:
 						break;
 					}
