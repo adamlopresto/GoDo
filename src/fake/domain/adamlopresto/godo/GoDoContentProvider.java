@@ -134,10 +134,12 @@ public class GoDoContentProvider extends ContentProvider {
 		switch (uriType) {
 		case TASKS:
 			rowsUpdated = sqlDB.delete(TasksTable.TABLE, selection, selectionArgs);
+			GoDoAppWidget.updateAllAppWidgets(getContext());
 			getContext().getContentResolver().notifyChange(TASKS_URI, null);
 			return rowsUpdated;
 		case INSTANCES:
 			rowsUpdated = sqlDB.delete(InstancesTable.TABLE, selection, selectionArgs);
+			GoDoAppWidget.updateAllAppWidgets(getContext());
 			getContext().getContentResolver().notifyChange(INSTANCES_URI, null);
 			return rowsUpdated;
 		case CONTEXTS:
@@ -167,6 +169,7 @@ public class GoDoContentProvider extends ContentProvider {
 		switch (uriType) {
 		case INSTANCES:
 			id = sqlDB.insertOrThrow(InstancesTable.TABLE, null, values);
+			GoDoAppWidget.updateAllAppWidgets(getContext());
 			break;
 		case TASKS:
 			id = sqlDB.insertOrThrow(TasksTable.TABLE, null, values);
@@ -202,18 +205,22 @@ public class GoDoContentProvider extends ContentProvider {
 		switch (uriType) {
 		case TOGGLE_CONTEXT:
 			sqlDB.execSQL("UPDATE "+ContextsTable.TABLE+" SET "+ContextsTable.COLUMN_ACTIVE+"= NOT "+ContextsTable.COLUMN_ACTIVE + " WHERE "+selection, selectionArgs);
+			GoDoAppWidget.updateAllAppWidgets(getContext());
 			getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
 			return 1;
 		case TASKS:
 			rowsUpdated = sqlDB.update(TasksTable.TABLE, values, selection, selectionArgs);
+			GoDoAppWidget.updateAllAppWidgets(getContext());
 			getContext().getContentResolver().notifyChange(TASKS_URI, null);
 			return rowsUpdated;
 		case INSTANCES:
 			rowsUpdated = sqlDB.update(InstancesTable.TABLE, values, selection, selectionArgs);
+			GoDoAppWidget.updateAllAppWidgets(getContext());
 			getContext().getContentResolver().notifyChange(INSTANCES_URI, null);
 			return rowsUpdated;
 		case CONTEXTS:
 			rowsUpdated = sqlDB.update(ContextsTable.TABLE, values, selection, selectionArgs);
+			GoDoAppWidget.updateAllAppWidgets(getContext());
 			getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
 			return rowsUpdated;
 		case REPETITION_RULES:

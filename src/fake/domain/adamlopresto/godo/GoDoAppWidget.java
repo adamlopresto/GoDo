@@ -3,6 +3,7 @@ package fake.domain.adamlopresto.godo;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.TaskStackBuilder;
@@ -51,5 +52,11 @@ public class GoDoAppWidget extends AppWidgetProvider {
 
 		// Instruct the widget manager to update the widget
 		appWidgetManager.updateAppWidget(appWidgetId, views);
+	}
+	
+	public static void updateAllAppWidgets(Context context) {
+		AppWidgetManager man = AppWidgetManager.getInstance(context);
+		ComponentName widget = new ComponentName(context, GoDoAppWidget.class);
+		man.notifyAppWidgetViewDataChanged(man.getAppWidgetIds(widget), android.R.id.list);
 	}
 }

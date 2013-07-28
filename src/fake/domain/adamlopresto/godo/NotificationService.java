@@ -10,8 +10,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -42,11 +40,7 @@ public class NotificationService extends Service {
 		if (intent != null) 
 			max = intent.getIntExtra("max_notify", 4);
 		
-		{
-			AppWidgetManager man = AppWidgetManager.getInstance(this);
-			ComponentName widget = new ComponentName(this, GoDoAppWidget.class);
-			man.notifyAppWidgetViewDataChanged(man.getAppWidgetIds(widget), android.R.id.list);
-		}
+		GoDoAppWidget.updateAllAppWidgets(this);
 		
 		ContentResolver res = getContentResolver();
 		Cursor c = res.query(GoDoContentProvider.INSTANCES_URI, 

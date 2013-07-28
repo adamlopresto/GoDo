@@ -393,8 +393,9 @@ public class Instance {
 				rules.close();
 				next.flushNow();
 			}
-		}
+		} 
 		
+		GoDoAppWidget.updateAllAppWidgets(helper.getContext());
 		helper.notifyChange(GoDoContentProvider.INSTANCES_URI);
 		dirty=false;
 		needsRepeat = false;

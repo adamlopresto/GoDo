@@ -76,4 +76,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void notifyChange(Uri uri){
 		context.getContentResolver().notifyChange(uri, null);
 	}
+	
+	public Context getContext(){
+		return context;
+	}
 }
