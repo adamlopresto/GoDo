@@ -59,5 +59,7 @@
     <string name="saturday">Saturday</string>
     <string name="pref_default_notification_title">Default active notification level</string>
     <string name="pref_default_due_notification_title">Default due notification level</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 
 </resources>

@@ -10,7 +10,7 @@
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -74,9 +74,9 @@
             <intent-filter>
                 <action android:name="com.twofortyfouram.locale.intent.action.FIRE_SETTING" />
             </intent-filter>
-			<intent-filter>
-		        <action android:name="android.intent.action.BOOT_COMPLETED" />
-		    </intent-filter>            
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
         </receiver>
 
         <activity
@@ -91,6 +91,22 @@
             android:name="fake.domain.adamlopresto.godo.NotificationService"
             android:enabled="true"
             android:exported="false" >
+        </service>
+
+        <receiver android:name="fake.domain.adamlopresto.godo.GoDoAppWidget" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/go_do_app_widget_info" />
+        </receiver>
+
+        <service
+            android:name="fake.domain.adamlopresto.godo.GoDoWidgetService"
+            android:enabled="true"
+            android:exported="false" android:permission="android.permission.BIND_REMOTEVIEWS">
         </service>
     </application>
 
