@@ -38,11 +38,11 @@ public class GoDoAppWidget extends AppWidgetProvider {
 
 		// Construct the RemoteViews object
 		RemoteViews views = new RemoteViews(context.getPackageName(),
-				R.layout.go_do_app_widget);
+				R.layout.app_widget);
 		views.setRemoteAdapter(android.R.id.list, new Intent(context, GoDoWidgetService.class));
 		views.setOnClickPendingIntent(R.id.text, 
 				PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 
-						0));
+						PendingIntent.FLAG_UPDATE_CURRENT));
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
 		//stackBuilder.addParentStack(TaskActivity.class);
 		stackBuilder.addNextIntentWithParentStack(

@@ -11,11 +11,11 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -135,29 +135,50 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 				new int[]{R.id.task_name, R.id.task_notes, R.id.instance_notes, R.id.due_date, R.id.plan_date, R.id.check}, 
 				0);
 		adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder(){ 
+			
+			@SuppressWarnings("unused")
+			private static final int ID = 0;
+			@SuppressWarnings("unused")
+			private static final int TASK_NAME = 1;
+			@SuppressWarnings("unused")
+			private static final int TASK_NOTES = 2;
+			@SuppressWarnings("unused")
+			private static final int INSTANCE_NOTES = 3;
+			private static final int DUE_DATE = 4;
+			private static final int PLAN_DATE = 5;
+			private static final int DONE_DATE = 6;
+			
 			@Override
 			public boolean setViewValue(View view, Cursor cursor,
 					int columnIndex) {
-				if (cursor.isNull(columnIndex) && columnIndex != 6){
+				if (cursor.isNull(columnIndex) && columnIndex != DONE_DATE){
 					view.setVisibility(View.GONE);
 					return true;
 				}
 				TextView tv = (TextView)view;
 				view.setVisibility(View.VISIBLE);
-				boolean done = !cursor.isNull(cursor.getColumnIndex("done_date"));
+				boolean done = !cursor.isNull(DONE_DATE);
 				if (!done){
 					tv.setPaintFlags(tv.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG); 
 				} else { 
 					tv.setPaintFlags(tv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 				}
+				
+				if (DateCalc.isBeforeNow(cursor.getString(DUE_DATE)))
+					tv.setTextColor(Color.RED);
+				else if (DateCalc.isAfterNow(cursor.getString(PLAN_DATE)))
+					tv.setTextColor(Color.GRAY);
+				else
+					tv.setTextColor(Color.BLACK);
+				
 				switch (columnIndex){
-				case 4:
+				case DUE_DATE:
 					tv.setText("D: "+DateCalc.formatShortRelativeDate(cursor.getString(columnIndex)));
 					return true;
-				case 5:
+				case PLAN_DATE:
 					tv.setText("P: "+DateCalc.formatShortRelativeDate(cursor.getString(columnIndex)));
 					return true;
-				case 6:
+				case DONE_DATE:
 					((CheckBox)view).setChecked(done);
 					return true;
 				}
@@ -255,7 +276,6 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_DONE, false))
 			where = DatabaseUtils.concatenateWhere(where, "(done_date IS NULL OR done_date > DATETIME('now', '-1 hours'))");
 		
-		Log.e("GoDo", "Loading: where "+where);
 		CursorLoader cursorLoader = new CursorLoader(this, uri, 
 				new String[]{"_id", "task_name", "task_notes", "instance_notes", "due_date", "plan_date", "done_date"}, 
 				where, null, 

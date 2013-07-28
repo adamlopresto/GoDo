@@ -10,6 +10,8 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +41,12 @@ public class NotificationService extends Service {
 		int max = 4;
 		if (intent != null) 
 			max = intent.getIntExtra("max_notify", 4);
+		
+		{
+			AppWidgetManager man = AppWidgetManager.getInstance(this);
+			ComponentName widget = new ComponentName(this, GoDoAppWidget.class);
+			man.notifyAppWidgetViewDataChanged(man.getAppWidgetIds(widget), android.R.id.list);
+		}
 		
 		ContentResolver res = getContentResolver();
 		Cursor c = res.query(GoDoContentProvider.INSTANCES_URI, 
@@ -215,7 +223,7 @@ public class NotificationService extends Service {
 									this,
 									0,
 									new Intent(this, MainActivity.class),
-									PendingIntent.FLAG_CANCEL_CURRENT))
+									PendingIntent.FLAG_UPDATE_CURRENT))
 
 					.setStyle(inbox);
 

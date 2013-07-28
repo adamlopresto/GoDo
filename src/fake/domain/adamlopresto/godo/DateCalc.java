@@ -112,5 +112,22 @@ public abstract class DateCalc {
 			return "Invalid date: "+formattedDate;
 		}
 	}
-
+	
+	public static boolean isBeforeNow(String formattedDate){
+		if (formattedDate == null)
+			return false;
+		if (formattedDate.length() > 10)
+			return formattedDate.compareTo(DatabaseHelper.dateTimeFormatter.format(new Date())) < 0;
+		else
+			return formattedDate.compareTo(DatabaseHelper.dateFormatter.format(new Date())) < 0;
+	}
+	
+	public static boolean isAfterNow(String formattedDate){
+		if (formattedDate == null)
+			return false;
+		if (formattedDate.length() > 10)
+			return formattedDate.compareTo(DatabaseHelper.dateTimeFormatter.format(new Date())) > 0;
+		else
+			return formattedDate.compareTo(DatabaseHelper.dateFormatter.format(new Date())) > 0;
+	}
 }

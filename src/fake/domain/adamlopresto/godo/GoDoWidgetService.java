@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -21,11 +22,15 @@ public class GoDoWidgetService extends RemoteViewsService {
 }
 
 class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
-	
 	Cursor cursor;
 	DatabaseHelper helper;
 	SQLiteDatabase db;
 	Context context;
+	
+	public final static int ID = 0;
+	public final static int TASK_NAME = 1;
+	public final static int DUE_DATE = 2;
+	public final static int PLAN_DATE = 3;
 	
 	GoDoViewsFactory(Context context){
 		helper = DatabaseHelper.getInstance(context);
@@ -50,11 +55,17 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 	@Override
 	public RemoteViews getViewAt(int position) {
 		cursor.moveToPosition(position);
-		RemoteViews rv = new RemoteViews(context.getPackageName(), android.R.layout.simple_list_item_1);
-		rv.setTextViewText(android.R.id.text1, cursor.getString(1));
+		RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.app_widget_item);
+		rv.setTextViewText(android.R.id.text1, cursor.getString(TASK_NAME));
+		if (DateCalc.isBeforeNow(cursor.getString(DUE_DATE)))
+			rv.setTextColor(android.R.id.text1, Color.RED);
+		else if (DateCalc.isAfterNow(cursor.getString(PLAN_DATE)))
+			rv.setTextColor(android.R.id.text1, Color.GRAY);
+		else
+			rv.setTextColor(android.R.id.text1, Color.WHITE);
 		
 		Bundle extras = new Bundle();
-        extras.putLong("instance", cursor.getLong(0));
+        extras.putLong("instance", cursor.getLong(ID));
         Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
         // Make it possible to distinguish the individual on-click
@@ -87,9 +98,20 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 		if (cursor != null && !cursor.isClosed())
 			cursor.close();
 		
+		String where = "((((NOT blocked_by_context) " +
+				"          AND (NOT blocked_by_task)) " +
+				"         AND (coalesce(start_date, 0) <= current_timestamp)) " +
+				"        OR (length(due_date) > 10 and due_date <= current_timestamp)) " +
+				"       AND (done_date IS NULL)";
+
 		cursor = db.query(InstancesView.VIEW, new String[]{
-				InstancesView.COLUMN_ID, InstancesView.COLUMN_TASK_NAME
-		}, null, null, null, null, null);
+				InstancesView.COLUMN_ID, InstancesView.COLUMN_TASK_NAME, 
+				InstancesView.COLUMN_DUE_DATE, InstancesView.COLUMN_PLAN_DATE
+		}, where, null, null, null, 
+		"case when due_date <= current_timestamp then due_date || ' 23:59:59' else '9999-99-99' end, "
+		+"coalesce(plan_date || ' 23:59:59', current_timestamp), due_date || ' 23:59:59', "
+		+"notification DESC, random()"
+		);
 	}
 	
 	void cleanup(){
