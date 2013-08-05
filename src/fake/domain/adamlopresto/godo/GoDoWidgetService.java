@@ -39,11 +39,13 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
 	@Override
 	public int getCount() {
+		getCursor();
 		return cursor.getCount();
 	}
 
 	@Override
 	public long getItemId(int position) {
+		getCursor();
 		return cursor.getLong(0);
 	}
 
@@ -54,6 +56,7 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
 	@Override
 	public RemoteViews getViewAt(int position) {
+		getCursor();
 		cursor.moveToPosition(position);
 		RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.app_widget_item);
 		rv.setTextViewText(android.R.id.text1, cursor.getString(TASK_NAME));
@@ -98,23 +101,30 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 		if (cursor != null && !cursor.isClosed())
 			cursor.close();
 		
-		String where = "((((NOT blocked_by_context) " +
-				"          AND (NOT blocked_by_task)) " +
-				"         AND (coalesce(start_date, 0) <= current_timestamp)) " +
-				"        OR (length(due_date) > 10 and due_date <= current_timestamp)) " +
-				"       AND (done_date IS NULL)";
-
-		cursor = db.query(InstancesView.VIEW, new String[]{
-				InstancesView.COLUMN_ID, InstancesView.COLUMN_TASK_NAME, 
-				InstancesView.COLUMN_DUE_DATE, InstancesView.COLUMN_PLAN_DATE
-		}, where, null, null, null, 
-		"case when due_date <= current_timestamp then due_date || ' 23:59:59' else '9999-99-99' end, "
-		+"coalesce(plan_date || ' 23:59:59', current_timestamp), due_date || ' 23:59:59', "
-		+"notification DESC, random()"
-		);
+		getCursor();
 	}
 	
-	void cleanup(){
+	//We've had problems with getCount() erroring out. Guarantee that there's an open cursor to work with.
+	private void getCursor(){
+		if (cursor == null || cursor.isClosed()){
+			String where = "((((NOT blocked_by_context) " +
+					"          AND (NOT blocked_by_task)) " +
+					"         AND (coalesce(start_date, 0) <= current_timestamp)) " +
+					"        OR (length(due_date) > 10 and due_date <= current_timestamp)) " +
+					"       AND (done_date IS NULL)";
+	
+			cursor = db.query(InstancesView.VIEW, new String[]{
+					InstancesView.COLUMN_ID, InstancesView.COLUMN_TASK_NAME, 
+					InstancesView.COLUMN_DUE_DATE, InstancesView.COLUMN_PLAN_DATE
+			}, where, null, null, null, 
+			"case when due_date <= current_timestamp then due_date || ' 23:59:59' else '9999-99-99' end, "
+			+"coalesce(plan_date || ' 23:59:59', current_timestamp), due_date || ' 23:59:59', "
+			+"notification DESC, random()"
+			);
+		}
+	}
+	
+	private void cleanup(){
 		if (cursor != null && !cursor.isClosed())
 			cursor.close();
 		cursor = null;

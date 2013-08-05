@@ -40,6 +40,8 @@ public class NotificationService extends Service {
 		if (intent != null) 
 			max = intent.getIntExtra("max_notify", 4);
 		
+		Log.e("GoDo", "Starting notification service, max: "+max);
+		
 		GoDoAppWidget.updateAllAppWidgets(this);
 		
 		ContentResolver res = getContentResolver();
@@ -93,9 +95,13 @@ public class NotificationService extends Service {
 		    	PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		    	
 		    	manager.set(AlarmManager.RTC_WAKEUP, date.getTime(), contentIntent);
+		    	Log.e("GoDo", "Setting next alarm for "+date);
+			} else {
+				Log.e("GoD", "No next alarm set; will never notify");
 			}
 		} catch (ParseException ignored) {
 			//if we can't parse the date, give up.
+			Log.e("GoDo", "Parse error parsing next date");
 		}	
 		
 		NotificationManager nm = (NotificationManager) this
@@ -188,12 +194,10 @@ public class NotificationService extends Service {
 					.setContentText("Text")
 					.setAutoCancel(true);
 			
-			int defaults = Notification.DEFAULT_LIGHTS;
 			if (audible)
-				defaults |= Notification.DEFAULT_SOUND;
-			if (vibrate)
-				defaults |= Notification.DEFAULT_VIBRATE;
-			builder.setDefaults(defaults);
+				builder.setDefaults(Notification.DEFAULT_SOUND);			if (vibrate)
+				builder.setVibrate(new long[]{0, 1000, 300, 1000});
+			builder.setLights(Color.GREEN, 1000, 1000);
 			
 			if (numToNotify == 1){
 				builder.setContentTitle(name)
