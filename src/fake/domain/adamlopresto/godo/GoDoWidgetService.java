@@ -46,6 +46,7 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 	@Override
 	public long getItemId(int position) {
 		getCursor();
+		cursor.moveToPosition(position);
 		return cursor.getLong(0);
 	}
 
@@ -107,6 +108,12 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 	//We've had problems with getCount() erroring out. Guarantee that there's an open cursor to work with.
 	private void getCursor(){
 		if (cursor == null || cursor.isClosed()){
+			if (db == null || !db.isOpen()){
+				if (helper == null)
+					helper = DatabaseHelper.getInstance(context);
+				db = helper.getReadableDatabase();
+			}
+				
 			String where = "((((NOT blocked_by_context) " +
 					"          AND (NOT blocked_by_task)) " +
 					"         AND (coalesce(start_date, 0) <= current_timestamp)) " +

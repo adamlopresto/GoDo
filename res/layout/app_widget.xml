@@ -5,17 +5,34 @@
     android:orientation="vertical"
     android:padding="@dimen/widget_margin" >
 
-    <TextView
-        android:id="@+id/text"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/header_bg"
-        android:text="@string/app_name"
-        android:textAppearance="?android:attr/textAppearanceLargeInverse" />
+         >
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|fill"
+            android:layout_weight="1"
+            android:text="@string/app_name"
+            android:textAppearance="?android:attr/textAppearanceLargeInverse" />
+
+        <ImageView
+            android:id="@+id/action_new_task"
+            android:layout_width="22sp"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/new_task"
+            android:scaleType="centerInside"
+            android:src="@drawable/content_new" />
+        
+    </LinearLayout>
 
     <ListView
         android:id="@android:id/list"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         />

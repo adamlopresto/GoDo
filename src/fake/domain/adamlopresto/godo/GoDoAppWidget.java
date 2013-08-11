@@ -49,6 +49,8 @@ public class GoDoAppWidget extends AppWidgetProvider {
 		stackBuilder.addNextIntentWithParentStack(
 				new Intent(context, TaskActivity.class));
 		views.setPendingIntentTemplate(android.R.id.list, stackBuilder.getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT));
+		views.setOnClickPendingIntent(R.id.action_new_task, 
+				stackBuilder.getPendingIntent(2, PendingIntent.FLAG_UPDATE_CURRENT));
 
 		// Instruct the widget manager to update the widget
 		appWidgetManager.updateAppWidget(appWidgetId, views);
