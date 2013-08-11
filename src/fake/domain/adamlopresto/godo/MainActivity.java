@@ -265,24 +265,24 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_BLOCKED_BY_TASK, false))
 			where = DatabaseUtils.concatenateWhere(where, "NOT blocked_by_task");
 		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_FUTURE, false))
-			where = DatabaseUtils.concatenateWhere(where, "coalesce(start_date, 0) <= current_timestamp");
+			where = DatabaseUtils.concatenateWhere(where, "coalesce(start_date,0) < DATETIME('now', 'localtime')");
 		
 		if (where == null)
 			where = "";
 		else 
 			where = "("+where+") or ";
-		where = where+"(length(due_date) > 10 and due_date <= current_timestamp)";
+		where = where+"(length(due_date) > 10 and due_date <= DATETIME('now', 'localtime'))";
 		
 		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_DONE, false))
-			where = DatabaseUtils.concatenateWhere(where, "(done_date IS NULL OR done_date > DATETIME('now', '-1 hours'))");
+			where = DatabaseUtils.concatenateWhere(where, "done_date is null or done_date > DATETIME('now', '-1 hours', 'localtime')");
 		
 		CursorLoader cursorLoader = new CursorLoader(this, uri, 
 				new String[]{"_id", "task_name", "task_notes", "instance_notes", "due_date", "plan_date", "done_date"}, 
 				where, null, 
 				//sort order
 				"done_date is not null, "+
-				"case when due_date <= current_timestamp then due_date || ' 23:59:59' else '9999-99-99' end, " +
-				"coalesce(plan_date || ' 23:59:59', current_timestamp), due_date || ' 23:59:59', notification DESC, random()"
+				"case when due_date <= DATETIME('now', 'localtime') then due_date || ' 23:59:59' else '9999-99-99' end, " +
+				"coalesce(plan_date || ' 23:59:59', DATETIME('now', 'localtime')), due_date || ' 23:59:59', notification DESC, random()"
 				);
 		return cursorLoader;
 	}

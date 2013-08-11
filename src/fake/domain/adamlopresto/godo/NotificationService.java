@@ -45,35 +45,9 @@ public class NotificationService extends Service {
 		GoDoAppWidget.updateAllAppWidgets(this);
 		
 		ContentResolver res = getContentResolver();
-		Cursor c = res.query(GoDoContentProvider.INSTANCES_URI, 
-				new String[]{InstancesView.COLUMN_DUE_DATE}, 
-				"due_date > current_timestamp AND done_date is null", 
-				null, "due_date LIMIT 1");
-		c.moveToFirst();
-		String nextDueString = null;
-		if (!c.isAfterLast())
-			nextDueString = c.getString(0);
-		c.close();
-		
-		c = res.query(GoDoContentProvider.INSTANCES_URI, 
-				new String[]{"coalesce(plan_date, start_date)"}, 
-				"NOT blocked_by_context AND NOT blocked_by_task AND coalesce(plan_date, start_date) > current_timestamp AND done_date is null", 
-				null, "coalesce(plan_date, start_date) LIMIT 1");
-		String nextPlanString = null;
-		c.moveToFirst();
-		if (!c.isAfterLast())
-			nextPlanString = c.getString(0);
-		c.close();
-		
-		String nextDateString;
-		if (nextDueString == null)
-			nextDateString = nextPlanString;
-		else if (nextPlanString == null) 
-			nextDateString = nextDueString;
-		else if (nextDueString.compareTo(nextPlanString) < 0)
-			nextDateString = nextDueString;
-		else
-			nextDateString = nextPlanString;
+		String nextDateString = nextDate(res, InstancesView.COLUMN_DUE_DATE);
+		nextDateString = stringMin(nextDateString, nextDate(res, InstancesView.COLUMN_START_DATE));
+		nextDateString = stringMin(nextDateString, nextDate(res, InstancesView.COLUMN_PLAN_DATE));
 					                                   
 		try {
 			if (nextDateString != null){
@@ -113,27 +87,27 @@ public class NotificationService extends Service {
 			return START_NOT_STICKY;
 		}
 		
-		c = res.query(GoDoContentProvider.INSTANCES_URI, 
+		Cursor c = res.query(GoDoContentProvider.INSTANCES_URI, 
 				new String[]{
 					InstancesView.COLUMN_TASK_NAME, InstancesView.COLUMN_TASK_NOTES, 
 					InstancesView.COLUMN_INSTANCE_NOTES, 
 					"max(0, " +
-					"	(case when (length(due_date) > 10 and due_date <= current_timestamp) then due_notification else 0 end), " +
-					"   (case when (NOT blocked_by_context AND NOT blocked_by_task AND COALESCE(plan_date, start_date, '') <= current_timestamp) then notification else 0 end)) " +
+					"	(case when (length(due_date) > 10 and due_date <= DATETIME('now', 'localtime')) then due_notification else 0 end), " +
+					"   (case when (NOT blocked_by_context AND NOT blocked_by_task AND COALESCE(plan_date, start_date, '') <= DATETIME('now', 'localtime')) then notification else 0 end)) " +
 					"as notification",
 					InstancesView.COLUMN_ID
 				}, 
 				"NOT task_name IS NULL " +
 				"AND done_date IS NULL " +
 				"AND ((NOT blocked_by_context AND NOT blocked_by_task " +
-					  "AND COALESCE(plan_date, start_date, '') <= current_timestamp " +
+					  "AND COALESCE(plan_date, start_date, '') <= DATETIME('now', 'localtime') " +
 					  "AND notification > 0" +
 				"     ) OR "+
-					 "(length(due_date) > 10 and due_date <= current_timestamp AND due_notification > 0)" +
+					 "(length(due_date) > 10 and due_date <= DATETIME('now', 'localtime') AND due_notification > 0)" +
 				"    )",
 				null, 
-				"case when due_date <= current_timestamp then due_date || ' 23:59:59' else '9999-99-99' end, " +
-				"coalesce(plan_date || ' 23:59:59', current_timestamp), due_date || ' 23:59:59' , notification DESC, random()"
+				"case when due_date <= DATETIME('now', 'localtime') then due_date || ' 23:59:59' else '9999-99-99' end, " +
+				"coalesce(plan_date || ' 23:59:59', DATETIME('now', 'localtime')), due_date || ' 23:59:59' , notification DESC, random()"
 				);
 		c.moveToFirst();
 		
@@ -299,6 +273,39 @@ public class NotificationService extends Service {
 		}
 		return START_NOT_STICKY;
 	}
+
+	private String nextDate(ContentResolver res, String column) {
+		Cursor c = res.query(GoDoContentProvider.INSTANCES_URI, 
+				new String[]{column}, 
+				column + " > datetime('now', 'localtime') AND done_date is null", 
+				null, column + " LIMIT 1");
+		c.moveToFirst();
+		String nextDate = null;
+		if (!c.isAfterLast())
+			nextDate = c.getString(0);
+		c.close();
+		return nextDate;
+	}
+	
+	
+	/**
+	 * Returns the lesser (alphabetically earlier) of the two strings. If either is
+	 * null, the other is returned. If both are null, null is returned (duh).
+	 * 
+	 * @param s1 first string to compare
+	 * @param s2 second string to compare
+	 * @return
+	 */
+	private String stringMin(String s1, String s2){
+		if (s1 == null)
+			return s2;
+		if (s2 == null)
+			return s1;
+		return s1.compareTo(s2) < 0 ? s1 : s2;
+		
+	}
+	
+	
 
 	@Override
 	public IBinder onBind(Intent intent) {

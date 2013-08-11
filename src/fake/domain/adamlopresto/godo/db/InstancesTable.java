@@ -38,6 +38,12 @@ public class InstancesTable {
 	}
 
 	public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
+		if (oldVersion < 4){
+			db.execSQL("UPDATE instances SET done_date = datetime(done_date, 'localtime') where length(done_date) > 10");
+			db.execSQL("UPDATE instances SET due_date = datetime(due_date, 'localtime') where length(due_date) > 10");
+			db.execSQL("UPDATE instances SET start_date = datetime(start_date, 'localtime') where length(start_date) > 10");
+			db.execSQL("UPDATE instances SET plan_date = datetime(plan_date, 'localtime') where length(plan_date) > 10");
+		}
 	}
 
 	public static void checkColumns(String[] projection) {

@@ -113,6 +113,13 @@ public abstract class DateCalc {
 		}
 	}
 	
+	/**
+	 * Returns true iff the formattedDate passed is unambiguously past. Returns false for null,
+	 * empty string, today (with no time), and any date tomorrow and onward, or any
+	 * datetime later today. @param formattedDate string formatted date, in local
+	 * time
+	 * @return boolean described above
+	 */
 	public static boolean isBeforeNow(String formattedDate){
 		if (formattedDate == null)
 			return false;
@@ -122,6 +129,12 @@ public abstract class DateCalc {
 			return formattedDate.compareTo(DatabaseHelper.dateFormatter.format(new Date())) < 0;
 	}
 	
+	/**
+	 * Returns true iff the formattedDate passed is unambiguously in the future. 
+	 * Returns false for null, * empty string, today (with no time), and any date in the past.
+	 * @param formattedDate string formatted date, in local time
+	 * @return boolean described above
+	 */
 	public static boolean isAfterNow(String formattedDate){
 		if (formattedDate == null)
 			return false;

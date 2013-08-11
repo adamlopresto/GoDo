@@ -3,9 +3,11 @@ package fake.domain.adamlopresto.godo;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
@@ -97,7 +99,7 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 	@Override
 	public void onDataSetChanged() {
 		if (db == null || !db.isOpen())
-			db = helper.getReadableDatabase();
+			db = helper.getWritableDatabase();
 		
 		if (cursor != null && !cursor.isClosed())
 			cursor.close();
@@ -116,18 +118,19 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 				
 			String where = "((((NOT blocked_by_context) " +
 					"          AND (NOT blocked_by_task)) " +
-					"         AND (coalesce(start_date, 0) <= current_timestamp)) " +
-					"        OR (length(due_date) > 10 and due_date <= current_timestamp)) " +
+					"         AND (coalesce(start_date, 0) <= DATETIME('now', 'localtime')))" +
+					"        OR (length(due_date) > 10 and due_date <= DATETIME('now', 'localtime')))" +
 					"       AND (done_date IS NULL)";
 	
 			cursor = db.query(InstancesView.VIEW, new String[]{
 					InstancesView.COLUMN_ID, InstancesView.COLUMN_TASK_NAME, 
 					InstancesView.COLUMN_DUE_DATE, InstancesView.COLUMN_PLAN_DATE
 			}, where, null, null, null, 
-			"case when due_date <= current_timestamp then due_date || ' 23:59:59' else '9999-99-99' end, "
-			+"coalesce(plan_date || ' 23:59:59', current_timestamp), due_date || ' 23:59:59', "
+			"case when due_date <= DATETIME('now', 'localtime') then due_date || ' 23:59:59' else '9999-99-99' end, "
+			+"coalesce(plan_date || ' 23:59:59', DATETIME('now', 'localtime')), due_date || ' 23:59:59', "
 			+"notification DESC, random()"
 			);
+			Log.e("GoDo", DatabaseUtils.dumpCursorToString(cursor));
 		}
 	}
 	
