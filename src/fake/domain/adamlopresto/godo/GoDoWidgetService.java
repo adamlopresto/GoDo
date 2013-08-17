@@ -3,11 +3,9 @@ package fake.domain.adamlopresto.godo;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
@@ -130,7 +128,6 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 			+"coalesce(plan_date || ' 23:59:59', DATETIME('now', 'localtime')), due_date || ' 23:59:59', "
 			+"notification DESC, random()"
 			);
-			Log.e("GoDo", DatabaseUtils.dumpCursorToString(cursor));
 		}
 	}
 	
