@@ -194,6 +194,19 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 	
 
 	@Override
+	protected void onStart() {
+		super.onStart();
+		new Thread(new Runnable(){
+
+			@Override
+			public void run() {
+				getContentResolver().delete(GoDoContentProvider.TASKS_URI, TasksTable.COLUMN_NAME+" IS NULL", null);
+			}
+		}).start();
+	}
+
+
+	@Override
 	protected void onResume() {
 		super.onResume();
 		startService(new Intent(this, NotificationService.class).putExtra("max_notify", 0));
@@ -275,6 +288,8 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 		
 		if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_DONE, false))
 			where = DatabaseUtils.concatenateWhere(where, "done_date is null or done_date > DATETIME('now', '-1 hours', 'localtime')");
+		
+		where = DatabaseUtils.concatenateWhere(where, "task_name is not null");
 		
 		CursorLoader cursorLoader = new CursorLoader(this, uri, 
 				new String[]{"_id", "task_name", "task_notes", "instance_notes", "due_date", "plan_date", "done_date"}, 

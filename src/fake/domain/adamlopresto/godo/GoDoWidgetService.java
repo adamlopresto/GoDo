@@ -118,7 +118,8 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 					"          AND (NOT blocked_by_task)) " +
 					"         AND (coalesce(start_date, 0) <= DATETIME('now', 'localtime')))" +
 					"        OR (length(due_date) > 10 and due_date <= DATETIME('now', 'localtime')))" +
-					"       AND (done_date IS NULL)";
+					"       AND (done_date IS NULL)"+
+					"       AND (task_name IS NOT NULL)";
 	
 			cursor = db.query(InstancesView.VIEW, new String[]{
 					InstancesView.COLUMN_ID, InstancesView.COLUMN_TASK_NAME, 
