@@ -22,7 +22,7 @@
 
         <ImageView
             android:id="@+id/action_new_task"
-            android:layout_width="22sp"
+            android:layout_width="44sp"
             android:layout_height="match_parent"
             android:contentDescription="@string/new_task"
             android:scaleType="centerInside"
