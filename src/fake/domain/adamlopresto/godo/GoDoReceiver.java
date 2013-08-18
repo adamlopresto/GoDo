@@ -8,8 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 
-public class TaskerPluginReceiver extends BroadcastReceiver {
-	public TaskerPluginReceiver() {
+public class GoDoReceiver extends BroadcastReceiver {
+	public GoDoReceiver() {
 	}
 
 	@Override

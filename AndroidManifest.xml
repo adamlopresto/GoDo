@@ -67,7 +67,7 @@
         </activity>
 
         <receiver
-            android:name="fake.domain.adamlopresto.godo.TaskerPluginReceiver"
+            android:name="fake.domain.adamlopresto.godo.GoDoReceiver"
             android:enabled="true"
             android:exported="true"
             tools:ignore="ExportedReceiver" >

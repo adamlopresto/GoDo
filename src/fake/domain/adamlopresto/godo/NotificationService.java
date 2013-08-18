@@ -61,7 +61,7 @@ public class NotificationService extends Service {
 				}
 				AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
 		    	
-		    	Intent alarmIntent = new Intent(this, TaskerPluginReceiver.class);
+		    	Intent alarmIntent = new Intent(this, GoDoReceiver.class);
 		    	if (quiet)
 		    		alarmIntent.putExtra("max_notify", 1);
 		    	else
