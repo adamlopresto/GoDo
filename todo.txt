@@ -1,7 +1,0 @@
-Interface for task dependencies
-Interface for template repeating tasks
-Properly delete empty tasks (tasks with no name)
-Astrid import
-All dates have associated times
-Notifications at due/activation times
-Widget
