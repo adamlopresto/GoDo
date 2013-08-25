@@ -13,12 +13,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import fake.domain.adamlopresto.godo.db.ContextsTable;
@@ -51,6 +53,21 @@ public class TaskActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_task);
 		
+		if (getIntent() == null){
+			Log.e("GoDo", "Null intent");
+		} else {
+			if (getIntent().getExtras() == null)
+				Log.e("GoDo", "No extras");
+			else {
+				Bundle bundle = getIntent().getExtras();
+				for (String key : bundle.keySet()) {
+				    Object value = bundle.get(key);
+				    Log.d("GoDo", String.format("%s %s (%s)", key,  
+				        value.toString(), value.getClass().getName()));
+				}
+			}
+				
+		}
 		if(!extractTaskAndOrInstanceFromBundle(savedInstanceState)){
 			if (!extractTaskAndOrInstanceFromBundle(getIntent().getExtras())){
 				instance = new Instance(DatabaseHelper.getInstance(this), this);
@@ -111,6 +128,15 @@ public class TaskActivity extends FragmentActivity implements
 				task = Task.get(helper, task_id);
 				instance = new Instance(helper, task);
 				return true;
+			} else {
+				ArrayList<String> names = bundle.getStringArrayList(RecognizerIntent.EXTRA_RESULTS);
+				if (names != null){
+					DatabaseHelper helper = DatabaseHelper.getInstance(this);
+					String name = names.get(0);
+					task = new Task(helper, this, Character.toTitleCase(name.charAt(0))+name.substring(1));
+					instance = new Instance(helper, task);
+					return true;
+				}
 			}
 		}
 		return false;

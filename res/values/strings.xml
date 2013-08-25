@@ -61,5 +61,6 @@
     <string name="pref_default_due_notification_title">Default due notification level</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="new_task_voice">New task from voice</string>
 
 </resources>

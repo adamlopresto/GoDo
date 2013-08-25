@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.speech.RecognizerIntent;
 import android.support.v4.app.TaskStackBuilder;
 import android.widget.RemoteViews;
 
@@ -51,6 +52,15 @@ public class GoDoAppWidget extends AppWidgetProvider {
 		views.setPendingIntentTemplate(android.R.id.list, stackBuilder.getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT));
 		views.setOnClickPendingIntent(R.id.action_new_task, 
 				stackBuilder.getPendingIntent(2, PendingIntent.FLAG_UPDATE_CURRENT));
+		
+		Intent recog = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		recog.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		recog.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+		recog.putExtra(RecognizerIntent.EXTRA_PROMPT, context.getText(R.string.task_name_hint));
+		recog.putExtra(RecognizerIntent.EXTRA_RESULTS_PENDINGINTENT, 
+				stackBuilder.getPendingIntent(3, PendingIntent.FLAG_UPDATE_CURRENT));
+		views.setOnClickPendingIntent(R.id.action_new_task_voice, 
+				PendingIntent.getActivity(context, 0, recog, PendingIntent.FLAG_UPDATE_CURRENT));
 
 		// Instruct the widget manager to update the widget
 		appWidgetManager.updateAppWidget(appWidgetId, views);

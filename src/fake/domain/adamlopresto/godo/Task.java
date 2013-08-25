@@ -57,6 +57,11 @@ public class Task {
 		this.dueNotification = NotificationLevels.valueOf(prefs.getString(SettingsActivity.PREF_DEFAULT_DUE_NOTIFICATION, "NONE"));
 	}
 	
+	public Task(DatabaseHelper helper, Context context, String name) {
+		this(helper, context);
+		this.name = name;
+	}
+	
 	private Task(DatabaseHelper helper, long id, String name, String notes, 
 			NotificationLevels notification, RepeatTypes repeat, 
 			NotificationLevels dueNotification){

@@ -21,8 +21,16 @@
             android:textAppearance="?android:attr/textAppearanceLargeInverse" />
 
         <ImageView
+            android:id="@+id/action_new_task_voice"
+            android:layout_width="33sp"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/new_task_voice"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_microphone" />
+        
+        <ImageView
             android:id="@+id/action_new_task"
-            android:layout_width="44sp"
+            android:layout_width="33sp"
             android:layout_height="match_parent"
             android:contentDescription="@string/new_task"
             android:scaleType="centerInside"
