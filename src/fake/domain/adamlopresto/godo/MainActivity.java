@@ -11,8 +11,6 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -24,14 +22,12 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.TasksTable;
 
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
-	private SimpleCursorAdapter adapter;
+	private TaskAdapter adapter;
 	
 	private boolean paused = false;
 	
@@ -130,6 +126,8 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 		getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 		getListView().setMultiChoiceModeListener(mActionModeCallback);
 		
+		adapter = new TaskAdapter(this, R.layout.main_list_item, null, 0);
+		/*
 		adapter = new SimpleCursorAdapter(this, R.layout.main_list_item, null,
 				new String[]{ "task_name",    "task_notes",    "instance_notes",    "due_date",    "plan_date", "done_date"},
 				new int[]{R.id.task_name, R.id.task_notes, R.id.instance_notes, R.id.due_date, R.id.plan_date, R.id.check}, 
@@ -187,6 +185,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 			}
 			
 		});
+		*/
 		
 		setListAdapter(adapter);
 		getLoaderManager().restartLoader(0, null, this);
