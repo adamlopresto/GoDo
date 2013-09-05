@@ -22,8 +22,18 @@ public class TaskAdapter extends ResourceCursorAdapter {
 	private static final int PLAN_DATE = 5;
 	private static final int DONE_DATE = 6;
 	
-	public TaskAdapter(Context context, int layout, Cursor c, int flags) {
-		super(context, layout, c, flags);
+	public static final String[] PROJECTION = new String[]{"_id", "task_name",
+			"task_notes", "instance_notes", "due_date", "plan_date", "done_date"};
+	public static final String SORT = "done_date is not null, "+
+			"case when due_date <= DATETIME('now', 'localtime') then due_date || ' 23:59:59' else '9999-99-99' end, " +
+			"coalesce(plan_date || ' 23:59:59', DATETIME('now', 'localtime')), " +
+			"due_date || ' 23:59:59', notification DESC, random()";
+	
+	private boolean showCheckBox;
+	
+	public TaskAdapter(Context context, int layout, Cursor c, boolean showCheckBox) {
+		super(context, layout, c, 0);
+		this.showCheckBox = showCheckBox;
 	}
 
 	@Override
@@ -31,6 +41,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
 		View v = super.newView(context, cursor, parent);
 		TaskHolder holder = new TaskHolder();
 		holder.done = (CheckBox)v.findViewById(R.id.check);
+		holder.done.setVisibility(showCheckBox ? View.VISIBLE : View.GONE);
 		holder.name = (TextView)v.findViewById(R.id.task_name);
 		holder.taskNotes = (TextView)v.findViewById(R.id.task_notes);
 		holder.instanceNotes = (TextView)v.findViewById(R.id.instance_notes);

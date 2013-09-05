@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
+import fake.domain.adamlopresto.godo.db.InstanceDependencyTable;
 import fake.domain.adamlopresto.godo.db.InstancesTable;
 import fake.domain.adamlopresto.godo.db.InstancesView;
 import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
@@ -29,6 +30,8 @@ public class GoDoContentProvider extends ContentProvider {
 	private static final int TASK_ID = 7;
 	private static final int REPETITION_RULES = 8;
 	private static final int REPETITION_RULE_ID = 9;
+	private static final int DEPENDENCIES = 10;
+	private static final int DEPENDENCY_ID = 11;
 	
 
 	public static final String AUTHORITY = "fake.domain.adamlopresto.godo.contentprovider";
@@ -50,6 +53,9 @@ public class GoDoContentProvider extends ContentProvider {
 	private static final String REPETITION_RULES_BASE_PATH = "repetition_rules";
 	public static final Uri REPETITION_RULES_URI = Uri.withAppendedPath(BASE, REPETITION_RULES_BASE_PATH);
 	
+	private static final String DEPENDENCY_BASE_PATH = "dependencies";
+	public static final Uri DEPENDENCY_URI = Uri.withAppendedPath(BASE, DEPENDENCY_BASE_PATH);
+	
 	/*
 	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
 			+ "/GoShopItems";
@@ -69,6 +75,8 @@ public class GoDoContentProvider extends ContentProvider {
 		sURIMatcher.addURI(AUTHORITY, TASK_BASE_PATH+"/#", TASK_ID);
 		sURIMatcher.addURI(AUTHORITY, REPETITION_RULES_BASE_PATH, REPETITION_RULES);
 		sURIMatcher.addURI(AUTHORITY, REPETITION_RULES_BASE_PATH+"/#", REPETITION_RULE_ID);
+		sURIMatcher.addURI(AUTHORITY, DEPENDENCY_BASE_PATH, DEPENDENCIES);
+		sURIMatcher.addURI(AUTHORITY, DEPENDENCY_BASE_PATH+"/#", DEPENDENCY_ID);
 	}
 
 	@Override
@@ -103,6 +111,9 @@ public class GoDoContentProvider extends ContentProvider {
 			break;
 		case REPETITION_RULES:
 			queryBuilder.setTables(RepetitionRulesTable.TABLE);
+			break;
+		case DEPENDENCIES:
+			queryBuilder.setTables(InstanceDependencyTable.TABLE);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -150,6 +161,10 @@ public class GoDoContentProvider extends ContentProvider {
 			rowsUpdated = sqlDB.delete(RepetitionRulesTable.TABLE, selection, selectionArgs);
 			getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
 			return rowsUpdated;
+		case DEPENDENCIES:
+			rowsUpdated = sqlDB.delete(InstanceDependencyTable.TABLE, selection, selectionArgs);
+			getContext().getContentResolver().notifyChange(DEPENDENCY_URI, null);
+			return rowsUpdated;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
@@ -179,6 +194,9 @@ public class GoDoContentProvider extends ContentProvider {
 			break;
 		case REPETITION_RULES:
 			id = sqlDB.insertOrThrow(RepetitionRulesTable.TABLE, null, values);
+			break;
+		case DEPENDENCIES:
+			id = sqlDB.insertOrThrow(InstanceDependencyTable.TABLE, null, values);
 			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -226,6 +244,10 @@ public class GoDoContentProvider extends ContentProvider {
 		case REPETITION_RULES:
 			rowsUpdated = sqlDB.update(RepetitionRulesTable.TABLE, values, selection, selectionArgs);
 			getContext().getContentResolver().notifyChange(REPETITION_RULES_URI, null);
+			return rowsUpdated;
+		case DEPENDENCIES:
+			rowsUpdated = sqlDB.update(InstanceDependencyTable.TABLE, values, selection, selectionArgs);
+			getContext().getContentResolver().notifyChange(DEPENDENCY_URI, null);
 			return rowsUpdated;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);

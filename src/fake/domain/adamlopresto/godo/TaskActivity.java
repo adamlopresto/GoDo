@@ -266,6 +266,7 @@ public class TaskActivity extends FragmentActivity implements
 
 		@Override
 		public Fragment getItem(int position) {
+			Log.d("GoDo", "SectionsPagerAdapter getItem("+position+")");
 			// getItem is called to instantiate the fragment for the given page.
 			switch (position){
 			case 0:{
@@ -276,6 +277,17 @@ public class TaskActivity extends FragmentActivity implements
 				Fragment f = new TaskRepetitionRuleFragment();
 				return f;
 			}
+			case 2:{
+				Fragment f = new DependencyFragment();
+				Bundle b = new Bundle();
+				b.putBoolean("prereq", true);
+				f.setArguments(b);
+				return f;
+			}
+			case 3:{
+				Fragment f = new DependencyFragment();
+				return f;
+			}
 			default:
 				throw new IllegalArgumentException();
 			}
@@ -284,7 +296,7 @@ public class TaskActivity extends FragmentActivity implements
 		@Override
 		public int getCount() {
 			// total number of pages
-			return 2;
+			return 4;
 		}
 
 		@Override
@@ -296,7 +308,9 @@ public class TaskActivity extends FragmentActivity implements
 			case 1:
 				return getString(R.string.title_fragment_task_repetitions).toUpperCase(l);
 			case 2:
-				return getString(R.string.title_section3).toUpperCase(l);
+				return "Prerequesites";
+			case 3:
+				return "Next steps";
 			}
 			return null;
 		}

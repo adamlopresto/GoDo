@@ -126,7 +126,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 		getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 		getListView().setMultiChoiceModeListener(mActionModeCallback);
 		
-		adapter = new TaskAdapter(this, R.layout.main_list_item, null, 0);
+		adapter = new TaskAdapter(this, R.layout.main_list_item, null, true);
 		/*
 		adapter = new SimpleCursorAdapter(this, R.layout.main_list_item, null,
 				new String[]{ "task_name",    "task_notes",    "instance_notes",    "due_date",    "plan_date", "done_date"},
@@ -291,13 +291,8 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 		where = DatabaseUtils.concatenateWhere(where, "task_name is not null");
 		
 		CursorLoader cursorLoader = new CursorLoader(this, uri, 
-				new String[]{"_id", "task_name", "task_notes", "instance_notes", "due_date", "plan_date", "done_date"}, 
-				where, null, 
-				//sort order
-				"done_date is not null, "+
-				"case when due_date <= DATETIME('now', 'localtime') then due_date || ' 23:59:59' else '9999-99-99' end, " +
-				"coalesce(plan_date || ' 23:59:59', DATETIME('now', 'localtime')), due_date || ' 23:59:59', notification DESC, random()"
-				);
+				TaskAdapter.PROJECTION,
+				where, null, TaskAdapter.SORT);
 		return cursorLoader;
 	}
 
