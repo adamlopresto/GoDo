@@ -10,7 +10,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -57,12 +56,19 @@ public class DependencyFragment extends ListFragment
 	            case R.id.delete:{
 	            	final long[] ids = getListView().getCheckedItemIds();
 	            	ContentResolver res = getActivity().getContentResolver();
-	            	String where = InstanceDependencyTable.COLUMN_ID + "=?";
-	            	String[] idArray = new String[1];
-	            	//
+	            	
+	            	String where = prereq() 
+            			? InstanceDependencyTable.COLUMN_FIRST  + "=? AND "
+	            			+ InstanceDependencyTable.COLUMN_SECOND + "=?"
+            			: InstanceDependencyTable.COLUMN_SECOND  + "=? AND "
+	            			+InstanceDependencyTable.COLUMN_FIRST + "=?";
+	            	
+	            	String[] idArray = new String[2];
+	            	idArray[1] = String.valueOf(getInstanceId());
+	            	
 	            	for (long id : ids){
 	            		idArray[0] = String.valueOf(id);
-	            		Log.e("GoDo", "deleting id "+id+" #"+res.delete(GoDoContentProvider.DEPENDENCY_URI, where, idArray));
+	            		res.delete(GoDoContentProvider.DEPENDENCY_URI, where, idArray);
 	            	}
 	            	getLoaderManager().restartLoader(0, null, DependencyFragment.this);
 	                mode.finish(); // Action picked, so close the CAB
