@@ -9,6 +9,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 import fake.domain.adamlopresto.godo.db.InstancesView;
@@ -104,37 +105,34 @@ public class TaskHistoryFragment extends ListFragment
 			}
 			
 			StringBuilder sb = new StringBuilder();
-			String tmp = cursor.getString(CREATED);
-			if (!TextUtils.isEmpty(tmp)){
-				sb.append("Created: ");
-				sb.append(DateCalc.formatShortRelativeDate(tmp));
-			}
 
-			tmp = cursor.getString(START);
-			if (!TextUtils.isEmpty(tmp)){
-				sb.append("\nStart: ");
-				sb.append(DateCalc.formatShortRelativeDate(tmp));
-			}
-
-			tmp = cursor.getString(PLAN);
-			if (!TextUtils.isEmpty(tmp)){
-				sb.append("\nPlan: ");
-				sb.append(DateCalc.formatShortRelativeDate(tmp));
-			}
-
-			tmp = cursor.getString(DUE);
-			if (!TextUtils.isEmpty(tmp)){
-				sb.append("\nDue: ");
-				sb.append(DateCalc.formatShortRelativeDate(tmp));
-			}
-
-			tmp = cursor.getString(DONE);
-			if (!TextUtils.isEmpty(tmp)){
-				sb.append("\nCompleted: ");
-				sb.append(DateCalc.formatShortRelativeDate(tmp));
-			}
+			appendIfContents(sb, "Created: ", cursor, CREATED);
+			appendIfContents(sb, "Start: ", cursor, START);
+			appendIfContents(sb, "Plan: ", cursor, PLAN);
+			appendIfContents(sb, "Due: ", cursor, DUE);
+			appendIfContents(sb, "Done: ", cursor, DONE);
 			
 			((TextView)view.findViewById(android.R.id.text2)).setText(sb);
+		}
+		
+		/* (non-Javadoc)
+		 * @see android.widget.ResourceCursorAdapter#newView(android.content.Context, android.database.Cursor, android.view.ViewGroup)
+		 */
+		@Override
+		public View newView(Context context, Cursor cursor, ViewGroup parent) {
+			View v = super.newView(context, cursor, parent);
+			v.setMinimumHeight(0);
+			return v;
+		}
+
+		private void appendIfContents(StringBuilder sb, String label, Cursor cursor, int col){
+			String tmp = cursor.getString(col);
+			if (!TextUtils.isEmpty(tmp)){
+				if (sb.length() > 0)
+					sb.append("\n");
+				sb.append(label);
+				sb.append(DateCalc.formatShortRelativeDate(tmp));
+			}
 		}
 		
 	}

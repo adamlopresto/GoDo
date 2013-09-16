@@ -130,14 +130,14 @@ public class DependencyFragment extends ListFragment
 	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.task_repetition, menu);
+		inflater.inflate(R.menu.dependency, menu);
 		super.onCreateOptionsMenu(menu, inflater);
     }
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.action_new:
+		case R.id.action_pick_from_list:
 			final Cursor c = getActivity().getContentResolver()
 				.query(GoDoContentProvider.INSTANCES_URI, TaskAdapter.PROJECTION, "done_date is null", null, null);
 			new AlertDialog.Builder(getActivity())
