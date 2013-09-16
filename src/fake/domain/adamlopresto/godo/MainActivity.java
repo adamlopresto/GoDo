@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.TasksTable;
 
@@ -241,6 +242,34 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 		case R.id.action_new_task:
 			startActivity(new Intent(this, TaskActivity.class));
 			return true;
+		case R.id.action_new_from_template:{
+			final Cursor cursor = getContentResolver().query(GoDoContentProvider.TASKS_URI, 
+					new String[]{ TasksTable.COLUMN_ID, TasksTable.COLUMN_NAME, 
+					              TasksTable.COLUMN_NOTES }, 
+					TasksTable.COLUMN_REPEAT+"=2", null, TasksTable.COLUMN_NAME);
+			new AlertDialog.Builder(this)
+				.setAdapter(
+					new SimpleCursorAdapter(this, android.R.layout.simple_list_item_2, 
+							cursor, new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES}, 
+							new int[]{android.R.id.text1, android.R.id.text2}, 0), 
+					new DialogInterface.OnClickListener(){
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							cursor.moveToPosition(which);
+							long id = cursor.getLong(0);
+							Intent i = new Intent(MainActivity.this, TaskActivity.class);
+							i.putExtra("task", id);
+							startActivity(i);
+
+						}
+
+					})
+				.setNegativeButton(android.R.string.cancel, null)
+				.show();
+
+			return true;
+		}
 		case R.id.action_notify:
 			startService(new Intent(this, NotificationService.class));
 			return true;

@@ -115,6 +115,9 @@ public class GoDoContentProvider extends ContentProvider {
 		case DEPENDENCIES:
 			queryBuilder.setTables(InstanceDependencyTable.TABLE);
 			break;
+		case TASKS:
+			queryBuilder.setTables(TasksTable.TABLE);
+			break;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
