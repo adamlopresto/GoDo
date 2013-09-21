@@ -64,5 +64,7 @@
     <string name="new_task_voice">New task from voice</string>
     <string name="pick_from_list">Pick from list</string>
     <string name="new_from_template">New from template</string>
+    <string name="new_prereq">Create prerequisite</string>
+    <string name="new_nextstep">Create next step</string>
 
 </resources>

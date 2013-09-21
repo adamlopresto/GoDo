@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/action_pick_from_list" android:title="@string/pick_from_list" android:icon="@drawable/ic_action_pick_from_list" android:showAsAction="always"></item>
+    <item android:id="@+id/action_new" android:icon="@drawable/content_new" android:title="@string/new_task" android:showAsAction="always"></item>
     
 
 </menu>

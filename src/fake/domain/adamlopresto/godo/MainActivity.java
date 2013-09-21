@@ -59,7 +59,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 	    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 	        // Inflate a menu resource providing context menu items
 	        MenuInflater inflater = mode.getMenuInflater();
-	        inflater.inflate(R.menu.context_edit_delete, menu);
+	        inflater.inflate(R.menu.main_cab, menu);
 	        editItem = menu.findItem(R.id.edit);
 	        mode.setTitle("Tasks");
 	        return true;
@@ -84,6 +84,18 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 	                startActivity(i);
 	                return true;
 	            }
+	            case R.id.create_prereq:
+	            	startActivity(new Intent(MainActivity.this, TaskActivity.class)
+	            		.putExtra("next", getListView().getCheckedItemIds()));
+	            	mode.finish();
+	            	return true;
+	            	
+	            case R.id.create_nextstep:
+	            	startActivity(new Intent(MainActivity.this, TaskActivity.class)
+	            		.putExtra("prereq", getListView().getCheckedItemIds()));
+	            	mode.finish();
+	            	return true;
+
 	            case R.id.delete:{
 	            	final long[] ids = getListView().getCheckedItemIds();
 	            	new AlertDialog.Builder(MainActivity.this)

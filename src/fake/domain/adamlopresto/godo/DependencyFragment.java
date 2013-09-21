@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -162,6 +163,13 @@ public class DependencyFragment extends ListFragment
 				.setNegativeButton("Cancel", null)
 				.show();
 			return true;
+
+		case R.id.action_new:{
+			String otherside = prereq() ? "next" : "prereq";
+			startActivity(new Intent(getActivity(), TaskActivity.class)
+				.putExtra(otherside, new long[]{forceInstanceId()}));
+			return true;
+			}
 		}
 		return false;
 	}

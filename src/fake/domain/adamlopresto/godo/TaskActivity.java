@@ -25,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
+import fake.domain.adamlopresto.godo.db.InstanceDependencyTable;
 import fake.domain.adamlopresto.godo.db.TaskContextTable;
 
 public class TaskActivity extends FragmentActivity implements
@@ -74,7 +75,30 @@ public class TaskActivity extends FragmentActivity implements
 				task = instance.getTask();
 			}
 		}
+		
+		{
+		long[] tmp;
 				
+		if ((tmp = getIntent().getLongArrayExtra("prereq")) != null){
+			Log.e("GoDo", "Create prereqs");
+			ContentValues cv = new ContentValues(2);
+			cv.put(InstanceDependencyTable.COLUMN_SECOND, instance.forceId());
+			for (long id : tmp){
+				Log.e("GoDo", "Create "+id);
+				cv.put(InstanceDependencyTable.COLUMN_FIRST, id);
+				getContentResolver().insert(GoDoContentProvider.DEPENDENCY_URI, cv);
+			}
+		}
+
+		if ((tmp = getIntent().getLongArrayExtra("next")) != null){
+			ContentValues cv = new ContentValues(2);
+			cv.put(InstanceDependencyTable.COLUMN_FIRST, instance.forceId());
+			for (long id : tmp){
+				cv.put(InstanceDependencyTable.COLUMN_SECOND, id);
+				getContentResolver().insert(GoDoContentProvider.DEPENDENCY_URI, cv);
+			}
+		}
+		}
 
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
