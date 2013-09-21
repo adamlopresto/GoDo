@@ -1,5 +1,9 @@
 package fake.domain.adamlopresto.godo;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,6 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.util.LruCache;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
+import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
 import fake.domain.adamlopresto.godo.db.TasksTable;
 
 /**
@@ -136,6 +141,153 @@ public class Task {
 	public void setRepeat(RepeatTypes repeat) {
 		this.repeat = repeat;
 		dirty = true;
+	}
+	
+	/**
+	 * Creates a new repetition instance for this task.
+	 * @param old If not null, then provides values for old dates
+	 */
+	public Instance createRepetition(Instance old){
+		Instance next = new Instance(helper, this);
+		SQLiteDatabase db = helper.getWritableDatabase();
+
+		Cursor rules = db.query(RepetitionRulesTable.TABLE, 
+				new String[]{
+				RepetitionRulesTable.COLUMN_FROM, RepetitionRulesTable.COLUMN_TO,
+				RepetitionRulesTable.COLUMN_TYPE, RepetitionRulesTable.COLUMN_SUBVALUE
+		}, 
+		RepetitionRulesTable.COLUMN_TASK+"=?", 
+				new String[]{String.valueOf(forceId())}, null, null, null 
+				);
+		rules.moveToFirst();
+		RepetitionRuleColumns[] cols = RepetitionRuleColumns.values();
+		RepetitionRuleTypes[] types = RepetitionRuleTypes.values();
+		while (!rules.isAfterLast()){
+			RepetitionRuleColumns from = cols[rules.getInt(0)];
+			RepetitionRuleColumns to = cols[rules.getInt(1)];
+			RepetitionRuleTypes type = types[rules.getInt(2)];
+			Date date = null;
+			boolean hasTime = false;
+			switch(from){
+			case NEW_DUE:
+				date = next.getDueDate();
+				hasTime = next.hasDueTime();
+				break;
+			case NEW_PLAN:
+				date = next.getPlanDate();
+				hasTime = next.hasPlanTime();
+				break;
+			case NEW_START:
+				date = next.getStartDate();
+				hasTime = next.hasStartTime();
+				break;
+			case NOW:
+				hasTime = false;
+				break;
+			case OLD_DUE:
+				date = old == null ? null : old.getDueDate();
+				hasTime = old == null ? false : old.hasDueTime();
+				break;
+			case OLD_PLAN:
+				date = old == null ? null : old.getPlanDate();
+				hasTime = old == null ? false : old.hasPlanTime();
+				break;
+			case OLD_START:
+				date = old == null ? null : old.getStartDate();
+				hasTime = old == null ? false : old.hasStartTime();
+				break;
+			default:
+				break;
+			}
+			if (date == null){
+				date = new Date();
+				hasTime = false;
+			}
+
+			GregorianCalendar cal = new GregorianCalendar();
+			cal.setTime(date);
+
+			switch(type){
+			case ADD_DAY:
+				cal.add(Calendar.DAY_OF_MONTH, rules.getInt(3));
+				break;
+			case ADD_MONTH:
+				cal.add(Calendar.MONTH, rules.getInt(3));
+				break;
+			case WEEKDAY:
+				int step = 1;
+				String days = rules.getString(3);
+				if (days.startsWith("-"))
+					step = -1;
+
+				boolean done = false;
+				for (int failsafe = 0; failsafe < 7 && !done; failsafe++){
+					cal.add(Calendar.DAY_OF_WEEK, step);
+					switch (cal.get(Calendar.DAY_OF_WEEK)){
+					case Calendar.SUNDAY:
+						if (days.contains("Su"))
+							done = true;
+						break;
+					case Calendar.MONDAY:
+						if (days.contains("M"))
+							done = true;
+						break;
+					case Calendar.TUESDAY:
+						if (days.contains("Tu"))
+							done = true;
+						break;
+					case Calendar.WEDNESDAY:
+						if (days.contains("W"))
+							done = true;
+						break;
+					case Calendar.THURSDAY:
+						if (days.contains("Th"))
+							done = true;
+						break;
+					case Calendar.FRIDAY:
+						if (days.contains("F"))
+							done = true;
+						break;
+					case Calendar.SATURDAY:
+						if (days.contains("Sa"))
+							done = true;
+						break;
+					}
+				}
+				break;
+			case ADD_WEEK:
+				cal.add(Calendar.DAY_OF_MONTH, 7*rules.getInt(3));
+				break;
+			case ADD_YEAR:
+				cal.add(Calendar.MONTH, 12*rules.getInt(3));
+				break;
+			default:
+				break;
+			}
+
+			date = cal.getTime();
+
+			switch(to){
+			case NEW_DUE:
+				next.setDueDate(date);
+				next.setHasDueTime(hasTime);
+				break;
+			case NEW_PLAN:
+				next.setPlanDate(date);
+				next.setHasPlanTime(hasTime);
+				break;
+			case NEW_START:
+				next.setStartDate(date);
+				next.setHasStartTime(hasTime);
+				break;
+			default:
+				break;
+			}
+			rules.moveToNext();
+		}
+		rules.close();
+		next.flushNow();
+		return next;
 	}
 	
 	/**

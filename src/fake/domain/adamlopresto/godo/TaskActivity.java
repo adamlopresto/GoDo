@@ -150,7 +150,7 @@ public class TaskActivity extends FragmentActivity implements
 			if (task_id != -1L){
 				DatabaseHelper helper = DatabaseHelper.getInstance(this);
 				task = Task.get(helper, task_id);
-				instance = new Instance(helper, task);
+				instance = task.createRepetition(null);
 				return true;
 			} else {
 				ArrayList<String> names = bundle.getStringArrayList(RecognizerIntent.EXTRA_RESULTS);
