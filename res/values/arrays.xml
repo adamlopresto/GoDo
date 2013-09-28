@@ -23,6 +23,14 @@
         <item>old plan date</item>
         <item>old due date</item>
     </string-array>
+    
+    <string-array name="from_columns_template">
+        <item>new start date</item>
+        <item>new plan date</item>
+        <item>new due date</item>
+        <item>creation date</item>
+    </string-array>
+    
     <array name="repetition_directions">
         <item>forward</item>
         <item>backward</item>

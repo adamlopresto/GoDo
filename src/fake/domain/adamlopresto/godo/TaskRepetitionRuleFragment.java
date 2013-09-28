@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
@@ -68,6 +69,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
 	        return false; // Return false if nothing is done
 	    }
 
+	    
 	    // Called when the user selects a contextual menu item
 	    @Override
 	    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
@@ -77,6 +79,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
 	                mode.finish(); // Action picked, so close the CAB
 	                Intent i = new Intent(getActivity(), TaskRepetitionRuleActivity.class);
 	                i.putExtra("rule", id);
+	                i.putExtra("template", template());
 	                startActivity(i);
 	                return true;
 	            }
@@ -170,16 +173,16 @@ public class TaskRepetitionRuleFragment extends ListFragment
 						from = "new due date";
 						break;
 					case 3:
-						from = "completion date";
+						from = template() ? "creation date" : "completion date";
 						break;
 					case 4:
-						from = "old start date";
+						from = template() ? "creation date" : "old start date";
 						break;
 					case 5:
-						from = "old plan date";
+						from = template() ? "creation date" : "old plan date";
 						break;
 					case 6:
-						from = "old due date";
+						from = template() ? "creation date" : "old due date";
 						break;
 					default:
 						from = "\nError: from column is unexpectedly "+cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_FROM));
@@ -215,6 +218,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
 				return true;
 			}
 		});
+		
 	}
 	
 	/* (non-Javadoc)
@@ -239,6 +243,18 @@ public class TaskRepetitionRuleFragment extends ListFragment
 		setListAdapter(null);
 		header.setSelection(((TaskActivity)getActivity()).task.getRepeat().ordinal());
 		lv.addHeaderView(header, null, false);
+		header.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+			@Override
+			public void onItemSelected(AdapterView<?> ignored, View view,
+					int position, long id) {
+				adapter.notifyDataSetChanged();
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				//noop;
+			}
+		});
 		setListAdapter(adapter);
 		setHasOptionsMenu(true);
 	}
@@ -277,7 +293,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
 				if (header.getSelectedItemPosition() == 0)
 					header.setSelection(1);
 				startActivity(new Intent(getActivity(), TaskRepetitionRuleActivity.class)
-					.putExtra("task", taskId));
+					.putExtra("task", taskId).putExtra("template", template()));
 			}
 			return true;
 		}
@@ -289,6 +305,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
 		super.onListItemClick(l, v, position, id);
 		Intent i = new Intent(getActivity(), TaskRepetitionRuleActivity.class);
 		i.putExtra("rule", id);
+		i.putExtra("template", template());
 		startActivity(i);
 	}
 
@@ -310,5 +327,10 @@ public class TaskRepetitionRuleFragment extends ListFragment
 	public void onLoaderReset(Loader<Cursor> loader) {
 		adapter.swapCursor(null);
 	}
+
+	private boolean template(){
+		return header.getSelectedItemPosition()==2;
+	}
+
 
 }

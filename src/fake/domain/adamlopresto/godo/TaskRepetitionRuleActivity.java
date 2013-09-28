@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -27,6 +28,7 @@ public class TaskRepetitionRuleActivity extends Activity {
 	private EditText number;
 	private LinearLayout weekdayLayout;
 	private CheckBox[] weekdays = new CheckBox[7];
+	private boolean template = false;
 
 	private boolean weekdaysHidden = true;
 
@@ -87,6 +89,13 @@ public class TaskRepetitionRuleActivity extends Activity {
 				finish();
 			}
 		}
+		
+		if (template){
+			ArrayAdapter<CharSequence> ad = ArrayAdapter.createFromResource(this, R.array.from_columns_template, 
+					android.R.layout.simple_spinner_item);
+			ad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			from.setAdapter(ad);
+		}
 
 		if (rule_id == -1L) {
 			from.setSelection(3);
@@ -104,10 +113,11 @@ public class TaskRepetitionRuleActivity extends Activity {
 					new String[] { String.valueOf(rule_id) }, null);
 			c.moveToFirst();
 
+			task_id = c.getLong(c.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TASK));
 			to.setSelection(c.getInt(c
 					.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TO)));
-			from.setSelection(c.getInt(c
-					.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_FROM)));
+			from.setSelection(Math.min(template ? 3 : 6, 
+					c.getInt(c.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_FROM))));
 			int ruleTypeNumber = c.getInt(c
 					.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TYPE));
 			ruleType.setSelection(ruleTypeNumber);
@@ -152,14 +162,17 @@ public class TaskRepetitionRuleActivity extends Activity {
 	}
 
 	private boolean extractFromBundle(Bundle bundle) {
-		if (bundle == null)
+		if (bundle == null){
 			return false;
-		else if ((rule_id = bundle.getLong("rule", -1L)) != -1L)
+		} else if ((rule_id = bundle.getLong("rule", -1L)) != -1L){
+			template = bundle.getBoolean("template", false);
 			return true;
-		else if ((task_id = bundle.getLong("task", -1L)) != -1L)
+		} else if ((task_id = bundle.getLong("task", -1L)) != -1L){
+			template = bundle.getBoolean("template", false);
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 
 	@Override
