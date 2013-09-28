@@ -287,6 +287,15 @@ public class Task {
 		}
 		rules.close();
 		next.flushNow();
+		
+		//If there's an old instance, then we need to also recreate any dependencies it had
+		if (old != null){
+			db.execSQL("insert into instance_dependency (first, second) " +
+					"select max(i1._id) as first, ? as second " +
+					"from instances_view i1 inner join instances i2 on i1.task = i2.task " +
+					"inner join instance_dependency d on i2._id = d.first " +
+					"where d.second = ? group by i2.task", new Long[]{next.getId(), old.getId()}); 
+		}
 		return next;
 	}
 	
