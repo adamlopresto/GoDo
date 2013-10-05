@@ -165,19 +165,36 @@ public class NotificationService extends Service {
 					// notification title, and text.
 					.setSmallIcon(R.drawable.ic_stat_tasks)
 					.setContentTitle("GoDo")
-					.setContentText("Text")
 					.setAutoCancel(true);
 			
 			if (audible)
 				builder.setDefaults(Notification.DEFAULT_SOUND);			if (vibrate)
 				builder.setVibrate(new long[]{0, 1000, 300, 1000});
 			builder.setLights(Color.GREEN, 1000, 1000);
+			builder.setAutoCancel(true);
 			
 			if (numToNotify == 1){
+				StringBuilder sb = new StringBuilder();
+				if (!TextUtils.isEmpty(taskNotes)){
+					sb.append(taskNotes);
+				}
+				if (!TextUtils.isEmpty(instanceNotes)){
+					if (sb.length() > 0){
+						sb.append('\n');
+					}
+					sb.append(instanceNotes);
+
+				}
 				builder.setContentTitle(name)
-				       .setContentText(taskNotes)
-				       .setSubText(instanceNotes)
+				       .setContentText(sb)
+				       .setStyle(new NotificationCompat.BigTextStyle().bigText(sb))
 				       .setTicker(name);
+				PendingIntent markDone = PendingIntent.getBroadcast(this, 0, 
+						new Intent(this, GoDoReceiver.class).setAction(GoDoReceiver.MARK_COMPLETE_INTENT)
+						    .putExtra("instance", id), 
+						PendingIntent.FLAG_UPDATE_CURRENT);
+				builder.addAction(R.drawable.ic_action_accept, getString(R.string.mark_complete), markDone);
+
 				TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 				//stackBuilder.addParentStack(TaskActivity.class);
 				stackBuilder.addNextIntentWithParentStack(

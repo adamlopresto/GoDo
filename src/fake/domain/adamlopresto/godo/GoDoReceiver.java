@@ -1,5 +1,7 @@
 package fake.domain.adamlopresto.godo;
 
+import java.util.Date;
+
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -8,8 +10,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import fake.domain.adamlopresto.godo.db.ContextsTable;
+import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 
 public class GoDoReceiver extends BroadcastReceiver {
+	public static final String MARK_COMPLETE_INTENT = "fake.domain.adamlopresto.godo.MARK_COMPLETE";
+
 	public GoDoReceiver() {
 	}
 
@@ -50,6 +55,14 @@ public class GoDoReceiver extends BroadcastReceiver {
 			}
 			if (max > 0)
 				context.startService(new Intent(context, NotificationService.class).putExtra("max_notify", max));
+		} else if (action.equals(MARK_COMPLETE_INTENT)){
+			long id = intent.getLongExtra("instance", -1);
+			if (id != -1){
+				Instance instance = Instance.get(DatabaseHelper.getInstance(context), id);
+				instance.setDoneDate(new Date());
+				instance.flush();
+			}
+			context.startService(new Intent(context, NotificationService.class).putExtra("max_notify", 1));
 		} else {
 			Log.e("GoDo", "Unknown intent action "+action+", "+intent);
 		}
