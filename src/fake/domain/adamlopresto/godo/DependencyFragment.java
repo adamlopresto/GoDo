@@ -24,12 +24,14 @@ public class DependencyFragment extends ListFragment
 	implements LoaderManager.LoaderCallbacks<Cursor> {
 	
 	private AbsListView.MultiChoiceModeListener mActionModeCallback = new AbsListView.MultiChoiceModeListener() {
+		private MenuItem editItem;
 	
 		@Override
 		public void onItemCheckedStateChanged(ActionMode mode, int position,
 				long id, boolean checked) {
 			final int checkedCount = getListView().getCheckedItemCount();
 			mode.setSubtitle("" + checkedCount + " items selected");
+			editItem.setVisible(checkedCount == 1);
 		}
 			
 	    // Called when the action mode is created; startActionMode() was called
@@ -37,7 +39,8 @@ public class DependencyFragment extends ListFragment
 	    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 	        // Inflate a menu resource providing context menu items
 	        MenuInflater inflater = mode.getMenuInflater();
-	        inflater.inflate(R.menu.context_delete, menu);
+	        inflater.inflate(R.menu.context_edit_delete, menu);
+	        editItem = menu.findItem(R.id.edit);
 	        mode.setTitle(prereq() ? "Prerequesites" : "Next Steps");
 	        return true;
 	    }
@@ -74,6 +77,10 @@ public class DependencyFragment extends ListFragment
 	                mode.finish(); // Action picked, so close the CAB
 	                return true;
 	            }
+	            case R.id.edit: 
+	            	startActivity(new Intent(getActivity(), TaskActivity.class).putExtra("instance", 
+	            			getListView().getCheckedItemIds()[0]));;
+	            	return true;
 	            default:
 	                return false;
 	        }
@@ -137,7 +144,7 @@ public class DependencyFragment extends ListFragment
 		switch (item.getItemId()) {
 		case R.id.action_pick_from_list:
 			final Cursor c = getActivity().getContentResolver()
-				.query(GoDoContentProvider.INSTANCES_URI, TaskAdapter.PROJECTION, "done_date is null", null, null);
+				.query(GoDoContentProvider.INSTANCES_URI, TaskAdapter.PROJECTION, "done_date is null", null, "task_name ASC");
 			new AlertDialog.Builder(getActivity())
 				.setAdapter(new TaskAdapter(getActivity(), R.layout.main_list_item, c, false), 
 						new DialogInterface.OnClickListener() {
@@ -205,7 +212,7 @@ public class DependencyFragment extends ListFragment
 				TaskAdapter.PROJECTION,
 				where, 
 				new String[]{String.valueOf(getInstanceId())}, 
-				TaskAdapter.SORT);
+				"task_name ASC");
 	}
 
 	@Override
