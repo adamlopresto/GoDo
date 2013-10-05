@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
-import android.widget.Toast;
 import fake.domain.adamlopresto.godo.db.InstanceDependencyTable;
 
 public class DependencyFragment extends ListFragment 
@@ -105,8 +104,6 @@ public class DependencyFragment extends ListFragment
 		super.onCreate(savedInstanceState);
 
 		adapter = new TaskAdapter(getActivity(), R.layout.main_list_item, null, false);
-		
-		
 	}
 	
 	/* (non-Javadoc)
@@ -147,7 +144,6 @@ public class DependencyFragment extends ListFragment
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								c.moveToPosition(which);
-								Toast.makeText(getActivity(), c.getString(1), Toast.LENGTH_LONG).show();
 								ContentValues cv = new ContentValues(2);
 								if (prereq()){
 									cv.put(InstanceDependencyTable.COLUMN_FIRST, c.getLong(0));
