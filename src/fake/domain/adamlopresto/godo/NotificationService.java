@@ -40,8 +40,6 @@ public class NotificationService extends Service {
 		if (intent != null) 
 			max = intent.getIntExtra("max_notify", 4);
 		
-		Log.e("GoDo", "Starting notification service, max: "+max);
-		
 		GoDoAppWidget.updateAllAppWidgets(this);
 		
 		ContentResolver res = getContentResolver();
@@ -69,10 +67,7 @@ public class NotificationService extends Service {
 		    	PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		    	
 		    	manager.set(AlarmManager.RTC_WAKEUP, date.getTime(), contentIntent);
-		    	Log.e("GoDo", "Setting next alarm for "+date);
-			} else {
-				Log.e("GoD", "No next alarm set; will never notify");
-			}
+			} 
 		} catch (ParseException ignored) {
 			//if we can't parse the date, give up.
 			Log.e("GoDo", "Parse error parsing next date");
