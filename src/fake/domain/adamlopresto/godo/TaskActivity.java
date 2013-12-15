@@ -160,6 +160,15 @@ public class TaskActivity extends FragmentActivity implements
 					task = new Task(helper, this, Character.toTitleCase(name.charAt(0))+name.substring(1));
 					instance = new Instance(helper, task);
 					return true;
+				} else {
+					String name = bundle.getString("task_name");
+					if (name != null) {
+						DatabaseHelper helper = DatabaseHelper.getInstance(this);
+						task = new Task(helper, this, Character.toTitleCase(name.charAt(0))+name.substring(1));
+						instance = new Instance(helper, task);
+						return true;
+
+					}
 				}
 			}
 		}

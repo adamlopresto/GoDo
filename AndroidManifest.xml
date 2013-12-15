@@ -45,7 +45,7 @@
             android:name="fake.domain.adamlopresto.godo.TaskActivity"
             android:label="@string/title_activity_task"
             android:parentActivityName=".MainActivity"
-            android:windowSoftInputMode="stateHidden" >
+            android:windowSoftInputMode="stateHidden" android:exported="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
