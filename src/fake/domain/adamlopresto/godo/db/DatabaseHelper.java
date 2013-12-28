@@ -39,7 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	
 	
 	private DatabaseHelper(Context context) {
-		super(context, DATABASE_NAME, null, CURRENT_VERSION);
+		super(context, context.getExternalFilesDir(null)+"/"+DATABASE_NAME, null, CURRENT_VERSION);
 		this.context = context;
 	}
 	
