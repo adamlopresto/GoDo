@@ -40,7 +40,7 @@ public class NotificationService extends Service {
 		if (intent != null) 
 			max = intent.getIntExtra("max_notify", 4);
 		
-		GoDoAppWidget.updateAllAppWidgets(this);
+		//GoDoAppWidget.updateAllAppWidgets(this);
 		
 		ContentResolver res = getContentResolver();
 		String nextDateString = nextDate(res, InstancesView.COLUMN_DUE_DATE);

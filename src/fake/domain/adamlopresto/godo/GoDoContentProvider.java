@@ -148,25 +148,35 @@ public class GoDoContentProvider extends ContentProvider {
 		switch (uriType) {
 		case TASKS:
 			rowsUpdated = sqlDB.delete(TasksTable.TABLE, selection, selectionArgs);
-			GoDoAppWidget.updateAllAppWidgets(getContext());
-			getContext().getContentResolver().notifyChange(TASKS_URI, null);
+			if (rowsUpdated > 0){
+				GoDoAppWidget.updateAllAppWidgets(getContext());
+				getContext().getContentResolver().notifyChange(TASKS_URI, null);
+			}
 			return rowsUpdated;
 		case INSTANCES:
 			rowsUpdated = sqlDB.delete(InstancesTable.TABLE, selection, selectionArgs);
-			GoDoAppWidget.updateAllAppWidgets(getContext());
-			getContext().getContentResolver().notifyChange(INSTANCES_URI, null);
+			if (rowsUpdated > 0){
+				GoDoAppWidget.updateAllAppWidgets(getContext());
+				getContext().getContentResolver().notifyChange(INSTANCES_URI, null);
+			}
 			return rowsUpdated;
 		case CONTEXTS:
 			rowsUpdated = sqlDB.delete(ContextsTable.TABLE, selection, selectionArgs);
-			getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
+			if (rowsUpdated > 0){
+				getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
+			}
 			return rowsUpdated;
 		case REPETITION_RULES:
 			rowsUpdated = sqlDB.delete(RepetitionRulesTable.TABLE, selection, selectionArgs);
-			getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
+			if (rowsUpdated > 0){
+				getContext().getContentResolver().notifyChange(REPETITION_RULES_URI, null);
+			}
 			return rowsUpdated;
 		case DEPENDENCIES:
 			rowsUpdated = sqlDB.delete(InstanceDependencyTable.TABLE, selection, selectionArgs);
-			getContext().getContentResolver().notifyChange(DEPENDENCY_URI, null);
+			if (rowsUpdated > 0){
+				getContext().getContentResolver().notifyChange(DEPENDENCY_URI, null);
+			}
 			return rowsUpdated;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -231,26 +241,36 @@ public class GoDoContentProvider extends ContentProvider {
 			return 1;
 		case TASKS:
 			rowsUpdated = sqlDB.update(TasksTable.TABLE, values, selection, selectionArgs);
-			GoDoAppWidget.updateAllAppWidgets(getContext());
-			getContext().getContentResolver().notifyChange(TASKS_URI, null);
+			if (rowsUpdated > 0){
+				GoDoAppWidget.updateAllAppWidgets(getContext());
+				getContext().getContentResolver().notifyChange(TASKS_URI, null);
+			}
 			return rowsUpdated;
 		case INSTANCES:
 			rowsUpdated = sqlDB.update(InstancesTable.TABLE, values, selection, selectionArgs);
-			GoDoAppWidget.updateAllAppWidgets(getContext());
-			getContext().getContentResolver().notifyChange(INSTANCES_URI, null);
+			if (rowsUpdated > 0){
+				GoDoAppWidget.updateAllAppWidgets(getContext());
+				getContext().getContentResolver().notifyChange(INSTANCES_URI, null);
+			}
 			return rowsUpdated;
 		case CONTEXTS:
 			rowsUpdated = sqlDB.update(ContextsTable.TABLE, values, selection, selectionArgs);
-			GoDoAppWidget.updateAllAppWidgets(getContext());
-			getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
+			if (rowsUpdated > 0){
+				GoDoAppWidget.updateAllAppWidgets(getContext());
+				getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
+			}
 			return rowsUpdated;
 		case REPETITION_RULES:
 			rowsUpdated = sqlDB.update(RepetitionRulesTable.TABLE, values, selection, selectionArgs);
-			getContext().getContentResolver().notifyChange(REPETITION_RULES_URI, null);
+			if (rowsUpdated > 0){
+				getContext().getContentResolver().notifyChange(REPETITION_RULES_URI, null);
+			}
 			return rowsUpdated;
 		case DEPENDENCIES:
 			rowsUpdated = sqlDB.update(InstanceDependencyTable.TABLE, values, selection, selectionArgs);
-			getContext().getContentResolver().notifyChange(DEPENDENCY_URI, null);
+			if (rowsUpdated > 0){
+				getContext().getContentResolver().notifyChange(DEPENDENCY_URI, null);
+			}
 			return rowsUpdated;
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);

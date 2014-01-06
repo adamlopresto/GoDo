@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.speech.RecognizerIntent;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 /**
@@ -19,6 +20,7 @@ public class GoDoAppWidget extends AppWidgetProvider {
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
 			int[] appWidgetIds) {
 		// There may be multiple widgets active, so update all of them
+		Log.e("GoDo", "GoDoAppWidget.onUpdate, "+appWidgetIds.length);
 		final int N = appWidgetIds.length;
 		for (int i = 0; i < N; i++) {
 			updateAppWidget(context, appWidgetManager, appWidgetIds[i]);
@@ -67,6 +69,7 @@ public class GoDoAppWidget extends AppWidgetProvider {
 	}
 	
 	public static void updateAllAppWidgets(Context context) {
+		Log.e("GoDo", "GoDoAppWidget.updateAllAppWidgets", new Throwable());
 		AppWidgetManager man = AppWidgetManager.getInstance(context);
 		ComponentName widget = new ComponentName(context, GoDoAppWidget.class);
 		man.notifyAppWidgetViewDataChanged(man.getAppWidgetIds(widget), android.R.id.list);

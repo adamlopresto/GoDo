@@ -3,12 +3,12 @@ package fake.domain.adamlopresto.godo;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.os.Binder;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
-import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesView;
 
 public class GoDoWidgetService extends RemoteViewsService {
@@ -23,8 +23,6 @@ public class GoDoWidgetService extends RemoteViewsService {
 
 class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 	Cursor cursor;
-	DatabaseHelper helper;
-	SQLiteDatabase db;
 	Context context;
 	
 	public final static int ID = 0;
@@ -33,21 +31,24 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 	public final static int PLAN_DATE = 3;
 	
 	GoDoViewsFactory(Context context){
-		helper = DatabaseHelper.getInstance(context);
+		Log.e("GoDo", "Creating new factory");
 		this.context = context;
 	}
 
 	@Override
 	public int getCount() {
+		Log.e("GoDo", "getCount()");
 		getCursor();
+		Log.e("GoDo", "count is "+cursor.getCount());
 		return cursor.getCount();
 	}
 
 	@Override
 	public long getItemId(int position) {
+		Log.e("GoDo", "getItemId("+position+")");
 		getCursor();
 		cursor.moveToPosition(position);
-		return cursor.getLong(0);
+		return cursor.getLong(ID);
 	}
 
 	@Override
@@ -57,6 +58,7 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
 	@Override
 	public RemoteViews getViewAt(int position) {
+		Log.e("GoDo", "getViewAt("+position+")");
 		getCursor();
 		cursor.moveToPosition(position);
 		RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.app_widget_item);
@@ -96,8 +98,6 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
 	@Override
 	public void onDataSetChanged() {
-		if (db == null || !db.isOpen())
-			db = helper.getWritableDatabase();
 		
 		if (cursor != null && !cursor.isClosed())
 			cursor.close();
@@ -108,12 +108,7 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 	//We've had problems with getCount() erroring out. Guarantee that there's an open cursor to work with.
 	private void getCursor(){
 		if (cursor == null || cursor.isClosed()){
-			if (db == null || !db.isOpen()){
-				if (helper == null)
-					helper = DatabaseHelper.getInstance(context);
-				db = helper.getReadableDatabase();
-			}
-				
+			Log.e("GoDo", "Opening cursor");
 			String where = "((((NOT blocked_by_context) " +
 					"          AND (NOT blocked_by_task)) " +
 					"         AND (coalesce(start_date, 0) <= DATETIME('now', 'localtime')))" +
@@ -121,14 +116,20 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 					"       AND (done_date IS NULL)"+
 					"       AND (task_name IS NOT NULL)";
 	
-			cursor = db.query(InstancesView.VIEW, new String[]{
+			final long token = Binder.clearCallingIdentity();
+			try {
+				cursor = context.getContentResolver().query(GoDoContentProvider.INSTANCES_URI, 
+					new String[]{
 					InstancesView.COLUMN_ID, InstancesView.COLUMN_TASK_NAME, 
 					InstancesView.COLUMN_DUE_DATE, InstancesView.COLUMN_PLAN_DATE
-			}, where, null, null, null, 
-			"case when due_date <= DATETIME('now', 'localtime') then due_date || ' 23:59:59' else '9999-99-99' end, "
-			+"coalesce(plan_date || ' 23:59:59', DATETIME('now', 'localtime')), due_date || ' 23:59:59', "
-			+"notification DESC, random()"
-			);
+				}, where, null, 
+				"case when due_date <= DATETIME('now', 'localtime') then due_date || ' 23:59:59' else '9999-99-99' end, "
+				+"coalesce(plan_date || ' 23:59:59', DATETIME('now', 'localtime')), due_date || ' 23:59:59', "
+				+"notification DESC, random()"
+				);
+			} finally {
+			    Binder.restoreCallingIdentity(token);
+			}
 		}
 	}
 	
@@ -136,9 +137,6 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 		if (cursor != null && !cursor.isClosed())
 			cursor.close();
 		cursor = null;
-		if (db != null && db.isOpen())
-			db.close();
-		db = null;
 	}
 
 	@Override
