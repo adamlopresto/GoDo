@@ -16,18 +16,19 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
 
 public class TaskRepetitionRuleActivity extends Activity {
 
-	private Spinner to;
+    private final CheckBox[] weekdays = new CheckBox[7];
+    private Spinner to;
 	private Spinner from;
 	private Spinner direction;
 	private Spinner ruleType;
 	private TextView numberLabel;
 	private EditText number;
 	private LinearLayout weekdayLayout;
-	private CheckBox[] weekdays = new CheckBox[7];
 	private boolean template = false;
 
 	private boolean weekdaysHidden = true;

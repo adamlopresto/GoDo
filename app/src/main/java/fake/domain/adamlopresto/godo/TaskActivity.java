@@ -1,9 +1,5 @@
 package fake.domain.adamlopresto.godo;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Locale;
-
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
@@ -23,6 +19,11 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Locale;
+
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstanceDependencyTable;
@@ -102,8 +103,10 @@ public class TaskActivity extends FragmentActivity implements
 
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(true);
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        }
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the app.
@@ -299,21 +302,17 @@ public class TaskActivity extends FragmentActivity implements
 
 		@Override
 		public Fragment getItem(int position) {
-			Log.d("GoDo", "SectionsPagerAdapter getItem("+position+")");
 			// getItem is called to instantiate the fragment for the given page.
 			switch (position){
 			case 0:{
-				Fragment f = new TaskDetailsFragment();
-				return f;
-			}
+                return new TaskDetailsFragment();
+            }
 			case 1:{
-				Fragment f = new TaskRepetitionRuleFragment();
-				return f;
-			}
+                return new TaskRepetitionRuleFragment();
+            }
 			case 2:{
-				Fragment f = new TaskHistoryFragment();
-				return f;
-			}
+                return new TaskHistoryFragment();
+            }
 			case 3:{
 				Fragment f = new DependencyFragment();
 				Bundle b = new Bundle();
@@ -322,9 +321,8 @@ public class TaskActivity extends FragmentActivity implements
 				return f;
 			}
 			case 4:{
-				Fragment f = new DependencyFragment();
-				return f;
-			}
+                return new DependencyFragment();
+            }
 			default:
 				throw new IllegalArgumentException();
 			}

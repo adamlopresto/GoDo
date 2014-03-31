@@ -1,9 +1,5 @@
 package fake.domain.adamlopresto.godo;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,6 +7,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.util.LruCache;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
 import fake.domain.adamlopresto.godo.db.TasksTable;
@@ -20,64 +21,65 @@ import fake.domain.adamlopresto.godo.db.TasksTable;
  */
 public class Task {
 
-	private static LruCache<Long, Task> cache = new LruCache<Long, Task>(10);
-	
-	private DatabaseHelper helper;
-	
-	private boolean dirty = false;
+    private static final LruCache<Long, Task> cache = new LruCache<Long, Task>(10);
+
+    private final DatabaseHelper helper;
+
+    private boolean dirty = false;
 	private long id = -1L;
 	private String name;
 	private String notes;
 	private NotificationLevels notification;
 	private NotificationLevels dueNotification;
 	private RepeatTypes repeat = RepeatTypes.NONE;
-	
-	public static Task get(DatabaseHelper helper, long id){
-		Task task = cache.get(Long.valueOf(id));
-		if (task != null)
-			return task;
-		SQLiteDatabase db = helper.getReadableDatabase();
-		Cursor c = db.query(TasksTable.TABLE, 
-				new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES, 
-				             TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT, 
-				             TasksTable.COLUMN_DUE_NOTIFICATION}, 
-				TasksTable.COLUMN_ID+"=?", new String[]{String.valueOf(id)}, null, null, null);
-		if (!c.moveToFirst()){
-			return null;
-		}
-		task = new Task(helper, id, c.getString(0), c.getString(1), 
-				NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)], 
-				NotificationLevels.values()[c.getInt(4)]);
-		cache.put(Long.valueOf(id), task);
-		return task;
-	}
-	
-	/*
-	 * Constructor to create a new, empty task
-	 */
-	public Task(DatabaseHelper helper, Context context) {
-		this.helper=helper;
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		this.notification = NotificationLevels.valueOf(prefs.getString(SettingsActivity.PREF_DEFAULT_NOTIFICATION, "NONE"));
-		this.dueNotification = NotificationLevels.valueOf(prefs.getString(SettingsActivity.PREF_DEFAULT_DUE_NOTIFICATION, "NONE"));
-	}
-	
-	public Task(DatabaseHelper helper, Context context, String name) {
-		this(helper, context);
-		this.name = name;
-	}
-	
-	private Task(DatabaseHelper helper, long id, String name, String notes, 
-			NotificationLevels notification, RepeatTypes repeat, 
-			NotificationLevels dueNotification){
-		this.helper = helper;
-		this.id=id;
-		this.name=name;
-		this.notes=notes;
-		this.notification=notification;
-		this.repeat=repeat;
-		this.dueNotification = dueNotification;
-	}
+
+    /*
+     * Constructor to create a new, empty task
+     */
+    public Task(DatabaseHelper helper, Context context) {
+        this.helper = helper;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        this.notification = NotificationLevels.valueOf(prefs.getString(SettingsActivity.PREF_DEFAULT_NOTIFICATION, "NONE"));
+        this.dueNotification = NotificationLevels.valueOf(prefs.getString(SettingsActivity.PREF_DEFAULT_DUE_NOTIFICATION, "NONE"));
+    }
+
+    public Task(DatabaseHelper helper, Context context, String name) {
+        this(helper, context);
+        this.name = name;
+    }
+
+    private Task(DatabaseHelper helper, long id, String name, String notes,
+                 NotificationLevels notification, RepeatTypes repeat,
+                 NotificationLevels dueNotification) {
+        this.helper = helper;
+        this.id = id;
+        this.name = name;
+        this.notes = notes;
+        this.notification = notification;
+        this.repeat = repeat;
+        this.dueNotification = dueNotification;
+    }
+
+    public static Task get(DatabaseHelper helper, long id) {
+        Task task = cache.get(Long.valueOf(id));
+        if (task != null)
+            return task;
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor c = db.query(TasksTable.TABLE,
+                new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES,
+                        TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT,
+                        TasksTable.COLUMN_DUE_NOTIFICATION},
+                TasksTable.COLUMN_ID + "=?", new String[]{String.valueOf(id)}, null, null, null
+        );
+        if (!c.moveToFirst()) {
+            return null;
+        }
+        task = new Task(helper, id, c.getString(0), c.getString(1),
+                NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)],
+                NotificationLevels.values()[c.getInt(4)]);
+        cache.put(Long.valueOf(id), task);
+        return task;
+    }
 	
 	/**
 	 * Gets the current id, as recorded in the database. Returns -1 for a new Task not yet saved
@@ -186,16 +188,16 @@ public class Task {
 				break;
 			case OLD_DUE:
 				date = old == null ? null : old.getDueDate();
-				hasTime = old == null ? false : old.hasDueTime();
-				break;
+                hasTime = old != null && old.hasDueTime();
+                break;
 			case OLD_PLAN:
 				date = old == null ? null : old.getPlanDate();
-				hasTime = old == null ? false : old.hasPlanTime();
-				break;
+                hasTime = old != null && old.hasPlanTime();
+                break;
 			case OLD_START:
 				date = old == null ? null : old.getStartDate();
-				hasTime = old == null ? false : old.hasStartTime();
-				break;
+                hasTime = old != null && old.hasStartTime();
+                break;
 			default:
 				break;
 			}

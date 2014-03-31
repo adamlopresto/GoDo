@@ -1,9 +1,9 @@
 package fake.domain.adamlopresto.godo.db;
 
+import android.database.sqlite.SQLiteDatabase;
+
 import java.util.Arrays;
 import java.util.HashSet;
-
-import android.database.sqlite.SQLiteDatabase;
 
 public class ContextsTable {
 	public static final String TABLE = "contexts";
