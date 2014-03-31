@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="notification_levels">
+        <item >None</item>
+        <item >Silent</item>
+        <item >Vibrate</item>
+        <item >Noisy</item>
+        <item >Spoken</item>
+    </string-array>
+    
+    <string-array name="to_columns">
+        <item>new start date</item>
+        <item>new plan date</item>
+        <item>new due date</item>
+    </string-array>
+    
+    <string-array name="from_columns">
+        <item>new start date</item>
+        <item>new plan date</item>
+        <item>new due date</item>
+        <item>completion date</item>
+        <item>old start date</item>
+        <item>old plan date</item>
+        <item>old due date</item>
+    </string-array>
+    
+    <string-array name="from_columns_template">
+        <item>new start date</item>
+        <item>new plan date</item>
+        <item>new due date</item>
+        <item>creation date</item>
+    </string-array>
+    
+    <array name="repetition_directions">
+        <item>forward</item>
+        <item>backward</item>
+    </array>
+    <array name="rule_types">
+        <item>by days</item>
+        <item>by months</item>
+        <item>to day of week</item>
+        <item>by weeks</item>
+        <item>by years</item>
+    </array>
+    <array name = "when_to_repeat">
+        <item>Never repeat</item>
+        <item>Repeat on completion</item>
+        <item>Manually</item>
+    </array>
+    <string-array name="notification_levels_backend">
+        <item >NONE</item>
+        <item >SILENT</item>
+        <item >VIBRATE</item>
+        <item >NOISY</item>
+        <item >SPOKEN</item>
+    </string-array>
+    
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory android:title="@string/pref_filtering_header">
+        <CheckBoxPreference android:key="pref_show_blocked_by_task" android:summaryOn="@string/pref_show_blocked_by_task_on" android:title="@string/pref_show_blocked_by_task_title" android:summaryOff="@string/pref_show_blocked_by_task_off"/>
+        <CheckBoxPreference android:key="pref_show_blocked_by_context" android:summaryOn="@string/pref_show_blocked_by_context_on" android:title="@string/pref_show_blocked_by_context_title" android:summaryOff="@string/pref_show_blocked_by_context_off"/>
+        <CheckBoxPreference android:key="pref_show_done" android:summaryOn="@string/pref_show_done_on" android:title="@string/pref_show_done_title" android:summaryOff="@string/pref_show_done_off"/>
+        <CheckBoxPreference android:key="pref_show_future" android:summaryOn="@string/pref_show_future_on" android:title="@string/pref_show_future_title" android:summaryOff="@string/pref_show_future_off"/>
+        <ListPreference android:entries="@array/notification_levels" android:key="pref_default_notification" android:title="@string/pref_default_notification_title" android:entryValues="@array/notification_levels_backend" android:defaultValue="NONE"/>
+        <ListPreference android:entries="@array/notification_levels" android:key="pref_default_due_notification" android:title="@string/pref_default_due_notification_title" android:entryValues="@array/notification_levels_backend" android:defaultValue="NONE"/>
+    </PreferenceCategory>
+    
+
+</PreferenceScreen>
