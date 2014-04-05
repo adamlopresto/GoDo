@@ -2,6 +2,7 @@ package fake.domain.adamlopresto.godo;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -68,8 +69,8 @@ public class GoDoContentProvider extends ContentProvider {
 
     private DatabaseHelper helper;
 
-    private static String appendSelection(String original, String newSelection) {
-        return DatabaseUtils.concatenateWhere(original, newSelection);
+    private static String appendIdToSelection(String original) {
+        return DatabaseUtils.concatenateWhere(original, "_id = ?");
     }
 
     private static String[] appendSelectionArgs(String originalValues[], String newValues[]) {
@@ -104,7 +105,7 @@ public class GoDoContentProvider extends ContentProvider {
         //If it's odd, then it has an ID appended.
         if ((uriType % 2) == 1) {
             String id = uri.getLastPathSegment();
-            selection = appendSelection(selection, "_id = ?");
+            selection = appendIdToSelection(selection);
             selectionArgs = appendSelectionArg(selectionArgs, id);
             uriType--;
         }
@@ -130,10 +131,16 @@ public class GoDoContentProvider extends ContentProvider {
         }
 
         SQLiteDatabase db = helper.getReadableDatabase();
+
         Cursor cursor = queryBuilder.query(db, projection, selection,
                 selectionArgs, null, null, sortOrder);
         // Make sure that potential listeners are getting notified
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        if (cursor != null) {
+            Context context = getContext();
+            if (context != null) {
+                cursor.setNotificationUri(context.getContentResolver(), uri);
+            }
+        }
 
         return cursor;
     }
@@ -142,12 +149,12 @@ public class GoDoContentProvider extends ContentProvider {
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = helper.getWritableDatabase();
-        int rowsUpdated = 0;
+        int rowsUpdated;
 
         //If it's odd, then it has an ID appended.
         if ((uriType % 2) == 1) {
             String id = uri.getLastPathSegment();
-            selection = appendSelection(selection, "_id = ?");
+            selection = appendIdToSelection(selection);
             selectionArgs = appendSelectionArg(selectionArgs, id);
             uriType--;
         }
@@ -157,32 +164,32 @@ public class GoDoContentProvider extends ContentProvider {
                 rowsUpdated = sqlDB.delete(TasksTable.TABLE, selection, selectionArgs);
                 if (rowsUpdated > 0) {
                     GoDoAppWidget.updateAllAppWidgets(getContext());
-                    getContext().getContentResolver().notifyChange(TASKS_URI, null);
+                    helper.notifyChange(TASKS_URI);
                 }
                 return rowsUpdated;
             case INSTANCES:
                 rowsUpdated = sqlDB.delete(InstancesTable.TABLE, selection, selectionArgs);
                 if (rowsUpdated > 0) {
                     GoDoAppWidget.updateAllAppWidgets(getContext());
-                    getContext().getContentResolver().notifyChange(INSTANCES_URI, null);
+                    helper.notifyChange(INSTANCES_URI);
                 }
                 return rowsUpdated;
             case CONTEXTS:
                 rowsUpdated = sqlDB.delete(ContextsTable.TABLE, selection, selectionArgs);
                 if (rowsUpdated > 0) {
-                    getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
+                    helper.notifyChange(CONTEXTS_URI);
                 }
                 return rowsUpdated;
             case REPETITION_RULES:
                 rowsUpdated = sqlDB.delete(RepetitionRulesTable.TABLE, selection, selectionArgs);
                 if (rowsUpdated > 0) {
-                    getContext().getContentResolver().notifyChange(REPETITION_RULES_URI, null);
+                    helper.notifyChange(REPETITION_RULES_URI);
                 }
                 return rowsUpdated;
             case DEPENDENCIES:
                 rowsUpdated = sqlDB.delete(InstanceDependencyTable.TABLE, selection, selectionArgs);
                 if (rowsUpdated > 0) {
-                    getContext().getContentResolver().notifyChange(DEPENDENCY_URI, null);
+                    helper.notifyChange(DEPENDENCY_URI);
                 }
                 return rowsUpdated;
             default:
@@ -200,7 +207,7 @@ public class GoDoContentProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = helper.getWritableDatabase();
-        long id = 0;
+        long id;
         switch (uriType) {
             case INSTANCES:
                 id = sqlDB.insertOrThrow(InstancesTable.TABLE, null, values);
@@ -221,7 +228,7 @@ public class GoDoContentProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
-        getContext().getContentResolver().notifyChange(uri, null);
+        helper.notifyChange(uri);
         return Uri.withAppendedPath(uri, String.valueOf(id));
     }
 
@@ -230,12 +237,12 @@ public class GoDoContentProvider extends ContentProvider {
                       String[] selectionArgs) {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = helper.getWritableDatabase();
-        int rowsUpdated = 0;
+        int rowsUpdated;
 
         //If it's odd, then it has an ID appended.
         if ((uriType % 2) == 1) {
             String id = uri.getLastPathSegment();
-            selection = appendSelection(selection, "_id = ?");
+            selection = appendIdToSelection(selection);
             selectionArgs = appendSelectionArg(selectionArgs, id);
             uriType--;
         }
@@ -244,39 +251,39 @@ public class GoDoContentProvider extends ContentProvider {
             case TOGGLE_CONTEXT:
                 sqlDB.execSQL("UPDATE " + ContextsTable.TABLE + " SET " + ContextsTable.COLUMN_ACTIVE + "= NOT " + ContextsTable.COLUMN_ACTIVE + " WHERE " + selection, selectionArgs);
                 GoDoAppWidget.updateAllAppWidgets(getContext());
-                getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
+                helper.notifyChange(CONTEXTS_URI);
                 return 1;
             case TASKS:
                 rowsUpdated = sqlDB.update(TasksTable.TABLE, values, selection, selectionArgs);
                 if (rowsUpdated > 0) {
                     GoDoAppWidget.updateAllAppWidgets(getContext());
-                    getContext().getContentResolver().notifyChange(TASKS_URI, null);
+                    helper.notifyChange(TASKS_URI);
                 }
                 return rowsUpdated;
             case INSTANCES:
                 rowsUpdated = sqlDB.update(InstancesTable.TABLE, values, selection, selectionArgs);
                 if (rowsUpdated > 0) {
                     GoDoAppWidget.updateAllAppWidgets(getContext());
-                    getContext().getContentResolver().notifyChange(INSTANCES_URI, null);
+                    helper.notifyChange(INSTANCES_URI);
                 }
                 return rowsUpdated;
             case CONTEXTS:
                 rowsUpdated = sqlDB.update(ContextsTable.TABLE, values, selection, selectionArgs);
                 if (rowsUpdated > 0) {
                     GoDoAppWidget.updateAllAppWidgets(getContext());
-                    getContext().getContentResolver().notifyChange(CONTEXTS_URI, null);
+                    helper.notifyChange(CONTEXTS_URI);
                 }
                 return rowsUpdated;
             case REPETITION_RULES:
                 rowsUpdated = sqlDB.update(RepetitionRulesTable.TABLE, values, selection, selectionArgs);
                 if (rowsUpdated > 0) {
-                    getContext().getContentResolver().notifyChange(REPETITION_RULES_URI, null);
+                    helper.notifyChange(REPETITION_RULES_URI);
                 }
                 return rowsUpdated;
             case DEPENDENCIES:
                 rowsUpdated = sqlDB.update(InstanceDependencyTable.TABLE, values, selection, selectionArgs);
                 if (rowsUpdated > 0) {
-                    getContext().getContentResolver().notifyChange(DEPENDENCY_URI, null);
+                    helper.notifyChange(DEPENDENCY_URI);
                 }
                 return rowsUpdated;
             default:

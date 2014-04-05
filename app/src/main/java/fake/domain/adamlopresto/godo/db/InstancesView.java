@@ -2,9 +2,6 @@ package fake.domain.adamlopresto.godo.db;
 
 import android.database.sqlite.SQLiteDatabase;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
 public class InstancesView {
 
     public static final String VIEW = "instances_view";
@@ -53,25 +50,10 @@ public class InstancesView {
         );
     }
 
-    public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public static void onUpgrade(SQLiteDatabase db, int oldVersion) {
         if (oldVersion < 3) {
             db.execSQL("DROP VIEW " + VIEW);
             onCreate(db);
-        }
-    }
-
-    public static void checkColumns(String[] projection) {
-        String[] available = {
-                COLUMN_ID,
-        };
-        if (projection != null) {
-            HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
-            HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));
-            requestedColumns.removeAll(availableColumns);
-            // Check if all columns which are requested are available
-            if (!requestedColumns.isEmpty()) {
-                throw new IllegalArgumentException("Unknown columns in projection: " + requestedColumns);
-            }
         }
     }
 }

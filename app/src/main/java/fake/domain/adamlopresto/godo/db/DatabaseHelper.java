@@ -2,8 +2,11 @@ package fake.domain.adamlopresto.godo.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -52,21 +55,41 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		TasksTable.onUpgrade(db, oldVersion, newVersion);
-		InstancesTable.onUpgrade(db, oldVersion, newVersion);
-		ContextsTable.onUpgrade(db, oldVersion, newVersion);
-		TaskContextTable.onUpgrade(db, oldVersion, newVersion);
-		InstanceDependencyTable.onUpgrade(db, oldVersion, newVersion);
-		InstancesView.onUpgrade(db, oldVersion, newVersion);
-		RepetitionRulesTable.onUpgrade(db, oldVersion, newVersion);
+		TasksTable.onUpgrade(db, oldVersion);
+		InstancesTable.onUpgrade(db, oldVersion);
+		//ContextsTable.onUpgrade(db, oldVersion, newVersion);
+		//TaskContextTable.onUpgrade(db, oldVersion, newVersion);
+		//InstanceDependencyTable.onUpgrade(db, oldVersion, newVersion);
+		InstancesView.onUpgrade(db, oldVersion);
+		RepetitionRulesTable.onUpgrade(db, oldVersion);
 	}
-	
-	@Override
+
+    @NotNull
+    @Override
+    public SQLiteDatabase getReadableDatabase() {
+        SQLiteDatabase db = super.getReadableDatabase();
+        if (db == null) {
+           throw new SQLiteException("getReadableDatabase returned null") ;
+        }
+        return db;
+    }
+
+    @NotNull
+    @Override
+    public SQLiteDatabase getWritableDatabase() {
+        SQLiteDatabase db = super.getWritableDatabase();
+        if (db == null) {
+            throw new SQLiteException("getWritableDatabase returned null") ;
+        }
+        return db;
+    }
+
+    @Override
 	public void onOpen(SQLiteDatabase db){
 		db.execSQL("PRAGMA foreign_keys = ON;");
 	}
 
-	public void notifyChange(Uri uri){
+    public void notifyChange(Uri uri){
 		context.getContentResolver().notifyChange(uri, null);
 	}
 	

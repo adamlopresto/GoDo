@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -27,8 +26,8 @@ import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 
 public class TaskerPluginEditActivity extends Activity {
 
-	private ArrayList<String> activate   = new ArrayList<String>();
-	private ArrayList<String> deactivate = new ArrayList<String>();
+	private final ArrayList<String> activate   = new ArrayList<String>();
+	private final ArrayList<String> deactivate = new ArrayList<String>();
 	private TextView activate_view;
 	private TextView deactivate_view;
 	private Spinner maxNotify;
@@ -39,8 +38,8 @@ public class TaskerPluginEditActivity extends Activity {
 		setContentView(R.layout.activity_tasker_plugin_edit);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
-		((Button)findViewById(R.id.activate_button)).setOnClickListener(new EditButtonClickListener(activate));
-		((Button)findViewById(R.id.deactivate_button)).setOnClickListener(new EditButtonClickListener(deactivate));
+		findViewById(R.id.activate_button).setOnClickListener(new EditButtonClickListener(activate));
+		findViewById(R.id.deactivate_button).setOnClickListener(new EditButtonClickListener(deactivate));
 		
 		activate_view = (TextView)findViewById(R.id.activate);
 		deactivate_view = (TextView)findViewById(R.id.deactivate);
@@ -136,7 +135,7 @@ public class TaskerPluginEditActivity extends Activity {
 	
 	private class EditButtonClickListener implements OnClickListener {
 		
-		private ArrayList<String> list;
+		private final ArrayList<String> list;
 		
 		public EditButtonClickListener(ArrayList<String> list){
 			this.list = list;

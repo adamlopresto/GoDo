@@ -2,7 +2,7 @@ apply plugin: 'android'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "19.0.3"
+    buildToolsVersion '19.0.3'
 
     defaultConfig {
         minSdkVersion 15
@@ -19,4 +19,5 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:+'
+    compile 'com.intellij:annotations:+@jar'
 }

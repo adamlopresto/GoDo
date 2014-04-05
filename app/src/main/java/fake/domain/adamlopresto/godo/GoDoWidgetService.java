@@ -28,7 +28,7 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public final static int DUE_DATE = 2;
     public final static int PLAN_DATE = 3;
     Cursor cursor;
-    Context context;
+    final Context context;
 
     GoDoViewsFactory(Context context) {
         Log.e("GoDo", "Creating new factory");
@@ -63,9 +63,9 @@ class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         cursor.moveToPosition(position);
         RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.app_widget_item);
         rv.setTextViewText(android.R.id.text1, cursor.getString(TASK_NAME));
-        if (DateCalc.isBeforeNow(cursor.getString(DUE_DATE)))
+        if (Utils.isBeforeNow(cursor.getString(DUE_DATE)))
             rv.setTextColor(android.R.id.text1, Color.RED);
-        else if (DateCalc.isAfterNow(cursor.getString(PLAN_DATE)))
+        else if (Utils.isAfterNow(cursor.getString(PLAN_DATE)))
             rv.setTextColor(android.R.id.text1, Color.GRAY);
         else
             rv.setTextColor(android.R.id.text1, Color.WHITE);

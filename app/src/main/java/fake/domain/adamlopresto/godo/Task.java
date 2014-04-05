@@ -61,7 +61,7 @@ public class Task {
     }
 
     public static Task get(DatabaseHelper helper, long id) {
-        Task task = cache.get(Long.valueOf(id));
+        Task task = cache.get(id);
         if (task != null)
             return task;
         SQLiteDatabase db = helper.getReadableDatabase();
@@ -77,7 +77,7 @@ public class Task {
         task = new Task(helper, id, c.getString(0), c.getString(1),
                 NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)],
                 NotificationLevels.values()[c.getInt(4)]);
-        cache.put(Long.valueOf(id), task);
+        cache.put(id, task);
         return task;
     }
 	

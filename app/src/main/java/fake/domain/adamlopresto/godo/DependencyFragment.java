@@ -40,6 +40,8 @@ public class DependencyFragment extends ListFragment
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             // Inflate a menu resource providing context menu items
             MenuInflater inflater = mode.getMenuInflater();
+            if (inflater == null)
+                inflater = new MenuInflater(getActivity());
             inflater.inflate(R.menu.context_edit_delete, menu);
             editItem = menu.findItem(R.id.edit);
             mode.setTitle(prereq() ? "Prerequesites" : "Next Steps");
@@ -102,10 +104,6 @@ public class DependencyFragment extends ListFragment
     public DependencyFragment() {
     }
 
-    public static DependencyFragment newInstance() {
-        return new DependencyFragment();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,6 +148,7 @@ public class DependencyFragment extends ListFragment
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        assert c != null;
                                         c.moveToPosition(which);
                                         ContentValues cv = new ContentValues(2);
                                         if (prereq()) {

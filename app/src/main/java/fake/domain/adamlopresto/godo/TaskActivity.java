@@ -140,7 +140,8 @@ public class TaskActivity extends FragmentActivity implements
 		}
 	}
 
-	private boolean extractTaskAndOrInstanceFromBundle(Bundle bundle) {
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private boolean extractTaskAndOrInstanceFromBundle(Bundle bundle) {
 		if (bundle == null)
 			return false;
 		long instance_id = bundle.getLong("instance", -1L);
@@ -209,7 +210,7 @@ public class TaskActivity extends FragmentActivity implements
 			final ArrayList<Long> orig = new ArrayList<Long>(cursor.getCount());
 			cursor.moveToFirst();
 			while (!cursor.isAfterLast()){
-				orig.add(Long.valueOf(cursor.getLong(0)));
+				orig.add(cursor.getLong(0));
 				cursor.moveToNext();
 			}
 			cursor.moveToFirst();

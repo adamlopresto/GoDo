@@ -129,14 +129,14 @@ public class TaskDetailsFragment extends Fragment {
         if (date == null)
             return "No date";
         else
-            return DateCalc.formatLongRelativeDate(date);
+            return Utils.formatLongRelativeDate(date);
     }
 
     private String timeString(boolean hasTime, Date date) {
         if (!hasTime || date == null)
             return "No time";
         else
-            return DateCalc.SHORTTIME.format(date);
+            return Utils.SHORT_TIME.format(date);
     }
 
     @Override
@@ -210,6 +210,7 @@ public class TaskDetailsFragment extends Fragment {
             dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Set", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    //noinspection MagicConstant
                     cal.set(dp.getYear(), dp.getMonth(), dp.getDayOfMonth());
                     switch (col) {
                         case NEW_START:

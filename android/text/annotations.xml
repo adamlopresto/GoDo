@@ -1,0 +1,7 @@
+<root>
+    <item name='android.text.TextUtils boolean isEmpty(java.lang.CharSequence)'>
+        <annotation name='org.jetbrains.annotations.Contract'>
+            <val val="&quot;null -&gt; true&quot;" />
+        </annotation>
+    </item>
+</root>

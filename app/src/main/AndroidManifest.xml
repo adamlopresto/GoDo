@@ -34,7 +34,8 @@
         <activity
             android:name="fake.domain.adamlopresto.godo.ContextsActivity"
             android:label="@string/title_activity_contexts"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />

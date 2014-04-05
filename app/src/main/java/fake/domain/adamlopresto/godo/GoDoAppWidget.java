@@ -51,6 +51,9 @@ public class GoDoAppWidget extends AppWidgetProvider {
     public static void updateAllAppWidgets(Context context) {
         Log.e("GoDo", "GoDoAppWidget.updateAllAppWidgets", new Throwable());
         AppWidgetManager man = AppWidgetManager.getInstance(context);
+        if (man == null) {
+           return;
+        }
         ComponentName widget = new ComponentName(context, GoDoAppWidget.class);
         man.notifyAppWidgetViewDataChanged(man.getAppWidgetIds(widget), android.R.id.list);
     }

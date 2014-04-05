@@ -1,6 +1,7 @@
 package fake.domain.adamlopresto.godo;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.LoaderManager;
@@ -61,6 +62,9 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 // Inflate a menu resource providing context menu items
                 MenuInflater inflater = mode.getMenuInflater();
+                if (inflater == null) {
+                    inflater = new MenuInflater(ContextsActivity.this);
+                }
                 inflater.inflate(R.menu.context_edit_delete, menu);
                 editItem = menu.findItem(R.id.edit);
                 mode.setTitle("Contexts");
@@ -81,24 +85,26 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
                     case R.id.edit: {
                         AlertDialog.Builder b = new AlertDialog.Builder(ContextsActivity.this);
                         @SuppressLint("InflateParams") View inner = LayoutInflater.from(b.getContext()).inflate(R.layout.context_details, null);
+                        assert inner != null;
                         final EditText name = (EditText) inner.findViewById(R.id.context_name);
-                        final EditText desc = (EditText) inner.findViewById(R.id.context_desciption);
+                        final EditText desc = (EditText) inner.findViewById(R.id.context_description);
 
                         final long id = getListView().getCheckedItemIds()[0];
                         Cursor c = getContentResolver().query(GoDoContentProvider.CONTEXTS_URI,
                                 new String[]{ContextsTable.COLUMN_NAME, ContextsTable.COLUMN_DESC},
                                 ContextsTable.COLUMN_ID + "=?",
                                 new String[]{String.valueOf(id)}, null);
-                        c.moveToFirst();
-                        name.setText(c.getString(0));
-                        desc.setText(c.getString(1));
+                        if (c != null && c.moveToFirst()) {
+                            name.setText(c.getString(0));
+                            desc.setText(c.getString(1));
+                        }
 
                         b.setView(inner).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 ContentValues values = new ContentValues(2);
-                                values.put(ContextsTable.COLUMN_NAME, name.getText().toString());
-                                values.put(ContextsTable.COLUMN_DESC, desc.getText().toString());
+                                values.put(ContextsTable.COLUMN_NAME, Utils.getString(name));
+                                values.put(ContextsTable.COLUMN_DESC, Utils.getString(desc));
 
                                 getContentResolver().update(GoDoContentProvider.CONTEXTS_URI, values,
                                         ContextsTable.COLUMN_ID + "=?",
@@ -151,7 +157,9 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contexts);
         // Show the Up button in the action bar.
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
         adapter = new SimpleCursorAdapter(this, R.layout.item_active_contexts, null,
                 projection,
@@ -201,15 +209,16 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
             case R.id.action_new_context:
                 AlertDialog.Builder b = new AlertDialog.Builder(ContextsActivity.this);
                 @SuppressLint("InflateParams") View inner = LayoutInflater.from(b.getContext()).inflate(R.layout.context_details, null);
+                assert inner != null;
                 final EditText name = (EditText) inner.findViewById(R.id.context_name);
-                final EditText desc = (EditText) inner.findViewById(R.id.context_desciption);
+                final EditText desc = (EditText) inner.findViewById(R.id.context_description);
 
                 b.setView(inner).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         ContentValues values = new ContentValues(2);
-                        values.put(ContextsTable.COLUMN_NAME, name.getText().toString());
-                        values.put(ContextsTable.COLUMN_DESC, desc.getText().toString());
+                        values.put(ContextsTable.COLUMN_NAME, Utils.getString(name));
+                        values.put(ContextsTable.COLUMN_DESC, Utils.getString(desc));
 
                         getContentResolver().insert(GoDoContentProvider.CONTEXTS_URI, values);
                     }

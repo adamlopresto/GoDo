@@ -50,7 +50,7 @@ public class NotificationService extends Service {
 
         try {
             if (nextDateString != null) {
-                Date date = null;
+                Date date;
                 boolean quiet = false;
                 if (nextDateString.length() > 10) {
                     date = DatabaseHelper.dateTimeFormatter.parse(nextDateString);
@@ -105,7 +105,6 @@ public class NotificationService extends Service {
                 "case when due_date <= DATETIME('now', 'localtime') then due_date || ' 23:59:59' else '9999-99-99' end, " +
                         "coalesce(plan_date || ' 23:59:59', DATETIME('now', 'localtime')), due_date || ' 23:59:59' , notification DESC, random()"
         );
-        c.moveToFirst();
 
         int numToNotify = 0;
         boolean audible = false;
@@ -116,42 +115,46 @@ public class NotificationService extends Service {
         String instanceNotes = null;
         final ArrayList<String> spoken = new ArrayList<String>();
         long id = -1L;
-        while (!c.isAfterLast()) {
-            SpannableStringBuilder sb = new SpannableStringBuilder();
-            numToNotify++;
-            name = c.getString(0);
-            sb.append(name);
-            sb.setSpan(new ForegroundColorSpan(Color.WHITE), 0,
-                    name.length(), 0);
-            taskNotes = c.getString(1);
-            if (!TextUtils.isEmpty(taskNotes)) {
-                sb.append(" ");
-                sb.append(taskNotes);
-            }
-            instanceNotes = c.getString(2);
-            if (!TextUtils.isEmpty(instanceNotes)) {
-                sb.append(" ");
-                sb.append(instanceNotes);
-            }
-            inbox.addLine(sb);
+        if (c != null) {
+            c.moveToFirst();
+            while (!c.isAfterLast()) {
+                SpannableStringBuilder sb = new SpannableStringBuilder();
+                numToNotify++;
+                name = c.getString(0);
+                if (!TextUtils.isEmpty(name)) {
+                    sb.append(name);
+                    sb.setSpan(new ForegroundColorSpan(Color.WHITE), 0,
+                            name.length(), 0);
+                    taskNotes = c.getString(1);
+                    if (!TextUtils.isEmpty(taskNotes)) {
+                        sb.append(' ');
+                        sb.append(taskNotes);
+                    }
+                    instanceNotes = c.getString(2);
+                    if (!TextUtils.isEmpty(instanceNotes)) {
+                        sb.append(' ');
+                        sb.append(instanceNotes);
+                    }
+                    inbox.addLine(sb);
 
-            switch (NotificationLevels.values()[Math.min(c.getInt(3), max)]) {
-                case SPOKEN:
-                    spoken.add(name);
-                    break;
-                case NOISY:
-                    audible = true;
-                case VIBRATE:
-                    vibrate = true;
-                default:
-                    break;
-            }
+                    switch (NotificationLevels.values()[Math.min(c.getInt(3), max)]) {
+                        case SPOKEN:
+                            spoken.add(name);
+                            break;
+                        case NOISY:
+                            audible = true;
+                        case VIBRATE:
+                            vibrate = true;
+                        default:
+                            break;
+                    }
 
-            id = c.getLong(4);
-            c.moveToNext();
+                    id = c.getLong(4);
+                }
+                c.moveToNext();
+            }
+            c.close();
         }
-
-        c.close();
 
         if (numToNotify > 0) {
 
@@ -310,7 +313,7 @@ public class NotificationService extends Service {
      *
      * @param s1 first string to compare
      * @param s2 second string to compare
-     * @return
+     * @return whichever string is first alphabetically
      */
     private String stringMin(String s1, String s2) {
         if (s1 == null)

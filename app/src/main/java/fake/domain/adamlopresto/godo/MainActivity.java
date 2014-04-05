@@ -56,6 +56,8 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             // Inflate a menu resource providing context menu items
             MenuInflater inflater = mode.getMenuInflater();
+            if (inflater == null)
+               inflater = new MenuInflater(MainActivity.this);
             inflater.inflate(R.menu.main_cab, menu);
             editItem = menu.findItem(R.id.edit);
             mode.setTitle("Tasks");
@@ -87,7 +89,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
                     mode.finish();
                     return true;
 
-                case R.id.create_nextstep:
+                case R.id.create_next_step:
                     startActivity(new Intent(MainActivity.this, TaskActivity.class)
                             .putExtra("prereq", getListView().getCheckedItemIds()));
                     mode.finish();
@@ -139,65 +141,6 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         getListView().setMultiChoiceModeListener(mActionModeCallback);
 
         adapter = new TaskAdapter(this, null, true);
-        /*
-		adapter = new SimpleCursorAdapter(this, R.layout.main_list_item, null,
-				new String[]{ "task_name",    "task_notes",    "instance_notes",    "due_date",    "plan_date", "done_date"},
-				new int[]{R.id.task_name, R.id.task_notes, R.id.instance_notes, R.id.due_date, R.id.plan_date, R.id.check}, 
-				0);
-		adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder(){ 
-			
-			@SuppressWarnings("unused")
-			private static final int ID = 0;
-			@SuppressWarnings("unused")
-			private static final int TASK_NAME = 1;
-			@SuppressWarnings("unused")
-			private static final int TASK_NOTES = 2;
-			@SuppressWarnings("unused")
-			private static final int INSTANCE_NOTES = 3;
-			private static final int DUE_DATE = 4;
-			private static final int PLAN_DATE = 5;
-			private static final int DONE_DATE = 6;
-			
-			@Override
-			public boolean setViewValue(View view, Cursor cursor,
-					int columnIndex) {
-				if (cursor.isNull(columnIndex) && columnIndex != DONE_DATE){
-					view.setVisibility(View.GONE);
-					return true;
-				}
-				TextView tv = (TextView)view;
-				view.setVisibility(View.VISIBLE);
-				boolean done = !cursor.isNull(DONE_DATE);
-				if (!done){
-					tv.setPaintFlags(tv.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG); 
-				} else { 
-					tv.setPaintFlags(tv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-				}
-				
-				if (DateCalc.isBeforeNow(cursor.getString(DUE_DATE)))
-					tv.setTextColor(Color.RED);
-				else if (DateCalc.isAfterNow(cursor.getString(PLAN_DATE)))
-					tv.setTextColor(Color.GRAY);
-				else
-					tv.setTextColor(Color.BLACK);
-				
-				switch (columnIndex){
-				case DUE_DATE:
-					tv.setText("D: "+DateCalc.formatShortRelativeDate(cursor.getString(columnIndex)));
-					return true;
-				case PLAN_DATE:
-					tv.setText("P: "+DateCalc.formatShortRelativeDate(cursor.getString(columnIndex)));
-					return true;
-				case DONE_DATE:
-					((CheckBox)view).setChecked(done);
-					return true;
-				}
-					
-				return false;
-			}
-			
-		});
-		*/
 
         setListAdapter(adapter);
         getLoaderManager().restartLoader(0, null, this);
@@ -268,12 +211,12 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        assert cursor != null;
                                         cursor.moveToPosition(which);
                                         long id = cursor.getLong(0);
                                         Intent i = new Intent(MainActivity.this, TaskActivity.class);
                                         i.putExtra("task", id);
                                         startActivity(i);
-
                                     }
 
                                 }

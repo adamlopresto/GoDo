@@ -24,7 +24,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge" 
         />
     <EditText 
-        android:id="@+id/context_desciption"
+        android:id="@+id/context_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textCapSentences"/>

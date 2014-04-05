@@ -27,10 +27,6 @@ public class TaskHistoryFragment extends ListFragment
     public TaskHistoryFragment() {
     }
 
-    public static TaskHistoryFragment newInstance() {
-        return new TaskHistoryFragment();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,7 +128,7 @@ public class TaskHistoryFragment extends ListFragment
                 if (sb.length() > 0)
                     sb.append("\n");
                 sb.append(label);
-                sb.append(DateCalc.formatShortRelativeDate(tmp));
+                sb.append(Utils.formatShortRelativeDate(tmp));
             }
         }
 

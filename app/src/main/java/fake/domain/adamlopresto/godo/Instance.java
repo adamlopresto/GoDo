@@ -26,8 +26,9 @@ public class Instance {
     private boolean hasDueTime;
     private Date doneDate;
 
-    @SuppressWarnings("FieldCanBeLocal")
-    private Date createDate;
+// --Commented out by Inspection START (4/5/2014 1:24 PM):
+//    private Date createDate;
+// --Commented out by Inspection STOP (4/5/2014 1:24 PM)
 
     public Instance(DatabaseHelper helper, Context context) {
         this(helper, new Task(helper, context));
@@ -41,7 +42,7 @@ public class Instance {
     private Instance(DatabaseHelper helper, long id, Task task, String notes,
                      Date startDate, boolean hasStartTime, Date planDate, boolean hasPlanTime,
                      Date dueDate, boolean hasDueTime,
-                     Date doneDate, Date createDate) {
+                     Date doneDate) {
         this.helper = helper;
         this.id = id;
         this.notes = notes;
@@ -53,7 +54,7 @@ public class Instance {
         this.dueDate = dueDate;
         this.hasDueTime = hasDueTime;
         this.doneDate = doneDate;
-        this.createDate = createDate;
+        //this.createDate = createDate;
     }
 
     public static Instance get(DatabaseHelper helper, long id) {
@@ -61,8 +62,7 @@ public class Instance {
         Cursor c = db.query(InstancesTable.TABLE,
                 new String[]{InstancesTable.COLUMN_TASK, InstancesTable.COLUMN_NOTES,
                         InstancesTable.COLUMN_START_DATE, InstancesTable.COLUMN_PLAN_DATE,
-                        InstancesTable.COLUMN_DUE_DATE, InstancesTable.COLUMN_DONE_DATE,
-                        InstancesTable.COLUMN_CREATE_DATE},
+                        InstancesTable.COLUMN_DUE_DATE, InstancesTable.COLUMN_DONE_DATE},
                 InstancesTable.COLUMN_ID + "=?", new String[]{String.valueOf(id)}, null, null, null
         );
         if (!c.moveToFirst()) {
@@ -83,12 +83,9 @@ public class Instance {
         s = c.getString(5);
         Date doneDate = getDate(s);
 
-        s = c.getString(6);
-        Date createDate = getDate(s);
-
         return new Instance(helper, id, Task.get(helper, c.getLong(0)), c.getString(1),
                 startDate, hasStartTime, planDate, hasPlanTime, dueDate, hasDueTime,
-                doneDate, createDate);
+                doneDate);
     }
 
     private static Date getDate(String dateString) {

@@ -2,9 +2,6 @@ package fake.domain.adamlopresto.godo.db;
 
 import android.database.sqlite.SQLiteDatabase;
 
-import java.util.Arrays;
-import java.util.HashSet;
-
 public class TasksTable {
     public static final String TABLE = "tasks";
 
@@ -36,7 +33,7 @@ public class TasksTable {
         );
     }
 
-    public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public static void onUpgrade(SQLiteDatabase db, int oldVersion) {
         if (oldVersion < 3) {
             db.execSQL("ALTER TABLE " + TABLE
                             + " ADD COLUMN " + COLUMN_DUE_NOTIFICATION + " INTEGER"
@@ -44,22 +41,4 @@ public class TasksTable {
         }
     }
 
-    public static void checkColumns(String[] projection) {
-        String[] available = {
-                COLUMN_ID,
-                COLUMN_NAME,
-                COLUMN_NOTES,
-                COLUMN_NOTIFICATION,
-                COLUMN_DUE_NOTIFICATION,
-        };
-        if (projection != null) {
-            HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
-            HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));
-            requestedColumns.removeAll(availableColumns);
-            // Check if all columns which are requested are available
-            if (!requestedColumns.isEmpty()) {
-                throw new IllegalArgumentException("Unknown columns in projection: " + requestedColumns);
-            }
-        }
-    }
 }

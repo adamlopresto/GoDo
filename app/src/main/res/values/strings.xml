@@ -59,7 +59,7 @@
     <string name="pick_from_list">Pick from list</string>
     <string name="new_from_template">New from template</string>
     <string name="new_prereq">Create prerequisite</string>
-    <string name="new_nextstep">Create next step</string>
+    <string name="new_next_step">Create next step</string>
     <string name="mark_complete">Mark complete</string>
 
 </resources>

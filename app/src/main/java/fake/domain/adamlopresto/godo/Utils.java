@@ -1,6 +1,7 @@
 package fake.domain.adamlopresto.godo;
 
 import android.annotation.SuppressLint;
+import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -13,13 +14,12 @@ import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 
 
 @SuppressLint("SimpleDateFormat")
-public abstract class DateCalc {
-
-    public static final DateFormat SHORTTIME = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT);
+public abstract class Utils {
+    public static final DateFormat SHORT_TIME = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT);
     private static final SimpleDateFormat weekday = new SimpleDateFormat("EEEE");
-    private static final DateFormat SHORTDATE = new SimpleDateFormat("MMM d");
-    private static final DateFormat SHORTDATEWITHYEAR = new SimpleDateFormat("MMM d, yyyy");
-    private static final DateFormat REALLYSHORTTIME = new SimpleDateFormat("h a");
+    private static final DateFormat SHORT_DATE = new SimpleDateFormat("MMM d");
+    private static final DateFormat SHORT_DATE_WITH_YEAR = new SimpleDateFormat("MMM d, yyyy");
+    private static final DateFormat REALLY_SHORT_TIME = new SimpleDateFormat("h a");
 
     public static String formatShortRelativeDate(Date then, boolean hasTime) {
         Calendar now = new GregorianCalendar();
@@ -50,9 +50,9 @@ public abstract class DateCalc {
         else if (diff < 0 && diff >= -7)
             date = "Last " + weekday.format(then);
         else if (thenCal.get(Calendar.YEAR) == now.get(Calendar.YEAR))
-            date = SHORTDATE.format(then);
+            date = SHORT_DATE.format(then);
         else
-            date = SHORTDATEWITHYEAR.format(then);
+            date = SHORT_DATE_WITH_YEAR.format(then);
 
         if (!hasTime)
             return date;
@@ -60,9 +60,9 @@ public abstract class DateCalc {
         thenCal.setTime(then);
         String time;
         if (thenCal.get(Calendar.MINUTE) == 0)
-            time = REALLYSHORTTIME.format(then);
+            time = REALLY_SHORT_TIME.format(then);
         else
-            time = SHORTTIME.format(then);
+            time = SHORT_TIME.format(then);
 
         if (diff == 0)
             return time;
@@ -97,9 +97,9 @@ public abstract class DateCalc {
         else if (diff < 0 && diff >= -7)
             return "Last " + weekday.format(then);
         else if (thenCal.get(Calendar.YEAR) == now.get(Calendar.YEAR))
-            return SHORTDATE.format(then);
+            return SHORT_DATE.format(then);
         else
-            return SHORTDATEWITHYEAR.format(then);
+            return SHORT_DATE_WITH_YEAR.format(then);
     }
 
     public static String formatShortRelativeDate(String formattedDate) {
@@ -144,5 +144,12 @@ public abstract class DateCalc {
             return formattedDate.compareTo(DatabaseHelper.dateTimeFormatter.format(new Date())) > 0;
         else
             return formattedDate.compareTo(DatabaseHelper.dateFormatter.format(new Date())) > 0;
+    }
+
+    public static String getString(TextView view){
+        CharSequence seq = view.getText();
+        if (seq == null)
+            return null;
+        return seq.toString();
     }
 }

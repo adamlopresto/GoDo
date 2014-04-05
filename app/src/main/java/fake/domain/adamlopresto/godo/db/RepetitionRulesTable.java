@@ -29,27 +29,8 @@ public class RepetitionRulesTable {
 		db.execSQL("CREATE INDEX repetition_task ON "+TABLE+" ("+COLUMN_TASK+")");
 	}
 
-	public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
+	public static void onUpgrade(SQLiteDatabase db, int oldVersion){
 		if (oldVersion < 2)
 			onCreate(db);
-	}
-
-	public static void checkColumns(String[] projection) {
-		throw new UnsupportedOperationException("Not yet implemented");
-		/*
-		String[] available = { COLUMN_ID, 
-				COLUMN_TASK,
-				
-		};
-		if (projection != null) {
-			HashSet<String> requestedColumns = new HashSet<String>(Arrays.asList(projection));
-			HashSet<String> availableColumns = new HashSet<String>(Arrays.asList(available));
-			requestedColumns.removeAll(availableColumns);
-			// Check if all columns which are requested are available
-			if (!requestedColumns.isEmpty()) {
-				throw new IllegalArgumentException("Unknown columns in projection: "+requestedColumns);
-			}
-		}
-		*/
 	}
 }

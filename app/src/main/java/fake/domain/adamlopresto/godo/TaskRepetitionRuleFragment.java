@@ -129,10 +129,6 @@ public class TaskRepetitionRuleFragment extends ListFragment
     public TaskRepetitionRuleFragment() {
     }
 
-    public static TaskRepetitionRuleFragment newInstance() {
-        return new TaskRepetitionRuleFragment();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,7 +142,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
 
             @Override
             public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-                String to = null;
+                String to;
                 switch (cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TO))) {
                     case 0:
                         to = "Starts ";
@@ -161,7 +157,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
                         to = "Error: to column is unexpectedly " + cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TO));
                 }
 
-                String from = null;
+                String from;
                 switch (cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_FROM))) {
                     case 0:
                         from = "new start date";
@@ -193,7 +189,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
                 subvalue = subvalue.replace("-", "");
                 String s = subvalue.equals("1") ? "" : "s";
 
-                String full = null;
+                String full;
                 switch (cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TYPE))) {
                     case 0:
                         full = to + subvalue + " day" + s + direction + from;

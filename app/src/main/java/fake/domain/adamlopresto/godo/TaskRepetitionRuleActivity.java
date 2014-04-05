@@ -17,6 +17,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jetbrains.annotations.NotNull;
+
 import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
 
 public class TaskRepetitionRuleActivity extends Activity {
@@ -162,7 +164,8 @@ public class TaskRepetitionRuleActivity extends Activity {
 		}
 	}
 
-	private boolean extractFromBundle(Bundle bundle) {
+	@SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private boolean extractFromBundle(Bundle bundle) {
 		if (bundle == null){
 			return false;
 		} else if ((rule_id = bundle.getLong("rule", -1L)) != -1L){
@@ -216,7 +219,7 @@ public class TaskRepetitionRuleActivity extends Activity {
 		String subValue = "";
 		switch (ruleType.getSelectedItemPosition()) {
 		case 2:
-			StringBuffer b = new StringBuffer();
+			StringBuilder b = new StringBuilder();
 			if (weekdays[0].isChecked())
 				b.append(",Su");
 			if (weekdays[1].isChecked())
@@ -256,7 +259,7 @@ public class TaskRepetitionRuleActivity extends Activity {
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
+	protected void onSaveInstanceState(@NotNull Bundle outState) {
 		super.onSaveInstanceState(outState);
 		saveData();
 		if (task_id != -1L)

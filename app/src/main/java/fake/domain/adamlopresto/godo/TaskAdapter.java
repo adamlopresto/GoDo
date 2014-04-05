@@ -54,9 +54,9 @@ public class TaskAdapter extends ResourceCursorAdapter {
         TaskHolder holder = (TaskHolder) v.getTag();
         boolean done = !cursor.isNull(DONE_DATE);
         String dueDate = cursor.getString(DUE_DATE);
-        boolean overdue = DateCalc.isBeforeNow(dueDate);
+        boolean overdue = Utils.isBeforeNow(dueDate);
         String planDate = cursor.getString(PLAN_DATE);
-        boolean future = DateCalc.isAfterNow(planDate);
+        boolean future = Utils.isAfterNow(planDate);
         holder.done.setChecked(done);
         setTextView(holder.name, cursor.getString(TASK_NAME), done, overdue, future);
         setTextView(holder.taskNotes, cursor.getString(TASK_NOTES), done, overdue, future);
@@ -68,7 +68,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
     private void setTextViewDate(TextView v, String prefix, String s, boolean done, boolean overdue,
                                  boolean future) {
         if (!hideView(v, s))
-            setTextViewInner(v, prefix + DateCalc.formatShortRelativeDate(s), done, overdue, future);
+            setTextViewInner(v, prefix + Utils.formatShortRelativeDate(s), done, overdue, future);
     }
 
     private void setTextView(TextView v, String s, boolean done, boolean overdue,
@@ -95,6 +95,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
             v.setTextColor(Color.BLACK);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean hideView(TextView v, String s) {
         if (TextUtils.isEmpty(s)) {
             v.setVisibility(View.GONE);
