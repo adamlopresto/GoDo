@@ -1,6 +1,7 @@
 package fake.domain.adamlopresto.godo;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -36,8 +37,11 @@ public class TaskerPluginEditActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tasker_plugin_edit);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
+
 		findViewById(R.id.activate_button).setOnClickListener(new EditButtonClickListener(activate));
 		findViewById(R.id.deactivate_button).setOnClickListener(new EditButtonClickListener(deactivate));
 		

@@ -35,21 +35,20 @@ public class GoDoAppWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.action_new_task,
                 stackBuilder.getPendingIntent(2, PendingIntent.FLAG_UPDATE_CURRENT));
 
-        Intent recog = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        recog.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        recog.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
-        recog.putExtra(RecognizerIntent.EXTRA_PROMPT, context.getText(R.string.task_name_hint));
-        recog.putExtra(RecognizerIntent.EXTRA_RESULTS_PENDINGINTENT,
+        Intent recognizer = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        recognizer.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        recognizer.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+        recognizer.putExtra(RecognizerIntent.EXTRA_PROMPT, context.getText(R.string.task_name_hint));
+        recognizer.putExtra(RecognizerIntent.EXTRA_RESULTS_PENDINGINTENT,
                 stackBuilder.getPendingIntent(3, PendingIntent.FLAG_UPDATE_CURRENT));
         views.setOnClickPendingIntent(R.id.action_new_task_voice,
-                PendingIntent.getActivity(context, 0, recog, PendingIntent.FLAG_UPDATE_CURRENT));
+                PendingIntent.getActivity(context, 0, recognizer, PendingIntent.FLAG_UPDATE_CURRENT));
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     public static void updateAllAppWidgets(Context context) {
-        Log.e("GoDo", "GoDoAppWidget.updateAllAppWidgets", new Throwable());
         AppWidgetManager man = AppWidgetManager.getInstance(context);
         if (man == null) {
            return;

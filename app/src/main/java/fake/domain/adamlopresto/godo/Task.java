@@ -219,7 +219,10 @@ public class Task {
 			case WEEKDAY:
 				int step = 1;
 				String days = rules.getString(3);
-				if (days.startsWith("-"))
+                if (days == null)
+                    break;
+
+                if (days.startsWith("-"))
 					step = -1;
 
 				boolean done = false;

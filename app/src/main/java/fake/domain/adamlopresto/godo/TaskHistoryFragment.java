@@ -118,7 +118,9 @@ public class TaskHistoryFragment extends ListFragment
         @Override
         public View newView(Context context, Cursor cursor, ViewGroup parent) {
             View v = super.newView(context, cursor, parent);
-            v.setMinimumHeight(0);
+            if (v != null) {
+                v.setMinimumHeight(0);
+            }
             return v;
         }
 

@@ -57,6 +57,9 @@ public class TaskRepetitionRuleFragment extends ListFragment
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             // Inflate a menu resource providing context menu items
             MenuInflater inflater = mode.getMenuInflater();
+            if (inflater == null) {
+                inflater = new MenuInflater(getActivity());
+            }
             inflater.inflate(R.menu.context_edit_delete, menu);
             editItem = menu.findItem(R.id.edit);
             mode.setTitle("Rules");
@@ -185,6 +188,8 @@ public class TaskRepetitionRuleFragment extends ListFragment
                 }
 
                 String subvalue = cursor.getString(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_SUBVALUE));
+                if (subvalue == null)
+                    subvalue = "";
                 String direction = subvalue.startsWith("-") ? " before " : " after ";
                 subvalue = subvalue.replace("-", "");
                 String s = subvalue.equals("1") ? "" : "s";
@@ -238,7 +243,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
         lv.setMultiChoiceModeListener(mActionModeCallback);
         setListAdapter(null);
         header.setSelection(((TaskActivity) getActivity()).task.getRepeat().ordinal());
-        lv.addHeaderView(header, null, false);
+        //lv.addHeaderView(header, null, false);
         header.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> ignored, View view,

@@ -298,6 +298,9 @@ public class NotificationService extends Service {
                 new String[]{column},
                 column + " > datetime('now', 'localtime') AND done_date is null",
                 null, column + " LIMIT 1");
+        if (c == null) {
+           return null;
+        }
         c.moveToFirst();
         String nextDate = null;
         if (!c.isAfterLast())

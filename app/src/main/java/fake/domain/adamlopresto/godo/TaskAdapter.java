@@ -37,6 +37,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
         View v = super.newView(context, cursor, parent);
+        assert v != null;
         TaskHolder holder = new TaskHolder();
         holder.done = (CheckBox) v.findViewById(R.id.check);
         holder.done.setVisibility(showCheckBox ? View.VISIBLE : View.GONE);

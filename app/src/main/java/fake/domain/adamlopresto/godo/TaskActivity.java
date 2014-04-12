@@ -117,6 +117,9 @@ public class TaskActivity extends FragmentActivity implements
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        if (actionBar == null){
+            return;
+        }
 		// When swiping between different sections, select the corresponding
 		// tab. We can also use ActionBar.Tab#select() to do this if we have
 		// a reference to the Tab.
@@ -346,7 +349,7 @@ public class TaskActivity extends FragmentActivity implements
 			case 2:
 				return "History";
 			case 3:
-				return "Prerequesites";
+				return "Prerequisites";
 			case 4:
 				return "Next steps";
 			}

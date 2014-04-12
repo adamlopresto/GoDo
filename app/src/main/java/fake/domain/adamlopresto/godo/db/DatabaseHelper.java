@@ -8,6 +8,7 @@ import android.net.Uri;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -28,8 +29,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private final Context context;
 
     private DatabaseHelper(Context context) {
-        super(context, context.getExternalFilesDir(null) + "/" + DATABASE_NAME, null, CURRENT_VERSION);
+        super(context, getDatabaseName(context), null, CURRENT_VERSION);
         this.context = context;
+    }
+
+    private static String getDatabaseName (@NotNull Context context) {
+        File path = context.getExternalFilesDir(null);
+        if (path == null)
+            return DATABASE_NAME;
+        return path+"/"+DATABASE_NAME;
     }
 
     public static DatabaseHelper getInstance(Context ctx) {

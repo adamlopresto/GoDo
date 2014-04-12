@@ -44,7 +44,7 @@ public class DependencyFragment extends ListFragment
                 inflater = new MenuInflater(getActivity());
             inflater.inflate(R.menu.context_edit_delete, menu);
             editItem = menu.findItem(R.id.edit);
-            mode.setTitle(prereq() ? "Prerequesites" : "Next Steps");
+            mode.setTitle(prereq() ? "Prerequisites" : "Next Steps");
             return true;
         }
 
@@ -168,9 +168,9 @@ public class DependencyFragment extends ListFragment
                 return true;
 
             case R.id.action_new: {
-                String otherside = prereq() ? "next" : "prereq";
+                String otherSide = prereq() ? "next" : "prereq";
                 startActivity(new Intent(getActivity(), TaskActivity.class)
-                        .putExtra(otherside, new long[]{forceInstanceId()}));
+                        .putExtra(otherSide, new long[]{forceInstanceId()}));
                 return true;
             }
         }

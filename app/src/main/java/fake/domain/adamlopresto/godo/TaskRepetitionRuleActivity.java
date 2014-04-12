@@ -1,8 +1,10 @@
 package fake.domain.adamlopresto.godo;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,7 +44,9 @@ public class TaskRepetitionRuleActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_task_repetition_rule);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null)
+            actionBar.setDisplayHomeAsUpEnabled(true);
 
 		to = (Spinner) findViewById(R.id.to);
 		from = (Spinner) findViewById(R.id.from);
@@ -114,6 +118,12 @@ public class TaskRepetitionRuleActivity extends Activity {
 							RepetitionRulesTable.COLUMN_TO },
 					RepetitionRulesTable.COLUMN_ID + "=?",
 					new String[] { String.valueOf(rule_id) }, null);
+
+            if (c == null){
+                from.setSelection(3);
+                number.setText("1");
+                return;
+            }
 			c.moveToFirst();
 
 			task_id = c.getLong(c.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TASK));
@@ -127,6 +137,8 @@ public class TaskRepetitionRuleActivity extends Activity {
 			String subValue = c
 					.getString(c
 							.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_SUBVALUE));
+            if (subValue == null)
+                subValue = "";
 			if (subValue.startsWith("-")) {
 				direction.setSelection(1);
 				subValue = subValue.substring(1);
@@ -238,7 +250,7 @@ public class TaskRepetitionRuleActivity extends Activity {
 				subValue = b.substring(1);
 			break;
 		default:
-			subValue = number.getText().toString();
+			subValue = Utils.getString(number);
 		}
 		if (direction.getSelectedItemPosition() == 1) {
 			subValue = "-" + subValue;
@@ -247,9 +259,10 @@ public class TaskRepetitionRuleActivity extends Activity {
 		values.put(RepetitionRulesTable.COLUMN_SUBVALUE, subValue);
 		if (rule_id == -1L) {
 			values.put(RepetitionRulesTable.COLUMN_TASK, task_id);
-			rule_id = Long.valueOf(getContentResolver().insert(
-					GoDoContentProvider.REPETITION_RULES_URI, values)
-					.getLastPathSegment());
+            Uri newItem =  getContentResolver().insert(
+                    GoDoContentProvider.REPETITION_RULES_URI, values);
+            if (newItem != null)
+                rule_id = Long.valueOf(newItem.getLastPathSegment());
 		} else {
 			getContentResolver().update(
 					GoDoContentProvider.REPETITION_RULES_URI, values,

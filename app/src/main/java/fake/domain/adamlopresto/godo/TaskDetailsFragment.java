@@ -5,15 +5,20 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CalendarView;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -40,7 +45,7 @@ public class TaskDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_task_details, group, false);
-
+        assert v != null;
         done = (CheckBox) v.findViewById(R.id.check);
         taskName = (EditText) v.findViewById(R.id.task_name);
         taskNotes = (EditText) v.findViewById(R.id.task_notes);
@@ -163,9 +168,15 @@ public class TaskDetailsFragment extends Fragment {
 
     }
 
-    private String nullString(EditText in) {
-        String out;
-        if ("".equals(out = in.getText().toString()))
+    @Nullable
+    private String nullString(@Nullable EditText in) {
+        if (in == null)
+            return null;
+        Editable edit = in.getText();
+        if (edit == null)
+            return null;
+        String out = edit.toString();
+        if (TextUtils.isEmpty(out))
             return null;
         return out;
     }
@@ -203,10 +214,12 @@ public class TaskDetailsFragment extends Fragment {
             DatePickerDialog dlg = new DatePickerDialog(getActivity(), null,
                     cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
             final DatePicker dp = dlg.getDatePicker();
+            assert dp != null;
             dp.setSpinnersShown(false);
             dp.setCalendarViewShown(true);
             dlg.setTitle(null);
-            dp.getCalendarView().setShowWeekNumber(false);
+            CalendarView cv = dp.getCalendarView();
+            if (cv != null) cv.setShowWeekNumber(false);
             dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Set", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
