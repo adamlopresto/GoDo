@@ -7,6 +7,7 @@ public class TaskContextTable {
     public static final String TABLE = "task_context";
 
     //as of version 1
+    @SuppressWarnings("WeakerAccess")
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TASK = "task";
     public static final String COLUMN_CONTEXT = "context";
