@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 public class TaskAdapter extends ResourceCursorAdapter {
 
-    public static final String[] PROJECTION = new String[]{"_id", "task_name",
+    public static final String[] PROJECTION = {"_id", "task_name",
             "task_notes", "instance_notes", "due_date", "plan_date", "done_date"};
     public static final String SORT = "done_date is not null, " +
             "case when due_date <= DATETIME('now', 'localtime') then due_date || ' 23:59:59' else '9999-99-99' end, " +
@@ -79,7 +79,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
 
     }
 
-    private void setTextViewInner(TextView v, String s, boolean done, boolean overdue,
+    private void setTextViewInner(TextView v, CharSequence s, boolean done, boolean overdue,
                                   boolean future) {
 
         v.setText(s);
@@ -97,7 +97,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean hideView(TextView v, String s) {
+    private boolean hideView(TextView v, CharSequence s) {
         if (TextUtils.isEmpty(s)) {
             v.setVisibility(View.GONE);
             return true;

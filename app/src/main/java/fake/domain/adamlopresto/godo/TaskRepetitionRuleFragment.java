@@ -192,7 +192,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
                     subvalue = "";
                 String direction = subvalue.startsWith("-") ? " before " : " after ";
                 subvalue = subvalue.replace("-", "");
-                String s = subvalue.equals("1") ? "" : "s";
+                String s = "1".equals(subvalue) ? "" : "s";
 
                 String full;
                 switch (cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TYPE))) {

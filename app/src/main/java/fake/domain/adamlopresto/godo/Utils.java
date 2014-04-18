@@ -1,6 +1,7 @@
 package fake.domain.adamlopresto.godo;
 
 import android.annotation.SuppressLint;
+import android.text.format.DateUtils;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -38,7 +39,7 @@ public abstract class Utils {
         String date;
 
         // diff is the number of days from now to then. If then is the future, the result is positive.
-        int diff = (int) ((thenCal.getTimeInMillis() - now.getTimeInMillis()) / 24 / 60 / 60 / 1000);
+        int diff = (int) ((thenCal.getTimeInMillis() - now.getTimeInMillis()) / DateUtils.DAY_IN_MILLIS);
         if (diff == 0)
             date = "Today";
         else if (diff == -1)
@@ -85,7 +86,7 @@ public abstract class Utils {
         thenCal.set(Calendar.MILLISECOND, 0);
 
         // diff is the number of days from now to then. If then is the future, the result is positive.
-        int diff = (int) ((thenCal.getTimeInMillis() - now.getTimeInMillis()) / 24 / 60 / 60 / 1000);
+        int diff = (int) ((thenCal.getTimeInMillis() - now.getTimeInMillis()) / DateUtils.DAY_IN_MILLIS);
         if (diff == 0)
             return "Today";
         else if (diff == -1)
@@ -146,7 +147,7 @@ public abstract class Utils {
             return formattedDate.compareTo(DatabaseHelper.dateFormatter.format(new Date())) > 0;
     }
 
-    public static String getString(TextView view){
+    public static String getString(TextView view) {
         CharSequence seq = view.getText();
         if (seq == null)
             return null;

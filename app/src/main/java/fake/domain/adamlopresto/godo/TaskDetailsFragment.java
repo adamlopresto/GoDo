@@ -130,7 +130,7 @@ public class TaskDetailsFragment extends Fragment {
         }
     }
 
-    private String dateString(Date date) {
+    private CharSequence dateString(Date date) {
         if (date == null)
             return "No date";
         else

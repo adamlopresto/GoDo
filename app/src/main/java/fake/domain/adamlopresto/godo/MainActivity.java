@@ -20,7 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.CheckBox;
+import android.widget.Checkable;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
@@ -57,7 +57,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
             // Inflate a menu resource providing context menu items
             MenuInflater inflater = mode.getMenuInflater();
             if (inflater == null)
-               inflater = new MenuInflater(MainActivity.this);
+                inflater = new MenuInflater(MainActivity.this);
             inflater.inflate(R.menu.main_cab, menu);
             editItem = menu.findItem(R.id.edit);
             mode.setTitle("Tasks");
@@ -243,7 +243,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
     public void checkBoxClick(View v) {
         ListView lv = getListView();
-        CheckBox cb = (CheckBox) v;
+        Checkable cb = (Checkable) v;
         Instance inst = Instance.get(DatabaseHelper.getInstance(this), lv.getItemIdAtPosition(lv.getPositionForView(v)));
         inst.updateDone(cb.isChecked());
         inst.flush();
@@ -268,7 +268,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
             where = "";
         else
             where = "(" + where + ") or ";
-        where = where + "(length(due_date) > 10 and due_date <= DATETIME('now', 'localtime'))";
+        where += "(length(due_date) > 10 and due_date <= DATETIME('now', 'localtime'))";
 
         if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_DONE, false))
             where = DatabaseUtils.concatenateWhere(where, "done_date is null or done_date > DATETIME('now', '-1 hours', 'localtime')");

@@ -20,7 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.CheckBox;
+import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -30,7 +30,7 @@ import fake.domain.adamlopresto.godo.db.ContextsTable;
 
 public class ContextsActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private final String[] projection = new String[]{ContextsTable.COLUMN_NAME, ContextsTable.COLUMN_DESC, ContextsTable.COLUMN_ACTIVE};
+    private final String[] projection = {ContextsTable.COLUMN_NAME, ContextsTable.COLUMN_DESC, ContextsTable.COLUMN_ACTIVE};
     private final AbsListView.MultiChoiceModeListener mActionModeCallback;
     private SimpleCursorAdapter adapter;
 
@@ -170,7 +170,7 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
             @Override
             public boolean setViewValue(View v, Cursor c, int column) {
                 if (column == 3) {
-                    ((CheckBox) v).setChecked(c.getInt(column) != 0);
+                    ((Checkable) v).setChecked(c.getInt(column) != 0);
                     return true;
                 }
                 return false;

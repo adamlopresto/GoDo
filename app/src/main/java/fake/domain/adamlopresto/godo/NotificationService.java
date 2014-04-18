@@ -20,6 +20,8 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,6 +31,7 @@ import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesView;
 
 public class NotificationService extends Service {
+    @Nullable
     private static TextToSpeech tts;
 
     public NotificationService() {
@@ -169,6 +172,7 @@ public class NotificationService extends Service {
             if (audible)
                 builder.setDefaults(Notification.DEFAULT_SOUND);
             if (vibrate)
+                //noinspection MagicNumber
                 builder.setVibrate(new long[]{0, 1000, 300, 1000});
             builder.setLights(Color.GREEN, 1000, 1000);
             builder.setAutoCancel(true);
@@ -299,7 +303,7 @@ public class NotificationService extends Service {
                 column + " > datetime('now', 'localtime') AND done_date is null",
                 null, column + " LIMIT 1");
         if (c == null) {
-           return null;
+            return null;
         }
         c.moveToFirst();
         String nextDate = null;

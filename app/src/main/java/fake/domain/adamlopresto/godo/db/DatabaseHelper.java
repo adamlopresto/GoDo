@@ -17,15 +17,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     public static final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     private static final String DATABASE_NAME = "GoDo";
-	/*
+    /*
      * Version history:
-	 * 1: initial release
-	 * 2: add repetition rules
-	 * 3: add due notification
-	 * 4: all times are stored as local
-	 */
-	private static final int CURRENT_VERSION = 4;
-	private static DatabaseHelper mInstance;
+     * 1: initial release
+     * 2: add repetition rules
+     * 3: add due notification
+     * 4: all times are stored as local
+     */
+    private static final int CURRENT_VERSION = 4;
+    private static DatabaseHelper mInstance;
     private final Context context;
 
     private DatabaseHelper(Context context) {
@@ -33,11 +33,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         this.context = context;
     }
 
-    private static String getDatabaseName (@NotNull Context context) {
+    private static String getDatabaseName(@NotNull Context context) {
         File path = context.getExternalFilesDir(null);
         if (path == null)
             return DATABASE_NAME;
-        return path+"/"+DATABASE_NAME;
+        return path + "/" + DATABASE_NAME;
     }
 
     public static DatabaseHelper getInstance(Context ctx) {
@@ -49,35 +49,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return mInstance;
     }
-	
-	@Override
-	public void onCreate(SQLiteDatabase db) {
-		TasksTable.onCreate(db);
-		InstancesTable.onCreate(db);
-		ContextsTable.onCreate(db);
-		TaskContextTable.onCreate(db);
-		InstanceDependencyTable.onCreate(db);
-		InstancesView.onCreate(db);
-		RepetitionRulesTable.onCreate(db);
-	}
 
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		TasksTable.onUpgrade(db, oldVersion);
-		InstancesTable.onUpgrade(db, oldVersion);
-		//ContextsTable.onUpgrade(db, oldVersion, newVersion);
-		//TaskContextTable.onUpgrade(db, oldVersion, newVersion);
-		//InstanceDependencyTable.onUpgrade(db, oldVersion, newVersion);
-		InstancesView.onUpgrade(db, oldVersion);
-		RepetitionRulesTable.onUpgrade(db, oldVersion);
-	}
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        TasksTable.onCreate(db);
+        InstancesTable.onCreate(db);
+        ContextsTable.onCreate(db);
+        TaskContextTable.onCreate(db);
+        InstanceDependencyTable.onCreate(db);
+        InstancesView.onCreate(db);
+        RepetitionRulesTable.onCreate(db);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        TasksTable.onUpgrade(db, oldVersion);
+        InstancesTable.onUpgrade(db, oldVersion);
+        //ContextsTable.onUpgrade(db, oldVersion, newVersion);
+        //TaskContextTable.onUpgrade(db, oldVersion, newVersion);
+        //InstanceDependencyTable.onUpgrade(db, oldVersion, newVersion);
+        InstancesView.onUpgrade(db, oldVersion);
+        RepetitionRulesTable.onUpgrade(db, oldVersion);
+    }
 
     @NotNull
     @Override
     public SQLiteDatabase getReadableDatabase() {
         SQLiteDatabase db = super.getReadableDatabase();
         if (db == null) {
-           throw new SQLiteException("getReadableDatabase returned null") ;
+            throw new SQLiteException("getReadableDatabase returned null");
         }
         return db;
     }
@@ -87,21 +87,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public SQLiteDatabase getWritableDatabase() {
         SQLiteDatabase db = super.getWritableDatabase();
         if (db == null) {
-            throw new SQLiteException("getWritableDatabase returned null") ;
+            throw new SQLiteException("getWritableDatabase returned null");
         }
         return db;
     }
 
     @Override
-	public void onOpen(SQLiteDatabase db){
-		db.execSQL("PRAGMA foreign_keys = ON;");
-	}
+    public void onOpen(SQLiteDatabase db) {
+        db.execSQL("PRAGMA foreign_keys = ON;");
+    }
 
-    public void notifyChange(Uri uri){
-		context.getContentResolver().notifyChange(uri, null);
-	}
-	
-	public Context getContext(){
-		return context;
-	}
+    public void notifyChange(Uri uri) {
+        context.getContentResolver().notifyChange(uri, null);
+    }
+
+    public Context getContext() {
+        return context;
+    }
 }

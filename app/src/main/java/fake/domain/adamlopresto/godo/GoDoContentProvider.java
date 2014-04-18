@@ -73,7 +73,7 @@ public class GoDoContentProvider extends ContentProvider {
         return DatabaseUtils.concatenateWhere(original, "_id = ?");
     }
 
-    private static String[] appendSelectionArgs(String originalValues[], String newValues[]) {
+    private static String[] appendSelectionArgs(String[] originalValues, String[] newValues) {
         if (originalValues == null) {
             return newValues;
         }

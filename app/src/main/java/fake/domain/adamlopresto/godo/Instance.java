@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Date;
 
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
@@ -24,6 +26,7 @@ public class Instance {
     private boolean hasPlanTime;
     private Date dueDate;
     private boolean hasDueTime;
+    @Nullable
     private Date doneDate;
 
 // --Commented out by Inspection START (4/5/2014 1:24 PM):
@@ -100,7 +103,7 @@ public class Instance {
         }
     }
 
-    private static boolean hasTime(String dateString) {
+    private static boolean hasTime(CharSequence dateString) {
         return dateString != null && dateString.length() > 10;
     }
 
@@ -137,7 +140,7 @@ public class Instance {
         return task;
     }
 
-    public String getNotes() {
+    public CharSequence getNotes() {
         return notes;
     }
 
@@ -208,7 +211,7 @@ public class Instance {
     }
 
 /*
-	public Date getCreateDate() {
+    public Date getCreateDate() {
 		return createDate;
 	}
 
@@ -259,7 +262,7 @@ public class Instance {
                     new String[]{String.valueOf(id)});
 
         if (needsRepeat) {
-            if (RepeatTypes.AUTOMATIC.equals(task.getRepeat())) {
+            if (RepeatTypes.AUTOMATIC == task.getRepeat()) {
                 task.createRepetition(this);
             }
         }

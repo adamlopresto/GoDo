@@ -51,13 +51,13 @@ public class GoDoAppWidget extends AppWidgetProvider {
     public static void updateAllAppWidgets(Context context) {
         AppWidgetManager man = AppWidgetManager.getInstance(context);
         if (man == null) {
-           return;
+            return;
         }
         ComponentName widget = new ComponentName(context, GoDoAppWidget.class);
         man.notifyAppWidgetViewDataChanged(man.getAppWidgetIds(widget), android.R.id.list);
     }
 
-	@Override
+    @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
                          int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
