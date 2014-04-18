@@ -228,7 +228,6 @@ public class TaskRepetitionRuleFragment extends ListFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        header = (Spinner) inflater.inflate(R.layout.fragment_task_repetition_header, container, false);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -242,8 +241,10 @@ public class TaskRepetitionRuleFragment extends ListFragment
         lv.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
         lv.setMultiChoiceModeListener(mActionModeCallback);
         setListAdapter(null);
+        header = (Spinner) getLayoutInflater(savedInstanceState)
+                .inflate(R.layout.fragment_task_repetition_header, lv, false);
         header.setSelection(((TaskActivity) getActivity()).task.getRepeat().ordinal());
-        //lv.addHeaderView(header, null, false);
+        lv.addHeaderView(header, null, false);
         header.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> ignored, View view,
