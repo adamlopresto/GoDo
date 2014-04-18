@@ -2,6 +2,7 @@ package fake.domain.adamlopresto.godo.db;
 
 import android.database.sqlite.SQLiteDatabase;
 
+@SuppressWarnings("WeakerAccess")
 public class InstancesView {
 
     public static final String VIEW = "instances_view";

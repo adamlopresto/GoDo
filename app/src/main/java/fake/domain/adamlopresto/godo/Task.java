@@ -225,6 +225,7 @@ public class Task {
                     int step = 1;
                     String days = rules.getString(3);
                     if (days == null)
+                        //noinspection BreakStatement
                         break;
 
                     if (days.startsWith("-"))

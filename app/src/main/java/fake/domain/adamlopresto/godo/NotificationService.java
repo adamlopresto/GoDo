@@ -146,8 +146,10 @@ public class NotificationService extends Service {
                             break;
                         case NOISY:
                             audible = true;
+                            //fall through
                         case VIBRATE:
                             vibrate = true;
+                            break;
                         default:
                             break;
                     }

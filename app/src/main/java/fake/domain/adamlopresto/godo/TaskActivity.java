@@ -38,19 +38,9 @@ public class TaskActivity extends FragmentActivity implements
     public Instance instance;
 
     /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link android.support.v4.app.FragmentPagerAdapter} derivative, which
-     * will keep every loaded fragment in memory. If this becomes too memory
-     * intensive, it may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
      * The {@link ViewPager} that will host the section contents.
      */
-    ViewPager mViewPager;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +73,7 @@ public class TaskActivity extends FragmentActivity implements
             long[] tmp = getIntent().getLongArrayExtra("prereq");
 
             if (tmp != null) {
-                Log.e("GoDo", "Create prereqs");
+                Log.e("GoDo", "Create prerequisites");
                 ContentValues cv = new ContentValues(2);
                 cv.put(InstanceDependencyTable.COLUMN_SECOND, instance.forceId());
                 for (long id : tmp) {
@@ -111,9 +101,7 @@ public class TaskActivity extends FragmentActivity implements
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         }
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the app.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(
+        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(
                 getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
@@ -162,24 +150,22 @@ public class TaskActivity extends FragmentActivity implements
                 task = Task.get(helper, task_id);
                 instance = task.createRepetition(null);
                 return true;
-            } else {
-                List<String> names = bundle.getStringArrayList(RecognizerIntent.EXTRA_RESULTS);
-                if (names != null) {
-                    DatabaseHelper helper = DatabaseHelper.getInstance(this);
-                    String name = names.get(0);
-                    task = new Task(helper, this, Character.toTitleCase(name.charAt(0)) + name.substring(1));
-                    instance = new Instance(helper, task);
-                    return true;
-                } else {
-                    String name = bundle.getString("task_name");
-                    if (name != null) {
-                        DatabaseHelper helper = DatabaseHelper.getInstance(this);
-                        task = new Task(helper, this, Character.toTitleCase(name.charAt(0)) + name.substring(1));
-                        instance = new Instance(helper, task);
-                        return true;
+            }
+            List<String> names = bundle.getStringArrayList(RecognizerIntent.EXTRA_RESULTS);
+            if (names != null) {
+                DatabaseHelper helper = DatabaseHelper.getInstance(this);
+                String name = names.get(0);
+                task = new Task(helper, this, Character.toTitleCase(name.charAt(0)) + name.substring(1));
+                instance = new Instance(helper, task);
+                return true;
+            }
+            String name = bundle.getString("task_name");
+            if (name != null) {
+                DatabaseHelper helper = DatabaseHelper.getInstance(this);
+                task = new Task(helper, this, Character.toTitleCase(name.charAt(0)) + name.substring(1));
+                instance = new Instance(helper, task);
+                return true;
 
-                    }
-                }
             }
         }
         return false;
@@ -247,7 +233,7 @@ public class TaskActivity extends FragmentActivity implements
 
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                String[] whereArgs = new String[]{String.valueOf(task_id), null};
+                                String[] whereArgs = {String.valueOf(task_id), null};
                                 for (Long id : toDel) {
                                     whereArgs[1] = String.valueOf(id);
                                     db.delete(TaskContextTable.TABLE,

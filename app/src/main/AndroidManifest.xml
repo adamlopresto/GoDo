@@ -45,7 +45,8 @@
             android:exported="true"
             android:label="@string/title_activity_task"
             android:parentActivityName=".MainActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            tools:ignore="UnusedAttribute">
         <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />

@@ -7,6 +7,7 @@ public class InstanceDependencyTable {
     public static final String TABLE = "instance_dependency";
 
     //as of version 1
+    @SuppressWarnings("WeakerAccess")
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_FIRST = "first";
     public static final String COLUMN_SECOND = "second";

@@ -83,7 +83,6 @@ public class TaskHistoryFragment extends ListFragment
     private class HistoryAdapter extends ResourceCursorAdapter {
 
 
-        @SuppressWarnings("unused")
         private static final int ID = 0, NOTES = 1, CREATED = 2, START = 3, PLAN = 4, DUE = 5, DONE = 6;
 
         public HistoryAdapter(Context context) {

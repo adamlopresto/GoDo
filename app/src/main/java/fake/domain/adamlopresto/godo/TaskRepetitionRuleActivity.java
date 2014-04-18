@@ -181,15 +181,16 @@ public class TaskRepetitionRuleActivity extends Activity {
     private boolean extractFromBundle(Bundle bundle) {
         if (bundle == null) {
             return false;
-        } else if ((rule_id = bundle.getLong("rule", -1L)) != -1L) {
-            template = bundle.getBoolean("template", false);
-            return true;
-        } else if ((task_id = bundle.getLong("task", -1L)) != -1L) {
-            template = bundle.getBoolean("template", false);
-            return true;
-        } else {
-            return false;
         }
+        if ((rule_id = bundle.getLong("rule", -1L)) != -1L) {
+            template = bundle.getBoolean("template", false);
+            return true;
+        }
+        if ((task_id = bundle.getLong("task", -1L)) != -1L) {
+            template = bundle.getBoolean("template", false);
+            return true;
+        }
+        return false;
     }
 
     @Override

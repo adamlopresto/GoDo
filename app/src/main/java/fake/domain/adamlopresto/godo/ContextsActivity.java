@@ -170,7 +170,7 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
             @Override
             public boolean setViewValue(View v, Cursor c, int column) {
                 if (column == 3) {
-                    ((Checkable) v).setChecked(c.getInt(column) != 0);
+                    ((Checkable) v).setChecked(c.getInt(3) != 0);
                     return true;
                 }
                 return false;

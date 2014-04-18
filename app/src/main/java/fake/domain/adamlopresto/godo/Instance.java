@@ -45,7 +45,7 @@ public class Instance {
     private Instance(DatabaseHelper helper, long id, Task task, String notes,
                      Date startDate, boolean hasStartTime, Date planDate, boolean hasPlanTime,
                      Date dueDate, boolean hasDueTime,
-                     Date doneDate) {
+                     @Nullable Date doneDate) {
         this.helper = helper;
         this.id = id;
         this.notes = notes;
@@ -94,10 +94,10 @@ public class Instance {
     private static Date getDate(String dateString) {
         try {
             return DatabaseHelper.dateTimeFormatter.parse(dateString);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             try {
                 return DatabaseHelper.dateFormatter.parse(dateString);
-            } catch (Exception e2) {
+            } catch (Exception ignored2) {
                 return null;
             }
         }
@@ -221,7 +221,7 @@ public class Instance {
 	}
  */
 
-    public void setDoneDate(Date doneDate) {
+    public void setDoneDate(@Nullable Date doneDate) {
         if (different(this.doneDate, doneDate))
             this.doneDate = doneDate;
     }

@@ -12,6 +12,7 @@ public class TaskContextTable {
     public static final String COLUMN_CONTEXT = "context";
 
 
+    @SuppressWarnings("SpellCheckingInspection")
     public static void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + TABLE
                         + "("

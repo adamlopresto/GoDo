@@ -22,8 +22,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
+@SuppressWarnings("InstanceVariableMayNotBeInitialized")
 public class TaskDetailsFragment extends Fragment {
 
     private CheckBox done;
@@ -38,9 +38,6 @@ public class TaskDetailsFragment extends Fragment {
     private TextView dueTime;
     private Spinner notification;
     private Spinner dueNotification;
-
-    @SuppressWarnings("FieldCanBeLocal")
-    private Date doneDate;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
@@ -98,8 +95,7 @@ public class TaskDetailsFragment extends Fragment {
         Instance instance = getInstance();
         if (instance != null) {
             instanceNotes.setText(instance.getNotes());
-            doneDate = instance.getDoneDate();
-            done.setChecked(doneDate != null);
+            done.setChecked(instance.getDoneDate() != null);
 
             Date date = instance.getStartDate();
             startDate.setText(dateString(date));
@@ -131,17 +127,11 @@ public class TaskDetailsFragment extends Fragment {
     }
 
     private CharSequence dateString(Date date) {
-        if (date == null)
-            return "No date";
-        else
-            return Utils.formatLongRelativeDate(date);
+        return (date == null) ? "No date" : Utils.formatLongRelativeDate(date);
     }
 
-    private String timeString(boolean hasTime, Date date) {
-        if (!hasTime || date == null)
-            return "No time";
-        else
-            return Utils.SHORT_TIME.format(date);
+    private CharSequence timeString(boolean hasTime, Date date) {
+        return (hasTime && (date != null)) ? Utils.SHORT_TIME.format(date) : "No time";
     }
 
     @Override
@@ -150,6 +140,7 @@ public class TaskDetailsFragment extends Fragment {
         saveData();
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void saveData() {
         Task task = getTask();
 
@@ -184,7 +175,7 @@ public class TaskDetailsFragment extends Fragment {
     private class DateOnClickListener implements View.OnClickListener {
 
         private final RepetitionRuleColumns col;
-        private Calendar cal = GregorianCalendar.getInstance();
+        private Calendar cal = Calendar.getInstance();
 
         DateOnClickListener(RepetitionRuleColumns col) {
             this.col = col;
@@ -207,7 +198,7 @@ public class TaskDetailsFragment extends Fragment {
             }
 
             if (date == null)
-                cal = GregorianCalendar.getInstance();
+                cal = Calendar.getInstance();
             else
                 cal.setTime(date);
 
@@ -270,7 +261,7 @@ public class TaskDetailsFragment extends Fragment {
     private class TimeOnClickListener implements View.OnClickListener {
 
         private final RepetitionRuleColumns col;
-        private Calendar cal = GregorianCalendar.getInstance();
+        private Calendar cal = Calendar.getInstance();
         private boolean confirm = true;
 
         TimeOnClickListener(RepetitionRuleColumns col) {
@@ -299,7 +290,7 @@ public class TaskDetailsFragment extends Fragment {
             }
 
             if (date == null)
-                cal = GregorianCalendar.getInstance();
+                cal = Calendar.getInstance();
             else
                 cal.setTime(date);
 

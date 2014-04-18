@@ -264,10 +264,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_FUTURE, false))
             where = DatabaseUtils.concatenateWhere(where, "coalesce(start_date,0) < DATETIME('now', 'localtime')");
 
-        if (where == null)
-            where = "";
-        else
-            where = "(" + where + ") or ";
+        where = (where == null) ? "" : "(" + where + ") or ";
         where += "(length(due_date) > 10 and due_date <= DATETIME('now', 'localtime'))";
 
         if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_DONE, false))

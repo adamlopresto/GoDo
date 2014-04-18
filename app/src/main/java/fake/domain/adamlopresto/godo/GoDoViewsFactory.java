@@ -16,14 +16,14 @@ import org.jetbrains.annotations.Nullable;
 import fake.domain.adamlopresto.godo.db.InstancesView;
 
 public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
-    public static final int ID = 0;
-    public static final int TASK_NAME = 1;
-    public static final int DUE_DATE = 2;
-    public static final int PLAN_DATE = 3;
+    private static final int ID = 0;
+    private static final int TASK_NAME = 1;
+    private static final int DUE_DATE = 2;
+    private static final int PLAN_DATE = 3;
     @NotNull
-    final Context context;
+    private final Context context;
     @Nullable
-    Cursor cursor;
+    private Cursor cursor;
 
     GoDoViewsFactory(@NotNull Context context) {
         Log.e("GoDo", "Creating new factory");
@@ -83,24 +83,25 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public boolean hasStableIds() {
-        return true;
+        return false;
     }
 
     @Override
     public void onCreate() {
-
+        Log.e("GoDo", "onCreate");
     }
 
     @Override
     public void onDataSetChanged() {
-
+        Log.e("GoDo", "onDataSetChanged");
         if (cursor != null && !cursor.isClosed())
             cursor.close();
-
         getCursor();
     }
 
-    //We've had problems with getCount() erroring out. Guarantee that there's an open cursor to work with.
+    //We've had problems with getCount() having NPE for cursor.
+    //Guarantee that there's an open cursor to work with.
+    //TODO This probably isn't the right way to proceed.
     private void getCursor() {
         if (cursor == null || cursor.isClosed()) {
             Log.e("GoDo", "Opening cursor");
@@ -129,6 +130,7 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     }
 
     private void cleanup() {
+        Log.e("GoDo", "cleanup");
         if (cursor != null && !cursor.isClosed())
             cursor.close();
         cursor = null;
@@ -136,6 +138,7 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDestroy() {
+        Log.e("GoDo", "onDestroy");
         cleanup();
     }
 }

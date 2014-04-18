@@ -19,7 +19,6 @@ public class TaskAdapter extends ResourceCursorAdapter {
             "case when due_date <= DATETIME('now', 'localtime') then due_date || ' 23:59:59' else '9999-99-99' end, " +
             "coalesce(plan_date || ' 23:59:59', DATETIME('now', 'localtime')), " +
             "due_date || ' 23:59:59', notification DESC, random()";
-    @SuppressWarnings("unused")
     private static final int ID = 0;
     private static final int TASK_NAME = 1;
     private static final int TASK_NOTES = 2;
@@ -72,7 +71,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
             setTextViewInner(v, prefix + Utils.formatShortRelativeDate(s), done, overdue, future);
     }
 
-    private void setTextView(TextView v, String s, boolean done, boolean overdue,
+    private void setTextView(TextView v, CharSequence s, boolean done, boolean overdue,
                              boolean future) {
         if (!hideView(v, s))
             setTextViewInner(v, s, done, overdue, future);

@@ -15,14 +15,19 @@ import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 
 
 @SuppressLint("SimpleDateFormat")
-public abstract class Utils {
-    public static final DateFormat SHORT_TIME = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT);
-    private static final SimpleDateFormat weekday = new SimpleDateFormat("EEEE");
+public final class Utils {
+
+    public static final DateFormat SHORT_TIME = DateFormat.getTimeInstance(DateFormat.SHORT);
+    @SuppressWarnings("SpellCheckingInspection")
+    private static final DateFormat weekday = new SimpleDateFormat("EEEE");
     private static final DateFormat SHORT_DATE = new SimpleDateFormat("MMM d");
     private static final DateFormat SHORT_DATE_WITH_YEAR = new SimpleDateFormat("MMM d, yyyy");
     private static final DateFormat REALLY_SHORT_TIME = new SimpleDateFormat("h a");
 
-    public static String formatShortRelativeDate(Date then, boolean hasTime) {
+    private Utils() {
+    }
+
+    private static String formatShortRelativeDate(Date then, boolean hasTime) {
         Calendar now = new GregorianCalendar();
         now.set(Calendar.HOUR_OF_DAY, 0);
         now.set(Calendar.MINUTE, 0);
@@ -65,13 +70,12 @@ public abstract class Utils {
         else
             time = SHORT_TIME.format(then);
 
-        if (diff == 0)
-            return time;
-        else
-            return date + " " + time;
+        return diff == 0
+                ? time
+                : date + " " + time;
     }
 
-    public static String formatLongRelativeDate(Date then) {
+    public static CharSequence formatLongRelativeDate(Date then) {
         Calendar now = new GregorianCalendar();
         now.set(Calendar.HOUR_OF_DAY, 0);
         now.set(Calendar.MINUTE, 0);
@@ -89,27 +93,25 @@ public abstract class Utils {
         int diff = (int) ((thenCal.getTimeInMillis() - now.getTimeInMillis()) / DateUtils.DAY_IN_MILLIS);
         if (diff == 0)
             return "Today";
-        else if (diff == -1)
+        if (diff == -1)
             return "Yesterday";
-        else if (diff == 1)
+        if (diff == 1)
             return "Tomorrow";
-        else if (diff > 0 && diff <= 7)
+        if (diff > 0 && diff <= 7)
             return weekday.format(then);
-        else if (diff < 0 && diff >= -7)
+        if (diff < 0 && diff >= -7)
             return "Last " + weekday.format(then);
-        else if (thenCal.get(Calendar.YEAR) == now.get(Calendar.YEAR))
+        if (thenCal.get(Calendar.YEAR) == now.get(Calendar.YEAR))
             return SHORT_DATE.format(then);
-        else
-            return SHORT_DATE_WITH_YEAR.format(then);
+        return SHORT_DATE_WITH_YEAR.format(then);
     }
 
     public static String formatShortRelativeDate(String formattedDate) {
         try {
             if (formattedDate.length() <= 10)
                 return formatShortRelativeDate(DatabaseHelper.dateFormatter.parse(formattedDate), false);
-            else
-                return formatShortRelativeDate(DatabaseHelper.dateTimeFormatter.parse(formattedDate), true);
-        } catch (ParseException e) {
+            return formatShortRelativeDate(DatabaseHelper.dateTimeFormatter.parse(formattedDate), true);
+        } catch (ParseException ignored) {
             return "Invalid date: " + formattedDate;
         }
     }
@@ -127,8 +129,7 @@ public abstract class Utils {
             return false;
         if (formattedDate.length() > 10)
             return formattedDate.compareTo(DatabaseHelper.dateTimeFormatter.format(new Date())) < 0;
-        else
-            return formattedDate.compareTo(DatabaseHelper.dateFormatter.format(new Date())) < 0;
+        return formattedDate.compareTo(DatabaseHelper.dateFormatter.format(new Date())) < 0;
     }
 
     /**
@@ -143,8 +144,7 @@ public abstract class Utils {
             return false;
         if (formattedDate.length() > 10)
             return formattedDate.compareTo(DatabaseHelper.dateTimeFormatter.format(new Date())) > 0;
-        else
-            return formattedDate.compareTo(DatabaseHelper.dateFormatter.format(new Date())) > 0;
+        return formattedDate.compareTo(DatabaseHelper.dateFormatter.format(new Date())) > 0;
     }
 
     public static String getString(TextView view) {

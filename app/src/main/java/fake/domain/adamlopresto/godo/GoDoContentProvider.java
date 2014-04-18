@@ -20,8 +20,8 @@ import fake.domain.adamlopresto.godo.db.TasksTable;
 
 public class GoDoContentProvider extends ContentProvider {
 
-    public static final String AUTHORITY = "fake.domain.adamlopresto.godo.contentprovider";
-    public static final Uri BASE = Uri.parse("content://" + AUTHORITY);
+    private static final String AUTHORITY = "fake.domain.adamlopresto.godo.contentprovider";
+    private static final Uri BASE = Uri.parse("content://" + AUTHORITY);
     // Used for the UriMatcher
     // Odd numbers have an ID, evens don't.
     private static final int INSTANCES = 0;
@@ -67,6 +67,7 @@ public class GoDoContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, DEPENDENCY_BASE_PATH + "/#", DEPENDENCY_ID);
     }
 
+    @SuppressWarnings("InstanceVariableMayNotBeInitialized")
     private DatabaseHelper helper;
 
     private static String appendIdToSelection(String original) {
