@@ -24,16 +24,21 @@ import android.widget.Checkable;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.TasksTable;
 
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    @Nullable
     private final AbsListView.MultiChoiceModeListener mActionModeCallback = new AbsListView.MultiChoiceModeListener() {
+        @Nullable
         private MenuItem editItem;
 
         @Override
-        public void onItemCheckedStateChanged(ActionMode mode, int position,
+        public void onItemCheckedStateChanged(@NotNull ActionMode mode, int position,
                                               long id, boolean checked) {
             final int checkedCount = getListView().getCheckedItemCount();
             switch (checkedCount) {
@@ -53,7 +58,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
         // Called when the action mode is created; startActionMode() was called
         @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        public boolean onCreateActionMode(@NotNull ActionMode mode, @NotNull Menu menu) {
             // Inflate a menu resource providing context menu items
             MenuInflater inflater = mode.getMenuInflater();
             if (inflater == null)
@@ -73,7 +78,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
         // Called when the user selects a contextual menu item
         @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        public boolean onActionItemClicked(@NotNull ActionMode mode, @NotNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.edit: {
                     final long id = getListView().getCheckedItemIds()[0];
@@ -185,7 +190,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_contexts:
                 startActivity(new Intent(this, ContextsActivity.class));
@@ -250,6 +255,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         getContentResolver().notifyChange(GoDoContentProvider.INSTANCES_URI, null);
     }
 
+    @Nullable
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Uri uri = GoDoContentProvider.INSTANCES_URI;

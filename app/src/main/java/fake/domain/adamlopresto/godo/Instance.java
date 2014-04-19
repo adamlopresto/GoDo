@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
@@ -33,7 +34,7 @@ public class Instance {
 //    private Date createDate;
 // --Commented out by Inspection STOP (4/5/2014 1:24 PM)
 
-    public Instance(DatabaseHelper helper, Context context) {
+    public Instance(DatabaseHelper helper, @NotNull Context context) {
         this(helper, new Task(helper, context));
     }
 
@@ -60,7 +61,8 @@ public class Instance {
         //this.createDate = createDate;
     }
 
-    public static Instance get(DatabaseHelper helper, long id) {
+    @Nullable
+    public static Instance get(@NotNull DatabaseHelper helper, long id) {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor c = db.query(InstancesTable.TABLE,
                 new String[]{InstancesTable.COLUMN_TASK, InstancesTable.COLUMN_NOTES,
@@ -91,6 +93,7 @@ public class Instance {
                 doneDate);
     }
 
+    @Nullable
     private static Date getDate(String dateString) {
         try {
             return DatabaseHelper.dateTimeFormatter.parse(dateString);
@@ -103,11 +106,11 @@ public class Instance {
         }
     }
 
-    private static boolean hasTime(CharSequence dateString) {
+    private static boolean hasTime(@Nullable CharSequence dateString) {
         return dateString != null && dateString.length() > 10;
     }
 
-    private static void putDate(ContentValues values, String key, Date date, boolean hasTime) {
+    private static void putDate(@NotNull ContentValues values, String key, @Nullable Date date, boolean hasTime) {
         if (date == null)
             values.putNull(key);
         else if (hasTime)
@@ -116,7 +119,7 @@ public class Instance {
             values.put(key, DatabaseHelper.dateFormatter.format(date));
     }
 
-    private boolean different(Object o1, Object o2) {
+    private boolean different(@Nullable Object o1, @Nullable Object o2) {
         if (o1 == null && o2 == null)
             return false;
         if (o1 == null || !o1.equals(o2)) {
@@ -206,6 +209,7 @@ public class Instance {
         hasDueTime = b;
     }
 
+    @Nullable
     public Date getDoneDate() {
         return doneDate;
     }

@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -25,14 +26,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * 4: all times are stored as local
      */
     private static final int CURRENT_VERSION = 4;
+    @Nullable
     private static DatabaseHelper mInstance;
+    @NotNull
     private final Context context;
 
-    private DatabaseHelper(Context context) {
+    private DatabaseHelper(@NotNull Context context) {
         super(context, getDatabaseName(context), null, CURRENT_VERSION);
         this.context = context;
     }
 
+    @NotNull
     private static String getDatabaseName(@NotNull Context context) {
         File path = context.getExternalFilesDir(null);
         if (path == null)
@@ -40,7 +44,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return path + "/" + DATABASE_NAME;
     }
 
-    public static DatabaseHelper getInstance(Context ctx) {
+    @Nullable
+    public static DatabaseHelper getInstance(@NotNull Context ctx) {
         // Use the application context, which will ensure that you
         // don't accidentally leak an Activity's context.
         // See this article for more information: http://bit.ly/6LRzfx
@@ -51,7 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
+    public void onCreate(@NotNull SQLiteDatabase db) {
         TasksTable.onCreate(db);
         InstancesTable.onCreate(db);
         ContextsTable.onCreate(db);
@@ -62,7 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(@NotNull SQLiteDatabase db, int oldVersion, int newVersion) {
         TasksTable.onUpgrade(db, oldVersion);
         InstancesTable.onUpgrade(db, oldVersion);
         //ContextsTable.onUpgrade(db, oldVersion, newVersion);
@@ -93,7 +98,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onOpen(SQLiteDatabase db) {
+    public void onOpen(@NotNull SQLiteDatabase db) {
         db.execSQL("PRAGMA foreign_keys = ON;");
     }
 
@@ -101,6 +106,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         context.getContentResolver().notifyChange(uri, null);
     }
 
+    @NotNull
     public Context getContext() {
         return context;
     }

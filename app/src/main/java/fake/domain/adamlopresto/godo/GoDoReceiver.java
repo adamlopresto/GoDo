@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Date;
 
 import fake.domain.adamlopresto.godo.db.ContextsTable;
@@ -20,7 +22,7 @@ public class GoDoReceiver extends BroadcastReceiver {
     }
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(@NotNull Context context, @NotNull Intent intent) {
 
         String action = intent.getAction();
         if (action == null ||

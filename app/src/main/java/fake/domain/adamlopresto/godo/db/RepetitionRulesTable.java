@@ -2,6 +2,8 @@ package fake.domain.adamlopresto.godo.db;
 
 import android.database.sqlite.SQLiteDatabase;
 
+import org.jetbrains.annotations.NotNull;
+
 public class RepetitionRulesTable {
 
     public static final String TABLE = "repetition_rules";
@@ -14,7 +16,7 @@ public class RepetitionRulesTable {
     public static final String COLUMN_FROM = "from_column";
     public static final String COLUMN_TO = "to_column";
 
-    public static void onCreate(SQLiteDatabase db) {
+    public static void onCreate(@NotNull SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE
                         + "("
                         + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -29,7 +31,7 @@ public class RepetitionRulesTable {
         db.execSQL("CREATE INDEX repetition_task ON " + TABLE + " (" + COLUMN_TASK + ")");
     }
 
-    public static void onUpgrade(SQLiteDatabase db, int oldVersion) {
+    public static void onUpgrade(@NotNull SQLiteDatabase db, int oldVersion) {
         if (oldVersion < 2)
             onCreate(db);
     }

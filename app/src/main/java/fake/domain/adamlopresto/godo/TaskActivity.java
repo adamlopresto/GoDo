@@ -20,6 +20,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,7 +37,9 @@ import fake.domain.adamlopresto.godo.db.TaskContextTable;
 public class TaskActivity extends FragmentActivity implements
         ActionBar.TabListener {
 
+    @Nullable
     public Task task;
+    @Nullable
     public Instance instance;
 
     /**
@@ -135,7 +140,7 @@ public class TaskActivity extends FragmentActivity implements
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean extractTaskAndOrInstanceFromBundle(Bundle bundle) {
+    private boolean extractTaskAndOrInstanceFromBundle(@Nullable Bundle bundle) {
         if (bundle == null)
             return false;
         long instance_id = bundle.getLong("instance", -1L);
@@ -179,7 +184,7 @@ public class TaskActivity extends FragmentActivity implements
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // This ID represents the Home or Up button. In the case of this
@@ -260,14 +265,14 @@ public class TaskActivity extends FragmentActivity implements
      * @see android.support.v4.app.FragmentActivity#onSaveInstanceState(android.os.Bundle)
      */
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NotNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong("task", task.forceId());
         outState.putLong("instance", instance.forceId());
     }
 
     @Override
-    public void onTabSelected(ActionBar.Tab tab,
+    public void onTabSelected(@NotNull ActionBar.Tab tab,
                               FragmentTransaction fragmentTransaction) {
         // When the given tab is selected, switch to the corresponding page in
         // the ViewPager.
@@ -294,6 +299,7 @@ public class TaskActivity extends FragmentActivity implements
             super(fm);
         }
 
+        @NotNull
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
@@ -328,6 +334,7 @@ public class TaskActivity extends FragmentActivity implements
             return 5;
         }
 
+        @Nullable
         @Override
         public CharSequence getPageTitle(int position) {
             Locale l = Locale.getDefault();

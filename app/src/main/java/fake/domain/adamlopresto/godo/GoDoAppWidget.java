@@ -11,13 +11,15 @@ import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Implementation of App Widget functionality.
  */
 public class GoDoAppWidget extends AppWidgetProvider {
 
-    private static void updateAppWidget(Context context,
-                                        AppWidgetManager appWidgetManager, int appWidgetId) {
+    private static void updateAppWidget(@NotNull Context context,
+                                        @NotNull AppWidgetManager appWidgetManager, int appWidgetId) {
 
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(),
@@ -48,7 +50,7 @@ public class GoDoAppWidget extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
-    public static void updateAllAppWidgets(Context context) {
+    public static void updateAllAppWidgets(@NotNull Context context) {
         AppWidgetManager man = AppWidgetManager.getInstance(context);
         if (man == null) {
             return;
@@ -58,8 +60,8 @@ public class GoDoAppWidget extends AppWidgetProvider {
     }
 
     @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager,
-                         int[] appWidgetIds) {
+    public void onUpdate(@NotNull Context context, @NotNull AppWidgetManager appWidgetManager,
+                         @NotNull int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
         Log.e("GoDo", "GoDoAppWidget.onUpdate, " + appWidgetIds.length);
         for (int appWidgetId : appWidgetIds) {

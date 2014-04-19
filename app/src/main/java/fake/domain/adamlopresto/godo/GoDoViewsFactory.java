@@ -46,11 +46,13 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         return cursor.getLong(ID);
     }
 
+    @Nullable
     @Override
     public RemoteViews getLoadingView() {
         return null;
     }
 
+    @NotNull
     @Override
     public RemoteViews getViewAt(int position) {
         Log.e("GoDo", "getViewAt(" + position + ")");

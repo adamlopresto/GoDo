@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
 
@@ -178,7 +179,7 @@ public class TaskRepetitionRuleActivity extends Activity {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean extractFromBundle(Bundle bundle) {
+    private boolean extractFromBundle(@Nullable Bundle bundle) {
         if (bundle == null) {
             return false;
         }
@@ -201,7 +202,7 @@ public class TaskRepetitionRuleActivity extends Activity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // This ID represents the Home or Up button. In the case of this

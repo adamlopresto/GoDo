@@ -2,6 +2,8 @@ package fake.domain.adamlopresto.godo.db;
 
 import android.database.sqlite.SQLiteDatabase;
 
+import org.jetbrains.annotations.NotNull;
+
 public class InstancesTable {
 
     public static final String TABLE = "instances";
@@ -17,7 +19,7 @@ public class InstancesTable {
     public static final String COLUMN_CREATE_DATE = "create_date";
 
 
-    public static void onCreate(SQLiteDatabase db) {
+    public static void onCreate(@NotNull SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE
                         + "("
                         + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -34,7 +36,7 @@ public class InstancesTable {
         db.execSQL("CREATE INDEX instance_task ON " + TABLE + " (" + COLUMN_TASK + ")");
     }
 
-    public static void onUpgrade(SQLiteDatabase db, int oldVersion) {
+    public static void onUpgrade(@NotNull SQLiteDatabase db, int oldVersion) {
         if (oldVersion < 4) {
             db.execSQL("UPDATE instances SET done_date = datetime(done_date, 'localtime') where length(done_date) > 10");
             db.execSQL("UPDATE instances SET due_date = datetime(due_date, 'localtime') where length(due_date) > 10");

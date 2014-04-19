@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.text.format.DateUtils;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -106,7 +109,7 @@ public final class Utils {
         return SHORT_DATE_WITH_YEAR.format(then);
     }
 
-    public static String formatShortRelativeDate(String formattedDate) {
+    public static String formatShortRelativeDate(@NotNull String formattedDate) {
         try {
             if (formattedDate.length() <= 10)
                 return formatShortRelativeDate(DatabaseHelper.dateFormatter.parse(formattedDate), false);
@@ -124,7 +127,7 @@ public final class Utils {
      *
      * @return boolean described above
      */
-    public static boolean isBeforeNow(String formattedDate) {
+    public static boolean isBeforeNow(@Nullable String formattedDate) {
         if (formattedDate == null)
             return false;
         if (formattedDate.length() > 10)
@@ -139,7 +142,7 @@ public final class Utils {
      * @param formattedDate string formatted date, in local time
      * @return boolean described above
      */
-    public static boolean isAfterNow(String formattedDate) {
+    public static boolean isAfterNow(@Nullable String formattedDate) {
         if (formattedDate == null)
             return false;
         if (formattedDate.length() > 10)
@@ -147,7 +150,8 @@ public final class Utils {
         return formattedDate.compareTo(DatabaseHelper.dateFormatter.format(new Date())) > 0;
     }
 
-    public static String getString(TextView view) {
+    @Nullable
+    public static String getString(@NotNull TextView view) {
         CharSequence seq = view.getText();
         if (seq == null)
             return null;

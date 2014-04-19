@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.util.LruCache;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Calendar;
@@ -38,14 +39,14 @@ public class Task {
     /*
      * Constructor to create a new, empty task
      */
-    public Task(DatabaseHelper helper, Context context) {
+    public Task(DatabaseHelper helper, @NotNull Context context) {
         this.helper = helper;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         this.notification = NotificationLevels.valueOf(prefs.getString(SettingsActivity.PREF_DEFAULT_NOTIFICATION, "NONE"));
         this.dueNotification = NotificationLevels.valueOf(prefs.getString(SettingsActivity.PREF_DEFAULT_DUE_NOTIFICATION, "NONE"));
     }
 
-    public Task(DatabaseHelper helper, Context context, String name) {
+    public Task(DatabaseHelper helper, @NotNull Context context, String name) {
         this(helper, context);
         this.name = name;
     }
@@ -62,7 +63,8 @@ public class Task {
         this.dueNotification = dueNotification;
     }
 
-    public static Task get(DatabaseHelper helper, long id) {
+    @Nullable
+    public static Task get(@NotNull DatabaseHelper helper, long id) {
         Task task = cache.get(id);
         if (task != null)
             return task;
@@ -154,7 +156,8 @@ public class Task {
      *
      * @param old If not null, then provides values for old dates
      */
-    public Instance createRepetition(Instance old) {
+    @NotNull
+    public Instance createRepetition(@Nullable Instance old) {
         Instance next = new Instance(helper, this);
         SQLiteDatabase db = helper.getWritableDatabase();
 

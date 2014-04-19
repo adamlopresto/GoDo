@@ -10,6 +10,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstanceDependencyTable;
@@ -35,16 +38,22 @@ public class GoDoContentProvider extends ContentProvider {
     private static final int DEPENDENCIES = 10;
     private static final int DEPENDENCY_ID = 11;
     private static final String INSTANCE_BASE_PATH = "instances";
+    @Nullable
     public static final Uri INSTANCES_URI = Uri.withAppendedPath(BASE, INSTANCE_BASE_PATH);
     private static final String CONTEXTS_BASE_PATH = "contexts";
+    @Nullable
     public static final Uri CONTEXTS_URI = Uri.withAppendedPath(BASE, CONTEXTS_BASE_PATH);
     private static final String TOGGLE_CONTEXT_PATH = "contexts/toggle";
+    @Nullable
     public static final Uri TOGGLE_CONTEXT_URI = Uri.withAppendedPath(BASE, TOGGLE_CONTEXT_PATH);
     private static final String TASK_BASE_PATH = "tasks";
+    @Nullable
     public static final Uri TASKS_URI = Uri.withAppendedPath(BASE, TASK_BASE_PATH);
     private static final String REPETITION_RULES_BASE_PATH = "repetition_rules";
+    @Nullable
     public static final Uri REPETITION_RULES_URI = Uri.withAppendedPath(BASE, REPETITION_RULES_BASE_PATH);
     private static final String DEPENDENCY_BASE_PATH = "dependencies";
+    @Nullable
     public static final Uri DEPENDENCY_URI = Uri.withAppendedPath(BASE, DEPENDENCY_BASE_PATH);
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -67,6 +76,7 @@ public class GoDoContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, DEPENDENCY_BASE_PATH + "/#", DEPENDENCY_ID);
     }
 
+    @Nullable
     @SuppressWarnings("InstanceVariableMayNotBeInitialized")
     private DatabaseHelper helper;
 
@@ -74,7 +84,8 @@ public class GoDoContentProvider extends ContentProvider {
         return DatabaseUtils.concatenateWhere(original, "_id = ?");
     }
 
-    private static String[] appendSelectionArgs(String[] originalValues, String[] newValues) {
+    @Nullable
+    private static String[] appendSelectionArgs(@Nullable String[] originalValues, @Nullable String[] newValues) {
         if (originalValues == null) {
             return newValues;
         }
@@ -84,6 +95,7 @@ public class GoDoContentProvider extends ContentProvider {
         return DatabaseUtils.appendSelectionArgs(originalValues, newValues);
     }
 
+    @Nullable
     private static String[] appendSelectionArg(String[] originalValues, String newValue) {
         return appendSelectionArgs(originalValues, new String[]{newValue});
     }
@@ -94,8 +106,9 @@ public class GoDoContentProvider extends ContentProvider {
         return true;
     }
 
+    @Nullable
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection,
+    public Cursor query(@NotNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
 
         // Using SQLiteQueryBuilder instead of query() method
@@ -147,7 +160,7 @@ public class GoDoContentProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NotNull Uri uri, String selection, String[] selectionArgs) {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = helper.getWritableDatabase();
         int rowsUpdated;
@@ -198,14 +211,16 @@ public class GoDoContentProvider extends ContentProvider {
         }
     }
 
+    @Nullable
     @Override
     public String getType(Uri uri) {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Nullable
     @Override
-    public Uri insert(Uri uri, ContentValues values) {
+    public Uri insert(@NotNull Uri uri, ContentValues values) {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = helper.getWritableDatabase();
         long id;
@@ -234,7 +249,7 @@ public class GoDoContentProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String selection,
+    public int update(@NotNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = helper.getWritableDatabase();

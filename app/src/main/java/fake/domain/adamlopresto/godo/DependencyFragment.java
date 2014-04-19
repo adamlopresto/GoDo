@@ -19,16 +19,21 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import fake.domain.adamlopresto.godo.db.InstanceDependencyTable;
 
 public class DependencyFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    @Nullable
     private final AbsListView.MultiChoiceModeListener mActionModeCallback = new AbsListView.MultiChoiceModeListener() {
+        @Nullable
         private MenuItem editItem;
 
         @Override
-        public void onItemCheckedStateChanged(ActionMode mode, int position,
+        public void onItemCheckedStateChanged(@NotNull ActionMode mode, int position,
                                               long id, boolean checked) {
             final int checkedCount = getListView().getCheckedItemCount();
             mode.setSubtitle("" + checkedCount + " items selected");
@@ -37,7 +42,7 @@ public class DependencyFragment extends ListFragment
 
         // Called when the action mode is created; startActionMode() was called
         @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        public boolean onCreateActionMode(@NotNull ActionMode mode, @NotNull Menu menu) {
             // Inflate a menu resource providing context menu items
             MenuInflater inflater = mode.getMenuInflater();
             if (inflater == null)
@@ -57,7 +62,7 @@ public class DependencyFragment extends ListFragment
 
         // Called when the user selects a contextual menu item
         @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        public boolean onActionItemClicked(@NotNull ActionMode mode, @NotNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.delete: {
                     final long[] ids = getListView().getCheckedItemIds();
@@ -132,13 +137,13 @@ public class DependencyFragment extends ListFragment
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, @NotNull MenuInflater inflater) {
         inflater.inflate(R.menu.dependency, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_pick_from_list:
                 final Cursor c = getActivity().getContentResolver()
@@ -197,6 +202,7 @@ public class DependencyFragment extends ListFragment
         //getActivity().startActionMode(mActionModeCallback);
     }
 
+    @NotNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String where;

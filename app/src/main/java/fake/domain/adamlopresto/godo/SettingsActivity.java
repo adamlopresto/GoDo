@@ -7,6 +7,8 @@ import android.preference.PreferenceFragment;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
+import org.jetbrains.annotations.NotNull;
+
 public class SettingsActivity extends PreferenceActivity {
 
     public static final String PREF_SHOW_BLOCKED_BY_TASK = "pref_show_blocked_by_task";
@@ -25,7 +27,7 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // This ID represents the Home or Up button. In the case of this

@@ -18,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Calendar;
@@ -39,8 +40,9 @@ public class TaskDetailsFragment extends Fragment {
     private Spinner notification;
     private Spinner dueNotification;
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_task_details, group, false);
         assert v != null;
         done = (CheckBox) v.findViewById(R.id.check);
@@ -67,10 +69,12 @@ public class TaskDetailsFragment extends Fragment {
         return v;
     }
 
+    @Nullable
     private Task getTask() {
         return ((TaskActivity) getActivity()).task;
     }
 
+    @Nullable
     private Instance getInstance() {
         return ((TaskActivity) getActivity()).instance;
     }
@@ -126,11 +130,13 @@ public class TaskDetailsFragment extends Fragment {
         }
     }
 
-    private CharSequence dateString(Date date) {
+    @NotNull
+    private CharSequence dateString(@Nullable Date date) {
         return (date == null) ? "No date" : Utils.formatLongRelativeDate(date);
     }
 
-    private CharSequence timeString(boolean hasTime, Date date) {
+    @NotNull
+    private CharSequence timeString(boolean hasTime, @Nullable Date date) {
         return (hasTime && (date != null)) ? Utils.SHORT_TIME.format(date) : "No time";
     }
 

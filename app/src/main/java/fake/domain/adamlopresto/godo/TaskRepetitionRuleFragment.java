@@ -23,16 +23,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
 
 public class TaskRepetitionRuleFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    @Nullable
     private final AbsListView.MultiChoiceModeListener mActionModeCallback = new AbsListView.MultiChoiceModeListener() {
+        @Nullable
         private MenuItem editItem;
 
         @Override
-        public void onItemCheckedStateChanged(ActionMode mode, int position,
+        public void onItemCheckedStateChanged(@NotNull ActionMode mode, int position,
                                               long id, boolean checked) {
             final int checkedCount = getListView().getCheckedItemCount();
             switch (checkedCount) {
@@ -52,7 +57,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
 
         // Called when the action mode is created; startActionMode() was called
         @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        public boolean onCreateActionMode(@NotNull ActionMode mode, @NotNull Menu menu) {
             // Inflate a menu resource providing context menu items
             MenuInflater inflater = mode.getMenuInflater();
             if (inflater == null) {
@@ -74,7 +79,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
 
         // Called when the user selects a contextual menu item
         @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        public boolean onActionItemClicked(@NotNull ActionMode mode, @NotNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.edit: {
                     final long id = getListView().getCheckedItemIds()[0];
@@ -121,6 +126,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
     };
 
     private SimpleCursorAdapter adapter;
+    @Nullable
     private Spinner header;
 
     /**
@@ -142,7 +148,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
         adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
 
             @Override
-            public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+            public boolean setViewValue(@NotNull View view, @NotNull Cursor cursor, int columnIndex) {
                 String to;
                 switch (cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TO))) {
                     case 0:
@@ -268,13 +274,13 @@ public class TaskRepetitionRuleFragment extends ListFragment
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, @NotNull MenuInflater inflater) {
         inflater.inflate(R.menu.task_repetition, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_new:
                 long taskId = ((TaskActivity) getActivity()).task.forceId();
@@ -300,6 +306,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
         startActivity(i);
     }
 
+    @Nullable
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(getActivity(), GoDoContentProvider.REPETITION_RULES_URI,

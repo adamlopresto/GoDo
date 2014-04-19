@@ -2,6 +2,8 @@ package fake.domain.adamlopresto.godo.db;
 
 import android.database.sqlite.SQLiteDatabase;
 
+import org.jetbrains.annotations.NotNull;
+
 public class TaskContextTable {
 
     public static final String TABLE = "task_context";
@@ -14,7 +16,7 @@ public class TaskContextTable {
 
 
     @SuppressWarnings("SpellCheckingInspection")
-    public static void onCreate(SQLiteDatabase db) {
+    public static void onCreate(@NotNull SQLiteDatabase db) {
         db.execSQL("create table " + TABLE
                         + "("
                         + COLUMN_ID + " integer primary key autoincrement, "

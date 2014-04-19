@@ -20,6 +20,7 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.ParseException;
@@ -38,7 +39,7 @@ public class NotificationService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
 
         int max = 4;
         if (intent != null)
@@ -299,7 +300,8 @@ public class NotificationService extends Service {
         return START_NOT_STICKY;
     }
 
-    private String nextDate(ContentResolver res, String column) {
+    @Nullable
+    private String nextDate(@NotNull ContentResolver res, String column) {
         Cursor c = res.query(GoDoContentProvider.INSTANCES_URI,
                 new String[]{column},
                 column + " > datetime('now', 'localtime') AND done_date is null",
@@ -324,7 +326,8 @@ public class NotificationService extends Service {
      * @param s2 second string to compare
      * @return whichever string is first alphabetically
      */
-    private String stringMin(String s1, String s2) {
+    @Nullable
+    private String stringMin(@Nullable String s1, @Nullable String s2) {
         if (s1 == null)
             return s2;
         if (s2 == null)
