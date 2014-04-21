@@ -37,9 +37,9 @@ import fake.domain.adamlopresto.godo.db.TaskContextTable;
 public class TaskActivity extends FragmentActivity implements
         ActionBar.TabListener {
 
-    @Nullable
+    @NotNull
     public Task task;
-    @Nullable
+    @NotNull
     public Instance instance;
 
     /**
@@ -52,21 +52,6 @@ public class TaskActivity extends FragmentActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
 
-        if (getIntent() == null) {
-            Log.e("GoDo", "Null intent");
-        } else {
-            if (getIntent().getExtras() == null)
-                Log.e("GoDo", "No extras");
-            else {
-                Bundle bundle = getIntent().getExtras();
-                for (String key : bundle.keySet()) {
-                    Object value = bundle.get(key);
-                    Log.d("GoDo", String.format("%s %s (%s)", key,
-                            value.toString(), value.getClass().getName()));
-                }
-            }
-
-        }
         if (!extractTaskAndOrInstanceFromBundle(savedInstanceState)) {
             if (!extractTaskAndOrInstanceFromBundle(getIntent().getExtras())) {
                 instance = new Instance(DatabaseHelper.getInstance(this), this);
@@ -74,28 +59,25 @@ public class TaskActivity extends FragmentActivity implements
             }
         }
 
-        {
-            long[] tmp = getIntent().getLongArrayExtra("prereq");
-
-            if (tmp != null) {
-                Log.e("GoDo", "Create prerequisites");
-                ContentValues cv = new ContentValues(2);
-                cv.put(InstanceDependencyTable.COLUMN_SECOND, instance.forceId());
-                for (long id : tmp) {
-                    Log.e("GoDo", "Create " + id);
-                    cv.put(InstanceDependencyTable.COLUMN_FIRST, id);
-                    getContentResolver().insert(GoDoContentProvider.DEPENDENCY_URI, cv);
-                }
+        long[] tmp = getIntent().getLongArrayExtra("prereq");
+        if (tmp != null) {
+            Log.e("GoDo", "Create prerequisites");
+            ContentValues cv = new ContentValues(2);
+            cv.put(InstanceDependencyTable.COLUMN_SECOND, instance.forceId());
+            for (long id : tmp) {
+                Log.e("GoDo", "Create " + id);
+                cv.put(InstanceDependencyTable.COLUMN_FIRST, id);
+                getContentResolver().insert(GoDoContentProvider.DEPENDENCY_URI, cv);
             }
+        }
 
-            tmp = getIntent().getLongArrayExtra("next");
-            if (tmp != null) {
-                ContentValues cv = new ContentValues(2);
-                cv.put(InstanceDependencyTable.COLUMN_FIRST, instance.forceId());
-                for (long id : tmp) {
-                    cv.put(InstanceDependencyTable.COLUMN_SECOND, id);
-                    getContentResolver().insert(GoDoContentProvider.DEPENDENCY_URI, cv);
-                }
+        tmp = getIntent().getLongArrayExtra("next");
+        if (tmp != null) {
+            ContentValues cv = new ContentValues(2);
+            cv.put(InstanceDependencyTable.COLUMN_FIRST, instance.forceId());
+            for (long id : tmp) {
+                cv.put(InstanceDependencyTable.COLUMN_SECOND, id);
+                getContentResolver().insert(GoDoContentProvider.DEPENDENCY_URI, cv);
             }
         }
 
@@ -148,30 +130,29 @@ public class TaskActivity extends FragmentActivity implements
             instance = Instance.get(DatabaseHelper.getInstance(this), instance_id);
             task = instance.getTask();
             return true;
-        } else {
-            long task_id = bundle.getLong("task", -1L);
-            if (task_id != -1L) {
-                DatabaseHelper helper = DatabaseHelper.getInstance(this);
-                task = Task.get(helper, task_id);
-                instance = task.createRepetition(null);
-                return true;
-            }
-            List<String> names = bundle.getStringArrayList(RecognizerIntent.EXTRA_RESULTS);
-            if (names != null) {
-                DatabaseHelper helper = DatabaseHelper.getInstance(this);
-                String name = names.get(0);
-                task = new Task(helper, this, Character.toTitleCase(name.charAt(0)) + name.substring(1));
-                instance = new Instance(helper, task);
-                return true;
-            }
-            String name = bundle.getString("task_name");
-            if (name != null) {
-                DatabaseHelper helper = DatabaseHelper.getInstance(this);
-                task = new Task(helper, this, Character.toTitleCase(name.charAt(0)) + name.substring(1));
-                instance = new Instance(helper, task);
-                return true;
+        }
+        long task_id = bundle.getLong("task", -1L);
+        if (task_id != -1L) {
+            DatabaseHelper helper = DatabaseHelper.getInstance(this);
+            task = Task.get(helper, task_id);
+            instance = task.createRepetition(null);
+            return true;
+        }
+        List<String> names = bundle.getStringArrayList(RecognizerIntent.EXTRA_RESULTS);
+        if (names != null) {
+            DatabaseHelper helper = DatabaseHelper.getInstance(this);
+            String name = names.get(0);
+            task = new Task(helper, this, Character.toTitleCase(name.charAt(0)) + name.substring(1));
+            instance = new Instance(helper, task);
+            return true;
+        }
+        String name = bundle.getString("task_name");
+        if (name != null) {
+            DatabaseHelper helper = DatabaseHelper.getInstance(this);
+            task = new Task(helper, this, Character.toTitleCase(name.charAt(0)) + name.substring(1));
+            instance = new Instance(helper, task);
+            return true;
 
-            }
         }
         return false;
     }

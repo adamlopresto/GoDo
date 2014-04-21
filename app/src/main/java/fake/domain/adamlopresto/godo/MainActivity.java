@@ -34,7 +34,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
     @Nullable
     private final AbsListView.MultiChoiceModeListener mActionModeCallback = new AbsListView.MultiChoiceModeListener() {
-        @Nullable
+        @NotNull
         private MenuItem editItem;
 
         @Override
@@ -64,6 +64,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
             if (inflater == null)
                 inflater = new MenuInflater(MainActivity.this);
             inflater.inflate(R.menu.main_cab, menu);
+            //noinspection ConstantConditions
             editItem = menu.findItem(R.id.edit);
             mode.setTitle("Tasks");
             return true;
@@ -250,6 +251,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         ListView lv = getListView();
         Checkable cb = (Checkable) v;
         Instance inst = Instance.get(DatabaseHelper.getInstance(this), lv.getItemIdAtPosition(lv.getPositionForView(v)));
+        assert inst != null;
         inst.updateDone(cb.isChecked());
         inst.flush();
         getContentResolver().notifyChange(GoDoContentProvider.INSTANCES_URI, null);

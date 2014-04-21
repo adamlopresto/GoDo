@@ -44,14 +44,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return path + "/" + DATABASE_NAME;
     }
 
-    @Nullable
+    @NotNull
     public static DatabaseHelper getInstance(@NotNull Context ctx) {
         // Use the application context, which will ensure that you
         // don't accidentally leak an Activity's context.
         // See this article for more information: http://bit.ly/6LRzfx
-        if (mInstance == null) {
+        if (mInstance == null)
             mInstance = new DatabaseHelper(ctx.getApplicationContext());
-        }
         return mInstance;
     }
 

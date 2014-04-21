@@ -10,6 +10,6 @@ public class GoDoWidgetService extends RemoteViewsService {
     @Nullable
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new GoDoViewsFactory(this.getApplicationContext());
+        return new GoDoViewsFactory(getApplicationContext());
     }
 }

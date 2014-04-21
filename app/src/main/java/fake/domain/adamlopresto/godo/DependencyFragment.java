@@ -29,7 +29,7 @@ public class DependencyFragment extends ListFragment
 
     @Nullable
     private final AbsListView.MultiChoiceModeListener mActionModeCallback = new AbsListView.MultiChoiceModeListener() {
-        @Nullable
+        @NotNull
         private MenuItem editItem;
 
         @Override
@@ -48,6 +48,7 @@ public class DependencyFragment extends ListFragment
             if (inflater == null)
                 inflater = new MenuInflater(getActivity());
             inflater.inflate(R.menu.context_edit_delete, menu);
+            //noinspection ConstantConditions
             editItem = menu.findItem(R.id.edit);
             mode.setTitle(prereq() ? "Prerequisites" : "Next Steps");
             return true;
@@ -101,13 +102,6 @@ public class DependencyFragment extends ListFragment
     };
 
     private TaskAdapter adapter;
-
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public DependencyFragment() {
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

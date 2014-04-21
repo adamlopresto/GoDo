@@ -38,22 +38,16 @@ public class GoDoContentProvider extends ContentProvider {
     private static final int DEPENDENCIES = 10;
     private static final int DEPENDENCY_ID = 11;
     private static final String INSTANCE_BASE_PATH = "instances";
-    @Nullable
     public static final Uri INSTANCES_URI = Uri.withAppendedPath(BASE, INSTANCE_BASE_PATH);
     private static final String CONTEXTS_BASE_PATH = "contexts";
-    @Nullable
     public static final Uri CONTEXTS_URI = Uri.withAppendedPath(BASE, CONTEXTS_BASE_PATH);
     private static final String TOGGLE_CONTEXT_PATH = "contexts/toggle";
-    @Nullable
     public static final Uri TOGGLE_CONTEXT_URI = Uri.withAppendedPath(BASE, TOGGLE_CONTEXT_PATH);
     private static final String TASK_BASE_PATH = "tasks";
-    @Nullable
     public static final Uri TASKS_URI = Uri.withAppendedPath(BASE, TASK_BASE_PATH);
     private static final String REPETITION_RULES_BASE_PATH = "repetition_rules";
-    @Nullable
     public static final Uri REPETITION_RULES_URI = Uri.withAppendedPath(BASE, REPETITION_RULES_BASE_PATH);
     private static final String DEPENDENCY_BASE_PATH = "dependencies";
-    @Nullable
     public static final Uri DEPENDENCY_URI = Uri.withAppendedPath(BASE, DEPENDENCY_BASE_PATH);
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -76,7 +70,7 @@ public class GoDoContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, DEPENDENCY_BASE_PATH + "/#", DEPENDENCY_ID);
     }
 
-    @Nullable
+    @NotNull
     @SuppressWarnings("InstanceVariableMayNotBeInitialized")
     private DatabaseHelper helper;
 

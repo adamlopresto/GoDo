@@ -12,6 +12,7 @@ import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TaskAdapter extends ResourceCursorAdapter {
 
@@ -67,7 +68,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
         setTextViewDate(holder.planDate, "P: ", cursor.getString(PLAN_DATE), done, overdue, future);
     }
 
-    private void setTextViewDate(@NotNull TextView v, String prefix, @NotNull String s, boolean done, boolean overdue,
+    private void setTextViewDate(@NotNull TextView v, String prefix, @Nullable String s, boolean done, boolean overdue,
                                  boolean future) {
         if (!hideView(v, s))
             setTextViewInner(v, prefix + Utils.formatShortRelativeDate(s), done, overdue, future);
@@ -89,15 +90,13 @@ public class TaskAdapter extends ResourceCursorAdapter {
         else
             v.setPaintFlags(v.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
 
-        if (overdue)
-            v.setTextColor(Color.RED);
-        else if (future)
-            v.setTextColor(Color.GRAY);
-        else
-            v.setTextColor(Color.BLACK);
+        v.setTextColor(overdue ? Color.RED   :
+                       future  ? Color.GRAY  :
+                                 Color.BLACK);
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    //@Contract("_, null -> true")
     private boolean hideView(@NotNull TextView v, CharSequence s) {
         if (TextUtils.isEmpty(s)) {
             v.setVisibility(View.GONE);

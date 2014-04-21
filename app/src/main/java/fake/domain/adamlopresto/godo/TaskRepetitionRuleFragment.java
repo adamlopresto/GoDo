@@ -33,7 +33,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
 
     @Nullable
     private final AbsListView.MultiChoiceModeListener mActionModeCallback = new AbsListView.MultiChoiceModeListener() {
-        @Nullable
+        @NotNull
         private MenuItem editItem;
 
         @Override
@@ -64,6 +64,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
                 inflater = new MenuInflater(getActivity());
             }
             inflater.inflate(R.menu.context_edit_delete, menu);
+            //noinspection ConstantConditions
             editItem = menu.findItem(R.id.edit);
             mode.setTitle("Rules");
             return true;
@@ -126,15 +127,8 @@ public class TaskRepetitionRuleFragment extends ListFragment
     };
 
     private SimpleCursorAdapter adapter;
-    @Nullable
+    @NotNull
     private Spinner header;
-
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public TaskRepetitionRuleFragment() {
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -236,6 +230,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
         lv.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
         lv.setMultiChoiceModeListener(mActionModeCallback);
         setListAdapter(null);
+        //noinspection ConstantConditions
         header = (Spinner) getLayoutInflater(savedInstanceState)
                 .inflate(R.layout.fragment_task_repetition_header, lv, false);
         header.setSelection(((TaskActivity) getActivity()).task.getRepeat().ordinal());

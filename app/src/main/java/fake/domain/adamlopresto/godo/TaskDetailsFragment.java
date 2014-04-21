@@ -69,12 +69,12 @@ public class TaskDetailsFragment extends Fragment {
         return v;
     }
 
-    @Nullable
+    @NotNull
     private Task getTask() {
         return ((TaskActivity) getActivity()).task;
     }
 
-    @Nullable
+    @NotNull
     private Instance getInstance() {
         return ((TaskActivity) getActivity()).instance;
     }

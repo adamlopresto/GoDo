@@ -33,10 +33,7 @@ import fake.domain.adamlopresto.godo.db.InstancesView;
 
 public class NotificationService extends Service {
     @Nullable
-    private static TextToSpeech tts;
-
-    public NotificationService() {
-    }
+    private TextToSpeech tts;
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
@@ -65,10 +62,7 @@ public class NotificationService extends Service {
                 AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
                 Intent alarmIntent = new Intent(this, GoDoReceiver.class);
-                if (quiet)
-                    alarmIntent.putExtra("max_notify", 1);
-                else
-                    alarmIntent.putExtra("max_notify", 4);
+                alarmIntent.putExtra("max_notify", quiet ? 1 : 4);
                 PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 manager.set(AlarmManager.RTC_WAKEUP, date.getTime(), contentIntent);
@@ -78,8 +72,7 @@ public class NotificationService extends Service {
             Log.e("GoDo", "Parse error parsing next date");
         }
 
-        NotificationManager nm = (NotificationManager) this
-                .getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         nm.cancelAll();
 
         if (max == 0) {

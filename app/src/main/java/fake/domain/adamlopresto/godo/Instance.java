@@ -61,7 +61,7 @@ public class Instance {
         //this.createDate = createDate;
     }
 
-    @Nullable
+    @NotNull
     public static Instance get(@NotNull DatabaseHelper helper, long id) {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor c = db.query(InstancesTable.TABLE,
@@ -70,9 +70,9 @@ public class Instance {
                         InstancesTable.COLUMN_DUE_DATE, InstancesTable.COLUMN_DONE_DATE},
                 InstancesTable.COLUMN_ID + "=?", new String[]{String.valueOf(id)}, null, null, null
         );
-        if (!c.moveToFirst()) {
-            return null;
-        }
+        if (!c.moveToFirst())
+            throw new IllegalArgumentException("No instance with id " + id);
+
         String s = c.getString(2);
         Date startDate = getDate(s);
         boolean hasStartTime = hasTime(s);
@@ -113,10 +113,9 @@ public class Instance {
     private static void putDate(@NotNull ContentValues values, String key, @Nullable Date date, boolean hasTime) {
         if (date == null)
             values.putNull(key);
-        else if (hasTime)
-            values.put(key, DatabaseHelper.dateTimeFormatter.format(date));
         else
-            values.put(key, DatabaseHelper.dateFormatter.format(date));
+            values.put(key, hasTime ? DatabaseHelper.dateTimeFormatter.format(date)
+                                    : DatabaseHelper.dateFormatter.format(date));
     }
 
     private boolean different(@Nullable Object o1, @Nullable Object o2) {

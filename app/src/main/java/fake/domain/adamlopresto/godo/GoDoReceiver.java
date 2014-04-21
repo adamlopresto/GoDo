@@ -18,9 +18,6 @@ import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 public class GoDoReceiver extends BroadcastReceiver {
     public static final String MARK_COMPLETE_INTENT = "fake.domain.adamlopresto.godo.MARK_COMPLETE";
 
-    public GoDoReceiver() {
-    }
-
     @Override
     public void onReceive(@NotNull Context context, @NotNull Intent intent) {
 
@@ -62,6 +59,7 @@ public class GoDoReceiver extends BroadcastReceiver {
             long id = intent.getLongExtra("instance", -1);
             if (id != -1) {
                 Instance instance = Instance.get(DatabaseHelper.getInstance(context), id);
+                assert instance != null;
                 instance.setDoneDate(new Date());
                 instance.flush();
             }

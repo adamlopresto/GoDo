@@ -42,8 +42,8 @@ public class Task {
     public Task(DatabaseHelper helper, @NotNull Context context) {
         this.helper = helper;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        this.notification = NotificationLevels.valueOf(prefs.getString(SettingsActivity.PREF_DEFAULT_NOTIFICATION, "NONE"));
-        this.dueNotification = NotificationLevels.valueOf(prefs.getString(SettingsActivity.PREF_DEFAULT_DUE_NOTIFICATION, "NONE"));
+        notification = NotificationLevels.valueOf(prefs.getString(SettingsActivity.PREF_DEFAULT_NOTIFICATION, "NONE"));
+        dueNotification = NotificationLevels.valueOf(prefs.getString(SettingsActivity.PREF_DEFAULT_DUE_NOTIFICATION, "NONE"));
     }
 
     public Task(DatabaseHelper helper, @NotNull Context context, String name) {
@@ -63,7 +63,7 @@ public class Task {
         this.dueNotification = dueNotification;
     }
 
-    @Nullable
+    @NotNull
     public static Task get(@NotNull DatabaseHelper helper, long id) {
         Task task = cache.get(id);
         if (task != null)
@@ -75,9 +75,8 @@ public class Task {
                         TasksTable.COLUMN_DUE_NOTIFICATION},
                 TasksTable.COLUMN_ID + "=?", new String[]{String.valueOf(id)}, null, null, null
         );
-        if (!c.moveToFirst()) {
-            return null;
-        }
+        if (!c.moveToFirst())
+            throw new IllegalArgumentException("No task with id " + id);
         task = new Task(helper, id, c.getString(0), c.getString(1),
                 NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)],
                 NotificationLevels.values()[c.getInt(4)]);

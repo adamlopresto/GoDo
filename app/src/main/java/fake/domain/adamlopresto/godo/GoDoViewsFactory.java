@@ -60,13 +60,10 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         cursor.moveToPosition(position);
         RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.app_widget_item);
         rv.setTextViewText(android.R.id.text1, cursor.getString(TASK_NAME));
-        if (Utils.isBeforeNow(cursor.getString(DUE_DATE)))
-            rv.setTextColor(android.R.id.text1, Color.RED);
-        else if (Utils.isAfterNow(cursor.getString(PLAN_DATE)))
-            rv.setTextColor(android.R.id.text1, Color.GRAY);
-        else
-            rv.setTextColor(android.R.id.text1, Color.WHITE);
-
+        rv.setTextColor(android.R.id.text1,
+                Utils.isBeforeNow(cursor.getString(DUE_DATE)) ? Color.RED :
+                Utils.isAfterNow(cursor.getString(PLAN_DATE)) ? Color.GRAY :
+                                                                Color.WHITE);
         Bundle extras = new Bundle();
         extras.putLong("instance", cursor.getLong(ID));
         Intent fillInIntent = new Intent();
