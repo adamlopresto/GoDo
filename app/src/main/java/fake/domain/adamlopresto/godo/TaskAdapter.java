@@ -21,7 +21,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
     public static final String SORT = "done_date is not null, " +
             "case when due_date <= DATETIME('now', 'localtime') then due_date || ' 23:59:59' else '9999-99-99' end, " +
             "coalesce(plan_date || ' 23:59:59', DATETIME('now', 'localtime')), " +
-            "due_date || ' 23:59:59', notification DESC, random()";
+            "due_date || ' 23:59:59', notification DESC, next_steps DESC, random()";
     private static final int ID = 0;
     private static final int TASK_NAME = 1;
     private static final int TASK_NOTES = 2;

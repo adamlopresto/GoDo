@@ -24,8 +24,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * 2: add repetition rules
      * 3: add due notification
      * 4: all times are stored as local
+     * 5: sort by dependencies
      */
-    private static final int CURRENT_VERSION = 4;
+    private static final int CURRENT_VERSION = 5;
     @Nullable
     private static DatabaseHelper mInstance;
     @NotNull

@@ -25,6 +25,7 @@ public class InstancesView {
     public static final String COLUMN_CREATE_DATE = InstancesTable.COLUMN_CREATE_DATE;
     public static final String COLUMN_BLOCKED_BY_CONTEXT = "blocked_by_context";
     public static final String COLUMN_BLOCKED_BY_TASK = "blocked_by_task";
+    public static final String COLUMN_NEXT_STEPS = "next_steps";
 
     public static void onCreate(@NotNull SQLiteDatabase db) {
         db.execSQL("CREATE VIEW " + VIEW
@@ -48,13 +49,15 @@ public class InstancesView {
                         "EXISTS " +
                         "(SELECT * FROM instance_dependency AS dep INNER JOIN instances AS prereq " +
                         " ON dep.first = prereq._id WHERE dep.second=i._id and prereq.done_date IS NULL) " +
-                        "AS " + COLUMN_BLOCKED_BY_TASK
+                        "AS " + COLUMN_BLOCKED_BY_TASK + ", " +
+                        "(SELECT COUNT(*) FROM instance_dependency WHERE first=i._id) AS "
+                        + COLUMN_NEXT_STEPS
                         + " from instances i inner join tasks t on i.task=t._id "
         );
     }
 
     public static void onUpgrade(@NotNull SQLiteDatabase db, int oldVersion) {
-        if (oldVersion < 3) {
+        if (oldVersion < 5) {
             db.execSQL("DROP VIEW " + VIEW);
             onCreate(db);
         }
