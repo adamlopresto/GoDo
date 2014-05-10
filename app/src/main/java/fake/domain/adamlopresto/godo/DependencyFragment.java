@@ -201,6 +201,7 @@ public class DependencyFragment extends ListFragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String where;
 
+        //noinspection IfMayBeConditional
         if (getArguments() != null && getArguments().getBoolean("prereq"))
             where = "_id in (SELECT " + InstanceDependencyTable.COLUMN_FIRST + " FROM " + InstanceDependencyTable.TABLE
                     + " WHERE " + InstanceDependencyTable.COLUMN_SECOND + " = ? )";

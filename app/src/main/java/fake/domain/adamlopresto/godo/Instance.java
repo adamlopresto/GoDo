@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.ParseException;
 import java.util.Date;
 
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
@@ -95,12 +96,15 @@ public class Instance {
 
     @Nullable
     private static Date getDate(String dateString) {
+        if (dateString == null) {
+            return null;
+        }
         try {
             return DatabaseHelper.dateTimeFormatter.parse(dateString);
-        } catch (Exception ignored) {
+        } catch (ParseException ignored) {
             try {
                 return DatabaseHelper.dateFormatter.parse(dateString);
-            } catch (Exception ignored2) {
+            } catch (ParseException ignore) {
                 return null;
             }
         }
@@ -213,16 +217,16 @@ public class Instance {
         return doneDate;
     }
 
-/*
+    /*
     public Date getCreateDate() {
-		return createDate;
-	}
+        return createDate;
+    }
 
-	public void setCreateDate(Date createDate) {
-		if (different(this.createDate, createDate))
-			this.createDate = createDate;
-	}
- */
+    public void setCreateDate(Date createDate) {
+        if (different(this.createDate, createDate))
+            this.createDate = createDate;
+    }
+    */
 
     public void setDoneDate(@Nullable Date doneDate) {
         if (different(this.doneDate, doneDate))

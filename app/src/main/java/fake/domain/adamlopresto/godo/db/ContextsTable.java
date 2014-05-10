@@ -28,7 +28,7 @@ public class ContextsTable {
 
     /*
     //Uncomment if we need to upgrade this
-	public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
-	}
-	*/
+    public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
+    }
+    */
 }

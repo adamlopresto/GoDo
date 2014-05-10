@@ -58,7 +58,8 @@ public final class Utils {
             date = weekday.format(then);
         else if (diff < 0 && diff >= -7)
             date = "Last " + weekday.format(then);
-        else if (thenCal.get(Calendar.YEAR) == now.get(Calendar.YEAR))
+        else //noinspection IfMayBeConditional
+            if (thenCal.get(Calendar.YEAR) == now.get(Calendar.YEAR))
             date = SHORT_DATE.format(then);
         else
             date = SHORT_DATE_WITH_YEAR.format(then);

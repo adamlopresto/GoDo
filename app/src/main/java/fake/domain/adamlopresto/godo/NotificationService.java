@@ -110,7 +110,7 @@ public class NotificationService extends Service {
         String name = null;
         String taskNotes = null;
         String instanceNotes = null;
-        final ArrayList<String> spoken = new ArrayList<String>();
+        final ArrayList<String> spoken = new ArrayList<>();
         long id = -1L;
         if (c != null) {
             c.moveToFirst();

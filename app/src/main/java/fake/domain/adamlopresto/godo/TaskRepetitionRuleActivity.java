@@ -156,20 +156,29 @@ public class TaskRepetitionRuleActivity extends Activity {
                     break;
                 case WEEKDAY:
                     for (String s : subValue.split(",")) {
-                        if ("Su".equals(s))
-                            weekdays[0].setChecked(true);
-                        else if ("M".equals(s))
-                            weekdays[1].setChecked(true);
-                        else if ("Tu".equals(s))
-                            weekdays[2].setChecked(true);
-                        else if ("W".equals(s))
-                            weekdays[3].setChecked(true);
-                        else if ("Th".equals(s))
-                            weekdays[4].setChecked(true);
-                        else if ("F".equals(s))
-                            weekdays[5].setChecked(true);
-                        else if ("Sa".equals(s))
-                            weekdays[6].setChecked(true);
+                        switch (s) {
+                            case "Su":
+                                weekdays[0].setChecked(true);
+                                break;
+                            case "M":
+                                weekdays[1].setChecked(true);
+                                break;
+                            case "Tu":
+                                weekdays[2].setChecked(true);
+                                break;
+                            case "W":
+                                weekdays[3].setChecked(true);
+                                break;
+                            case "Th":
+                                weekdays[4].setChecked(true);
+                                break;
+                            case "F":
+                                weekdays[5].setChecked(true);
+                                break;
+                            case "Sa":
+                                weekdays[6].setChecked(true);
+                                break;
+                        }
                     }
                     break;
                 default:

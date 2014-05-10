@@ -85,6 +85,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
                                   boolean future) {
 
         v.setText(s);
+        //noinspection IfMayBeConditional
         if (done)
             v.setPaintFlags(v.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         else

@@ -54,8 +54,9 @@
         <activity
             android:name="fake.domain.adamlopresto.godo.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
+            android:parentActivityName=".MainActivity"
+            tools:ignore="UnusedAttribute">
+        <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
