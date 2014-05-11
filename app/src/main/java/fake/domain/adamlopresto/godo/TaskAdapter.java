@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +23,8 @@ public class TaskAdapter extends ResourceCursorAdapter {
             "case when due_date <= DATETIME('now', 'localtime') then due_date || ' 23:59:59' else '9999-99-99' end, " +
             "coalesce(plan_date || ' 23:59:59', DATETIME('now', 'localtime')), " +
             "due_date || ' 23:59:59', notification DESC, next_steps DESC, random()";
+
+    @SuppressWarnings("UnusedDeclaration")
     private static final int ID = 0;
     private static final int TASK_NAME = 1;
     private static final int TASK_NOTES = 2;
@@ -97,7 +100,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    //@Contract("_, null -> true")
+    @Contract("_, null -> true")
     private boolean hideView(@NotNull TextView v, CharSequence s) {
         if (TextUtils.isEmpty(s)) {
             v.setVisibility(View.GONE);
