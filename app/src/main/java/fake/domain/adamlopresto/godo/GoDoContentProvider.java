@@ -37,8 +37,12 @@ public class GoDoContentProvider extends ContentProvider {
     private static final int REPETITION_RULE_ID = 9;
     private static final int DEPENDENCIES = 10;
     private static final int DEPENDENCY_ID = 11;
+    private static final int INSTANCES_SEARCH = 12;
+
     private static final String INSTANCE_BASE_PATH = "instances";
     public static final Uri INSTANCES_URI = Uri.withAppendedPath(BASE, INSTANCE_BASE_PATH);
+    private static final String INSTANCE_SEARCH_PATH = "instances/search";
+    public static final Uri INSTANCE_SEARCH_URI = Uri.withAppendedPath(BASE, INSTANCE_SEARCH_PATH);
     private static final String CONTEXTS_BASE_PATH = "contexts";
     public static final Uri CONTEXTS_URI = Uri.withAppendedPath(BASE, CONTEXTS_BASE_PATH);
     private static final String TOGGLE_CONTEXT_PATH = "contexts/toggle";
@@ -68,6 +72,7 @@ public class GoDoContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, REPETITION_RULES_BASE_PATH + "/#", REPETITION_RULE_ID);
         sURIMatcher.addURI(AUTHORITY, DEPENDENCY_BASE_PATH, DEPENDENCIES);
         sURIMatcher.addURI(AUTHORITY, DEPENDENCY_BASE_PATH + "/#", DEPENDENCY_ID);
+        sURIMatcher.addURI(AUTHORITY, INSTANCE_SEARCH_PATH, INSTANCES_SEARCH);
     }
 
     @NotNull
@@ -96,6 +101,7 @@ public class GoDoContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+        //noinspection ConstantConditions
         helper = DatabaseHelper.getInstance(getContext());
         return true;
     }
@@ -121,6 +127,30 @@ public class GoDoContentProvider extends ContentProvider {
         switch (uriType) {
             case INSTANCES:
                 queryBuilder.setTables(InstancesView.VIEW);
+                break;
+            case INSTANCES_SEARCH:
+                //we're only including the most recently created instance for each task
+                //see http://stackoverflow.com/a/123481/338660 for the algorithm used here
+                queryBuilder.setTables(InstancesView.VIEW + " AS v1 " +
+                                "LEFT OUTER JOIN " + InstancesView.VIEW + " AS v2 " +
+                                " ON v1.task = v2.task AND v1." + InstancesView.COLUMN_CREATE_DATE + "<v2." +
+                                InstancesView.COLUMN_CREATE_DATE
+                );
+                selection = DatabaseUtils.concatenateWhere(selection,
+                        "v2." + InstancesView.COLUMN_CREATE_DATE + " IS NULL");
+                projection = projection.clone();
+                for (int i = 0; i < projection.length; i++) {
+                    String s = projection[i];
+                    projection[i] = "v1." + s + " AS " + s;
+                }
+                /*
+                Map<String, String> map = new HashMap<>(projection.length);
+                for (String s : projection) {
+                    map.put(s, "v1." + s);
+                }
+                queryBuilder.setProjectionMap(map);
+                */
+
                 break;
             case CONTEXTS:
                 queryBuilder.setTables(ContextsTable.TABLE);
@@ -171,6 +201,7 @@ public class GoDoContentProvider extends ContentProvider {
             case TASKS:
                 rowsUpdated = sqlDB.delete(TasksTable.TABLE, selection, selectionArgs);
                 if (rowsUpdated > 0) {
+                    //noinspection ConstantConditions
                     GoDoAppWidget.updateAllAppWidgets(getContext());
                     helper.notifyChange(TASKS_URI);
                 }
@@ -178,6 +209,7 @@ public class GoDoContentProvider extends ContentProvider {
             case INSTANCES:
                 rowsUpdated = sqlDB.delete(InstancesTable.TABLE, selection, selectionArgs);
                 if (rowsUpdated > 0) {
+                    //noinspection ConstantConditions
                     GoDoAppWidget.updateAllAppWidgets(getContext());
                     helper.notifyChange(INSTANCES_URI);
                 }
@@ -221,6 +253,7 @@ public class GoDoContentProvider extends ContentProvider {
         switch (uriType) {
             case INSTANCES:
                 id = sqlDB.insertOrThrow(InstancesTable.TABLE, null, values);
+                //noinspection ConstantConditions
                 GoDoAppWidget.updateAllAppWidgets(getContext());
                 break;
             case TASKS:
@@ -260,12 +293,14 @@ public class GoDoContentProvider extends ContentProvider {
         switch (uriType) {
             case TOGGLE_CONTEXT:
                 sqlDB.execSQL("UPDATE " + ContextsTable.TABLE + " SET " + ContextsTable.COLUMN_ACTIVE + "= NOT " + ContextsTable.COLUMN_ACTIVE + " WHERE " + selection, selectionArgs);
+                //noinspection ConstantConditions
                 GoDoAppWidget.updateAllAppWidgets(getContext());
                 helper.notifyChange(CONTEXTS_URI);
                 return 1;
             case TASKS:
                 rowsUpdated = sqlDB.update(TasksTable.TABLE, values, selection, selectionArgs);
                 if (rowsUpdated > 0) {
+                    //noinspection ConstantConditions
                     GoDoAppWidget.updateAllAppWidgets(getContext());
                     helper.notifyChange(TASKS_URI);
                 }
@@ -273,6 +308,7 @@ public class GoDoContentProvider extends ContentProvider {
             case INSTANCES:
                 rowsUpdated = sqlDB.update(InstancesTable.TABLE, values, selection, selectionArgs);
                 if (rowsUpdated > 0) {
+                    //noinspection ConstantConditions
                     GoDoAppWidget.updateAllAppWidgets(getContext());
                     helper.notifyChange(INSTANCES_URI);
                 }
@@ -280,6 +316,7 @@ public class GoDoContentProvider extends ContentProvider {
             case CONTEXTS:
                 rowsUpdated = sqlDB.update(ContextsTable.TABLE, values, selection, selectionArgs);
                 if (rowsUpdated > 0) {
+                    //noinspection ConstantConditions
                     GoDoAppWidget.updateAllAppWidgets(getContext());
                     helper.notifyChange(CONTEXTS_URI);
                 }

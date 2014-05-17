@@ -61,5 +61,7 @@
     <string name="new_prereq">Create prerequisite</string>
     <string name="new_next_step">Create next step</string>
     <string name="mark_complete">Mark complete</string>
+    <string name="search_hint">Search tasks</string>
+    <string name="menu_search">Search</string>
 
 </resources>

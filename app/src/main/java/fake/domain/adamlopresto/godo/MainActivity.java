@@ -3,7 +3,9 @@ package fake.domain.adamlopresto.godo;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.LoaderManager;
+import android.app.SearchManager;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +16,7 @@ import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,12 +25,14 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Checkable;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
+import fake.domain.adamlopresto.godo.db.InstancesView;
 import fake.domain.adamlopresto.godo.db.TasksTable;
 
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -117,7 +122,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
                                         idArray[0] = String.valueOf(id);
                                         res.delete(GoDoContentProvider.INSTANCES_URI, where, idArray);
                                     }
-                                    getLoaderManager().restartLoader(0, null, MainActivity.this);
+                                    restartLoader();
                                 }
 
                             }).show();
@@ -138,6 +143,9 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     private TaskAdapter adapter;
     private boolean paused = false;
 
+    @Nullable
+    private String query;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,8 +155,21 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         getListView().setMultiChoiceModeListener(mActionModeCallback);
 
         adapter = new TaskAdapter(this, null, true);
-
         setListAdapter(adapter);
+
+        handleIntent(getIntent());
+
+        restartLoader();
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            query = intent.getStringExtra(SearchManager.QUERY);
+            restartLoader();
+        }
+    }
+
+    private void restartLoader() {
         getLoaderManager().restartLoader(0, null, this);
     }
 
@@ -171,7 +192,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         super.onResume();
         startService(new Intent(this, NotificationService.class).putExtra("max_notify", 0));
         if (paused) {
-            getLoaderManager().restartLoader(0, null, this);
+            restartLoader();
             paused = false;
         }
     }
@@ -187,6 +208,44 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        assert searchItem != null;
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        assert searchView != null;
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                query = newText;
+                restartLoader();
+                return true;
+            }
+        });
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                query = null;
+                restartLoader();
+                return true;
+            }
+        });
+
         return true;
     }
 
@@ -235,6 +294,8 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
             case R.id.action_notify:
                 startService(new Intent(this, NotificationService.class));
                 return true;
+            case R.id.action_search:
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -251,38 +312,55 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         ListView lv = getListView();
         Checkable cb = (Checkable) v;
         Instance inst = Instance.get(DatabaseHelper.getInstance(this), lv.getItemIdAtPosition(lv.getPositionForView(v)));
-        assert inst != null;
         inst.updateDone(cb.isChecked());
         inst.flush();
         getContentResolver().notifyChange(GoDoContentProvider.INSTANCES_URI, null);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
     @Nullable
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri uri = GoDoContentProvider.INSTANCES_URI;
+        Uri uri;
+        String sort;
 
         String where = null;
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_BLOCKED_BY_CONTEXT, false))
-            where = "NOT blocked_by_context";
+        if (!TextUtils.isEmpty(query)) {
+            where = "v1." + InstancesView.COLUMN_TASK_NAME + " LIKE " +
+                    DatabaseUtils.sqlEscapeString("%" + query + "%");
+            uri = GoDoContentProvider.INSTANCE_SEARCH_URI;
+            sort = "v1.task_name LIKE " + DatabaseUtils.sqlEscapeString(query + "%") + " DESC" +
+                    ", v1.task_name LIKE " + DatabaseUtils.sqlEscapeString("% " + query + "%") + " DESC" +
+                    ", v1.task_name";
+        } else {
+            uri = GoDoContentProvider.INSTANCES_URI;
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_BLOCKED_BY_CONTEXT, false))
+                where = "NOT blocked_by_context";
 
-        if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_BLOCKED_BY_TASK, false))
-            where = DatabaseUtils.concatenateWhere(where, "NOT blocked_by_task");
-        if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_FUTURE, false))
-            where = DatabaseUtils.concatenateWhere(where, "coalesce(start_date,0) < DATETIME('now', 'localtime')");
+            if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_BLOCKED_BY_TASK, false))
+                where = DatabaseUtils.concatenateWhere(where, "NOT blocked_by_task");
+            if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_FUTURE, false))
+                where = DatabaseUtils.concatenateWhere(where, "coalesce(start_date,0) < DATETIME('now', 'localtime')");
 
-        where = (where == null) ? "" : "(" + where + ") or ";
-        where += "(length(due_date) > 10 and due_date <= DATETIME('now', 'localtime'))";
+            where = (where == null) ? "" : "(" + where + ") or ";
+            where += "(length(due_date) > 10 and due_date <= DATETIME('now', 'localtime'))";
 
-        if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_DONE, false))
-            where = DatabaseUtils.concatenateWhere(where, "done_date is null or done_date > DATETIME('now', '-1 hours', 'localtime')");
+            if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_DONE, false))
+                where = DatabaseUtils.concatenateWhere(where, "done_date is null or done_date > DATETIME('now', '-1 hours', 'localtime')");
 
-        where = DatabaseUtils.concatenateWhere(where, "task_name is not null");
+            where = DatabaseUtils.concatenateWhere(where, "task_name is not null");
+            sort = TaskAdapter.SORT;
+        }
 
         return new CursorLoader(this, uri,
                 TaskAdapter.PROJECTION,
-                where, null, TaskAdapter.SORT);
+                where, null, sort);
     }
 
     @Override
