@@ -48,6 +48,7 @@ public final class Utils {
 
         // diff is the number of days from now to then. If then is the future, the result is positive.
         int diff = (int) ((thenCal.getTimeInMillis() - now.getTimeInMillis()) / DateUtils.DAY_IN_MILLIS);
+        //noinspection IfStatementWithTooManyBranches
         if (diff == 0)
             date = "Today";
         else if (diff == -1)
@@ -60,19 +61,18 @@ public final class Utils {
             date = "Last " + weekday.format(then);
         else //noinspection IfMayBeConditional
             if (thenCal.get(Calendar.YEAR) == now.get(Calendar.YEAR))
-            date = SHORT_DATE.format(then);
-        else
-            date = SHORT_DATE_WITH_YEAR.format(then);
+                date = SHORT_DATE.format(then);
+            else
+                date = SHORT_DATE_WITH_YEAR.format(then);
 
         if (!hasTime)
             return date;
 
         thenCal.setTime(then);
         String time;
-        if (thenCal.get(Calendar.MINUTE) == 0)
-            time = REALLY_SHORT_TIME.format(then);
-        else
-            time = SHORT_TIME.format(then);
+        time = thenCal.get(Calendar.MINUTE) == 0
+                ? REALLY_SHORT_TIME.format(then)
+                : SHORT_TIME.format(then);
 
         return diff == 0
                 ? time

@@ -24,7 +24,7 @@ import fake.domain.adamlopresto.godo.db.TasksTable;
  */
 public class Task {
 
-    private static final LruCache<Long, Task> cache = new LruCache<Long, Task>(10);
+    private static final LruCache<Long, Task> cache = new LruCache<>(10);
 
     private final DatabaseHelper helper;
 
@@ -233,6 +233,7 @@ public class Task {
                     if (days.startsWith("-"))
                         step = -1;
 
+                    @SuppressWarnings("BooleanVariableAlwaysNegated")
                     boolean done = false;
                     for (int failsafe = 0; failsafe < 7 && !done; failsafe++) {
                         cal.add(Calendar.DAY_OF_WEEK, step);

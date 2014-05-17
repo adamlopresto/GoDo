@@ -330,6 +330,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         String sort;
 
         String where = null;
+        //noinspection IfStatementWithNegatedCondition
         if (!TextUtils.isEmpty(query)) {
             where = "v1." + InstancesView.COLUMN_TASK_NAME + " LIKE " +
                     DatabaseUtils.sqlEscapeString("%" + query + "%");

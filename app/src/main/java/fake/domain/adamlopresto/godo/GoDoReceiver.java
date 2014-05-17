@@ -59,7 +59,6 @@ public class GoDoReceiver extends BroadcastReceiver {
             long id = intent.getLongExtra("instance", -1);
             if (id != -1) {
                 Instance instance = Instance.get(DatabaseHelper.getInstance(context), id);
-                assert instance != null;
                 instance.setDoneDate(new Date());
                 instance.flush();
             }

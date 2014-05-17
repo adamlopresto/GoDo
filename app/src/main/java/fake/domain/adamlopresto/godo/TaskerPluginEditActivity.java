@@ -30,8 +30,8 @@ import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 
 public class TaskerPluginEditActivity extends Activity {
 
-    private final ArrayList<String> activate = new ArrayList<String>();
-    private final ArrayList<String> deactivate = new ArrayList<String>();
+    private final ArrayList<String> activate = new ArrayList<>();
+    private final ArrayList<String> deactivate = new ArrayList<>();
     private TextView activate_view;
     private TextView deactivate_view;
     private Spinner maxNotify;
@@ -159,7 +159,7 @@ public class TaskerPluginEditActivity extends Activity {
             final String[] items = new String[count];
             boolean[] checkedItems = new boolean[count];
 
-            final Collection<String> temp = new HashSet<String>(list);
+            final Collection<String> temp = new HashSet<>(list);
 
             cursor.moveToFirst();
             for (int i = 0; i < count; ++i) {

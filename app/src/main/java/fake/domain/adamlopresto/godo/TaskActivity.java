@@ -185,7 +185,7 @@ public class TaskActivity extends FragmentActivity implements
                 final SQLiteDatabase db = DatabaseHelper.getInstance(this).getWritableDatabase();
                 Cursor cursor = db.query(ContextsTable.TABLE, new String[]{ContextsTable.COLUMN_ID, ContextsTable.COLUMN_NAME,
                         "exists (select * from " + TaskContextTable.TABLE + " where " + TaskContextTable.COLUMN_TASK + "=" + task_id + " and context=contexts._id) AS selected"}, null, null, null, null, null);
-                final List<Long> orig = new ArrayList<Long>(cursor.getCount());
+                final List<Long> orig = new ArrayList<>(cursor.getCount());
                 cursor.moveToFirst();
                 while (!cursor.isAfterLast()) {
                     orig.add(cursor.getLong(0));
@@ -193,8 +193,8 @@ public class TaskActivity extends FragmentActivity implements
                 }
                 cursor.moveToFirst();
 
-                final Collection<Long> toAdd = new HashSet<Long>();
-                final Collection<Long> toDel = new HashSet<Long>();
+                final Collection<Long> toAdd = new HashSet<>();
+                final Collection<Long> toDel = new HashSet<>();
 
                 new AlertDialog.Builder(this)
                         .setMultiChoiceItems(cursor, "selected", ContextsTable.COLUMN_NAME,
@@ -305,7 +305,7 @@ public class TaskActivity extends FragmentActivity implements
                     return new DependencyFragment();
                 }
                 default:
-                    throw new IllegalArgumentException();
+                    throw new IllegalArgumentException("Expected fragment in range 0-4, got "+position);
             }
         }
 

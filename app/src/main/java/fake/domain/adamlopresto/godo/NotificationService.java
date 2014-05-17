@@ -215,29 +215,7 @@ public class NotificationService extends Service {
                                         new Intent(this, MainActivity.class),
                                         PendingIntent.FLAG_UPDATE_CURRENT)
                         )
-
                         .setStyle(inbox);
-
-					/*
-                    // Example additional actions for this notification. These will
-					// only show on devices running Android 4.1 or later, so you
-					// should ensure that the activity in this notification's
-					// content intent provides access to the same actions in
-					// another way.
-					.addAction(
-							R.drawable.ic_action_stat_share,
-							res.getString(R.string.action_share),
-							PendingIntent.getActivity(context, 0, Intent
-									.createChooser(
-											new Intent(Intent.ACTION_SEND).setType(
-													"text/plain")
-													.putExtra(Intent.EXTRA_TEXT,
-															"Dummy text"),
-											"Dummy title"),
-									PendingIntent.FLAG_UPDATE_CURRENT))
-					.addAction(R.drawable.ic_action_stat_reply,
-							res.getString(R.string.action_reply), null)
-							*/
             } // end switch on numToNotify
 
             nm.notify("Tasks", 0, builder.build());
@@ -252,7 +230,7 @@ public class NotificationService extends Service {
                             for (int i = 0; i < spoken.size() - 1; i++) {
                                 tts.speak(spoken.get(i), TextToSpeech.QUEUE_ADD, null);
                             }
-                            HashMap<String, String> params = new HashMap<String, String>(1);
+                            HashMap<String, String> params = new HashMap<>(1);
                             params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "Last");
                             tts.speak(spoken.get(spoken.size() - 1), TextToSpeech.QUEUE_ADD, params);
                         } else {
