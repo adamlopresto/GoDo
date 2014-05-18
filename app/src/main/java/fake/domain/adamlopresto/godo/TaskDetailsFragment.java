@@ -25,12 +25,15 @@ import java.util.Calendar;
 import java.util.Date;
 
 @SuppressWarnings("InstanceVariableMayNotBeInitialized")
-public class TaskDetailsFragment extends Fragment {
+public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDateChangeListener {
 
     private CheckBox done;
     private EditText taskName;
     private EditText taskNotes;
     private EditText instanceNotes;
+    private DateTimePicker start;
+    private DateTimePicker plan;
+    private DateTimePicker due;
     private TextView startDate;
     private TextView startTime;
     private TextView planDate;
@@ -57,6 +60,18 @@ public class TaskDetailsFragment extends Fragment {
         dueTime = (TextView) v.findViewById(R.id.due_time);
         notification = (Spinner) v.findViewById(R.id.notification);
         dueNotification = (Spinner) v.findViewById(R.id.due_notification);
+
+        start = (DateTimePicker) v.findViewById(R.id.start);
+        start.setColumn(RepetitionRuleColumns.NEW_START);
+        start.setOnDateDateChangeListener(this);
+
+        plan = (DateTimePicker) v.findViewById(R.id.plan);
+        plan.setColumn(RepetitionRuleColumns.NEW_PLAN);
+        plan.setOnDateDateChangeListener(this);
+
+        due = (DateTimePicker) v.findViewById(R.id.due);
+        due.setColumn(RepetitionRuleColumns.NEW_DUE);
+        due.setOnDateDateChangeListener(this);
 
         startDate.setOnClickListener(new DateOnClickListener(RepetitionRuleColumns.NEW_START));
         planDate.setOnClickListener(new DateOnClickListener(RepetitionRuleColumns.NEW_PLAN));
@@ -109,6 +124,7 @@ public class TaskDetailsFragment extends Fragment {
                 startTime.setVisibility(View.VISIBLE);
                 startTime.setText(timeString(instance.hasStartTime(), date));
             }
+            start.setDate(date, instance.hasStartTime());
 
             date = instance.getPlanDate();
             planDate.setText(dateString(date));
@@ -118,6 +134,7 @@ public class TaskDetailsFragment extends Fragment {
                 planTime.setVisibility(View.VISIBLE);
                 planTime.setText(timeString(instance.hasPlanTime(), date));
             }
+            plan.setDate(date, instance.hasPlanTime());
 
             date = instance.getDueDate();
             dueDate.setText(dateString(date));
@@ -127,6 +144,7 @@ public class TaskDetailsFragment extends Fragment {
                 dueTime.setVisibility(View.VISIBLE);
                 dueTime.setText(timeString(instance.hasDueTime(), date));
             }
+            due.setDate(date, instance.hasDueTime());
         }
     }
 
@@ -146,8 +164,7 @@ public class TaskDetailsFragment extends Fragment {
         saveData();
     }
 
-    @SuppressWarnings("WeakerAccess")
-    public void saveData() {
+    private void saveData() {
         Task task = getTask();
 
         task.setName(nullString(taskName));
@@ -176,6 +193,28 @@ public class TaskDetailsFragment extends Fragment {
         if (TextUtils.isEmpty(out))
             return null;
         return out;
+    }
+
+    @Override
+    public void onDateChanged(Date newDate, boolean hasTime, RepetitionRuleColumns column) {
+        Instance instance = getInstance();
+        switch (column) {
+            case NEW_START:
+                instance.setStartDate(newDate);
+                instance.setHasStartTime(hasTime);
+                extractInstanceDetails(); //TODO this isn't needed long term
+                break;
+            case NEW_PLAN:
+                instance.setPlanDate(newDate);
+                instance.setHasPlanTime(hasTime);
+                extractInstanceDetails(); //TODO this isn't needed long term
+                break;
+            case NEW_DUE:
+                instance.setDueDate(newDate);
+                instance.setHasDueTime(hasTime);
+                extractInstanceDetails(); //TODO this isn't needed long term
+                break;
+        }
     }
 
     private class DateOnClickListener implements View.OnClickListener {

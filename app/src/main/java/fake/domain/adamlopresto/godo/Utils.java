@@ -17,11 +17,12 @@ import java.util.GregorianCalendar;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 
 
-@SuppressLint("SimpleDateFormat")
+@SuppressLint ("SimpleDateFormat")
 public final class Utils {
 
     public static final DateFormat SHORT_TIME = DateFormat.getTimeInstance(DateFormat.SHORT);
-    @SuppressWarnings("SpellCheckingInspection")
+    public static final Date SOMEDAY = new Date(64063198800000L);
+    @SuppressWarnings ("SpellCheckingInspection")
     private static final DateFormat weekday = new SimpleDateFormat("EEEE");
     private static final DateFormat SHORT_DATE = new SimpleDateFormat("MMM d");
     private static final DateFormat SHORT_DATE_WITH_YEAR = new SimpleDateFormat("MMM d, yyyy");
@@ -30,7 +31,12 @@ public final class Utils {
     private Utils() {
     }
 
-    private static String formatShortRelativeDate(Date then, boolean hasTime) {
+    private static String formatShortRelativeDate(@Nullable Date then, boolean hasTime) {
+        if (then == null)
+            return "Null";
+        if (then.equals(SOMEDAY))
+            return "Someday";
+
         Calendar now = new GregorianCalendar();
         now.set(Calendar.HOUR_OF_DAY, 0);
         now.set(Calendar.MINUTE, 0);
@@ -71,15 +77,53 @@ public final class Utils {
         thenCal.setTime(then);
         String time;
         time = thenCal.get(Calendar.MINUTE) == 0
-                ? REALLY_SHORT_TIME.format(then)
-                : SHORT_TIME.format(then);
+               ? REALLY_SHORT_TIME.format(then)
+               : SHORT_TIME.format(then);
 
         return diff == 0
-                ? time
-                : date + " " + time;
+               ? time
+               : date + " " + time;
     }
 
-    public static CharSequence formatLongRelativeDate(Date then) {
+    /**
+     * Returns date difference from now to then. Positive for future.
+     * Integer.MIN_VALUE for null input, but probably best to check that separately.
+     *
+     * @param then the input date
+     * @return Number of days difference
+     */
+    public static int daysOffset(@Nullable Date then) {
+        if (then == null)
+            return Integer.MIN_VALUE;
+
+        Calendar now = new GregorianCalendar();
+        now.set(Calendar.HOUR_OF_DAY, 0);
+        now.set(Calendar.MINUTE, 0);
+        now.set(Calendar.SECOND, 0);
+        now.set(Calendar.MILLISECOND, 0);
+
+        Calendar thenCal = new GregorianCalendar();
+        thenCal.setTime(then);
+        thenCal.set(Calendar.HOUR_OF_DAY, 0);
+        thenCal.set(Calendar.MINUTE, 0);
+        thenCal.set(Calendar.SECOND, 0);
+        thenCal.set(Calendar.MILLISECOND, 0);
+        return (int) ((thenCal.getTimeInMillis() - now.getTimeInMillis()) / DateUtils.DAY_IN_MILLIS);
+    }
+
+    public static String formatShortTime(@Nullable Date time) {
+        if (time == null)
+            return "No time";
+        return SHORT_TIME.format(time);
+    }
+
+    public static String formatLongRelativeDate(@Nullable Date then) {
+        if (then == null)
+            return "Null";
+
+        if (then.equals(SOMEDAY))
+            return "Someday";
+
         Calendar now = new GregorianCalendar();
         now.set(Calendar.HOUR_OF_DAY, 0);
         now.set(Calendar.MINUTE, 0);
