@@ -34,6 +34,7 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public int getCount() {
         Log.e("GoDo", "getCount()");
         getCursor();
+        assert cursor != null;
         Log.e("GoDo", "count is " + cursor.getCount());
         return cursor.getCount();
     }
@@ -42,6 +43,7 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public long getItemId(int position) {
         Log.e("GoDo", "getItemId(" + position + ")");
         getCursor();
+        assert cursor != null;
         cursor.moveToPosition(position);
         return cursor.getLong(ID);
     }
@@ -57,6 +59,7 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public RemoteViews getViewAt(int position) {
         Log.e("GoDo", "getViewAt(" + position + ")");
         getCursor();
+        assert cursor != null;
         cursor.moveToPosition(position);
         RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.app_widget_item);
         rv.setTextViewText(android.R.id.text1, cursor.getString(TASK_NAME));

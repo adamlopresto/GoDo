@@ -102,50 +102,46 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
 
     private void extractTaskDetails() {
         Task task = getTask();
-        if (task != null) {
-            taskName.setText(task.getName());
-            taskNotes.setText(task.getNotes());
-            notification.setSelection(task.getNotification().ordinal());
-            dueNotification.setSelection(task.getDueNotification().ordinal());
-        }
+        taskName.setText(task.getName());
+        taskNotes.setText(task.getNotes());
+        notification.setSelection(task.getNotification().ordinal());
+        dueNotification.setSelection(task.getDueNotification().ordinal());
     }
 
     private void extractInstanceDetails() {
         Instance instance = getInstance();
-        if (instance != null) {
-            instanceNotes.setText(instance.getNotes());
-            done.setChecked(instance.getDoneDate() != null);
+        instanceNotes.setText(instance.getNotes());
+        done.setChecked(instance.getDoneDate() != null);
 
-            Date date = instance.getStartDate();
-            startDate.setText(dateString(date));
-            if (date == null) {
-                startTime.setVisibility(View.GONE);
-            } else {
-                startTime.setVisibility(View.VISIBLE);
-                startTime.setText(timeString(instance.hasStartTime(), date));
-            }
-            start.setDate(date, instance.hasStartTime());
-
-            date = instance.getPlanDate();
-            planDate.setText(dateString(date));
-            if (date == null) {
-                planTime.setVisibility(View.GONE);
-            } else {
-                planTime.setVisibility(View.VISIBLE);
-                planTime.setText(timeString(instance.hasPlanTime(), date));
-            }
-            plan.setDate(date, instance.hasPlanTime());
-
-            date = instance.getDueDate();
-            dueDate.setText(dateString(date));
-            if (date == null) {
-                dueTime.setVisibility(View.GONE);
-            } else {
-                dueTime.setVisibility(View.VISIBLE);
-                dueTime.setText(timeString(instance.hasDueTime(), date));
-            }
-            due.setDate(date, instance.hasDueTime());
+        Date date = instance.getStartDate();
+        startDate.setText(dateString(date));
+        if (date == null) {
+            startTime.setVisibility(View.GONE);
+        } else {
+            startTime.setVisibility(View.VISIBLE);
+            startTime.setText(timeString(instance.hasStartTime(), date));
         }
+        start.setDate(date, instance.hasStartTime());
+
+        date = instance.getPlanDate();
+        planDate.setText(dateString(date));
+        if (date == null) {
+            planTime.setVisibility(View.GONE);
+        } else {
+            planTime.setVisibility(View.VISIBLE);
+            planTime.setText(timeString(instance.hasPlanTime(), date));
+        }
+        plan.setDate(date, instance.hasPlanTime());
+
+        date = instance.getDueDate();
+        dueDate.setText(dateString(date));
+        if (date == null) {
+            dueTime.setVisibility(View.GONE);
+        } else {
+            dueTime.setVisibility(View.VISIBLE);
+            dueTime.setText(timeString(instance.hasDueTime(), date));
+        }
+        due.setDate(date, instance.hasDueTime());
     }
 
     @NotNull
@@ -214,6 +210,8 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                 instance.setHasDueTime(hasTime);
                 extractInstanceDetails(); //TODO this isn't needed long term
                 break;
+            default:
+                //no-op
         }
     }
 

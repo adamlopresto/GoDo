@@ -21,7 +21,8 @@ import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 public final class Utils {
 
     public static final DateFormat SHORT_TIME = DateFormat.getTimeInstance(DateFormat.SHORT);
-    public static final Date SOMEDAY = new Date(64063198800000L);
+    private static final long DECEMBER_31_2099_IN_MS = 64063198800000L;
+    public static final Date SOMEDAY = new Date(DECEMBER_31_2099_IN_MS);
     @SuppressWarnings ("SpellCheckingInspection")
     private static final DateFormat weekday = new SimpleDateFormat("EEEE");
     private static final DateFormat SHORT_DATE = new SimpleDateFormat("MMM d");
@@ -85,33 +86,7 @@ public final class Utils {
                : date + " " + time;
     }
 
-    /**
-     * Returns date difference from now to then. Positive for future.
-     * Integer.MIN_VALUE for null input, but probably best to check that separately.
-     *
-     * @param then the input date
-     * @return Number of days difference
-     */
-    public static int daysOffset(@Nullable Date then) {
-        if (then == null)
-            return Integer.MIN_VALUE;
-
-        Calendar now = new GregorianCalendar();
-        now.set(Calendar.HOUR_OF_DAY, 0);
-        now.set(Calendar.MINUTE, 0);
-        now.set(Calendar.SECOND, 0);
-        now.set(Calendar.MILLISECOND, 0);
-
-        Calendar thenCal = new GregorianCalendar();
-        thenCal.setTime(then);
-        thenCal.set(Calendar.HOUR_OF_DAY, 0);
-        thenCal.set(Calendar.MINUTE, 0);
-        thenCal.set(Calendar.SECOND, 0);
-        thenCal.set(Calendar.MILLISECOND, 0);
-        return (int) ((thenCal.getTimeInMillis() - now.getTimeInMillis()) / DateUtils.DAY_IN_MILLIS);
-    }
-
-    public static String formatShortTime(@Nullable Date time) {
+    public static CharSequence formatShortTime(@Nullable Date time) {
         if (time == null)
             return "No time";
         return SHORT_TIME.format(time);

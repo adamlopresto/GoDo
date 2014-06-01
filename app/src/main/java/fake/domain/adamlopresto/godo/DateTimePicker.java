@@ -29,6 +29,7 @@ import java.util.GregorianCalendar;
 public class DateTimePicker extends LinearLayout {
 
     private static final Comparator<DateHolder> comparator = new Comparator<DateHolder>() {
+        @SuppressWarnings ("VariableNotUsedInsideIf")
         @Override
         public int compare(DateHolder lhs, DateHolder rhs) {
             if (lhs == null)
@@ -58,16 +59,19 @@ public class DateTimePicker extends LinearLayout {
     private ArrayAdapter<DateHolder> adapter;
     private boolean hasTime;
 
+    @SuppressWarnings ("UnusedDeclaration")
     public DateTimePicker(Context context) {
         super(context);
         init(context);
     }
 
+    @SuppressWarnings ("UnusedDeclaration")
     public DateTimePicker(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
+    @SuppressWarnings ("UnusedDeclaration")
     public DateTimePicker(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
@@ -97,6 +101,7 @@ public class DateTimePicker extends LinearLayout {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 DateHolder holder = (DateHolder) (parent.getItemAtPosition(position));
+                assert holder != null;
                 if (holder.isOther) {
                     final Calendar cal = Calendar.getInstance();
                     if (date != null && !Utils.SOMEDAY.equals(date))
@@ -114,6 +119,7 @@ public class DateTimePicker extends LinearLayout {
                     dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Set", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            //noinspection MagicConstant
                             cal.set(dp.getYear(), dp.getMonth(), dp.getDayOfMonth());
                             listener.onDateChanged(cal.getTime(), hasTime, column);
                         }
@@ -148,6 +154,7 @@ public class DateTimePicker extends LinearLayout {
                         cal.setTime(date);
                         Calendar newCal = new GregorianCalendar();
                         newCal.setTime(holder.date);
+                        //noinspection MagicConstant
                         cal.set(newCal.get(Calendar.YEAR), newCal.get(Calendar.MONTH), newCal.get(Calendar.DAY_OF_MONTH));
                         date = cal.getTime();
                     }
@@ -191,7 +198,7 @@ public class DateTimePicker extends LinearLayout {
                                     date = cal.getTime();
                                     hasTime = true;
                                     if (listener != null)
-                                        listener.onDateChanged(date, hasTime, column);
+                                        listener.onDateChanged(date, true, column);
                                 }
                             }
                         },
@@ -296,6 +303,7 @@ public class DateTimePicker extends LinearLayout {
         DateHolder selectedDate = new DateHolder(date);
 
         //current value
+        //noinspection VariableNotUsedInsideIf
         if (date != null)
             addIfNotFound(list, selectedDate);
 
@@ -323,30 +331,33 @@ public class DateTimePicker extends LinearLayout {
 
 
     private static class DateHolder {
-        public boolean isOther;
-        public Date date;
+        public final boolean isOther;
+        @Nullable
+        public final Date date;
 
         public DateHolder(boolean isOther) {
             this.isOther = isOther;
+            date = null;
         }
 
         public DateHolder(Calendar calendar) {
-            init(calendar);
-        }
-
-        public DateHolder(Date date) {
-            if (date != null) {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(date);
-                init(cal);
-            }
-        }
-
-        //Keep a local copy of just the day, for comparison
-        private void init(Calendar calendar) {
             Calendar localCal = new GregorianCalendar(calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
             date = localCal.getTime();
+            isOther = false;
+        }
+
+        public DateHolder(@Nullable Date date) {
+            isOther = false;
+            if (date == null){
+                this.date = null;
+            } else {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(date);
+                Calendar localCal = new GregorianCalendar(cal.get(Calendar.YEAR),
+                        cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+                this.date = localCal.getTime();
+            }
         }
 
         public String toString() {
@@ -362,10 +373,9 @@ public class DateTimePicker extends LinearLayout {
 
             DateHolder that = (DateHolder) o;
 
-            if (isOther != that.isOther) return false;
-            if (date == null ? that.date != null : !date.equals(that.date)) return false;
+            return (isOther == that.isOther) &&
+                   ((date == null) ? (that.date == null) : date.equals(that.date));
 
-            return true;
         }
 
         @Override

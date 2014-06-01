@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <root>
     <item name='android.text.TextUtils boolean isEmpty(java.lang.CharSequence)'>
         <annotation name='org.jetbrains.annotations.Contract'>
