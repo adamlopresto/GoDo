@@ -93,6 +93,12 @@ public class DateTimePicker extends LinearLayout {
         dateSpinner = (Spinner) getChildAt(0);
         timeButton = (Button) getChildAt(1);
 
+        timeButton.setText("No time");
+
+        if (isInEditMode()) {
+            return;
+        }
+
         adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dateSpinner.setAdapter(adapter);
@@ -169,7 +175,6 @@ public class DateTimePicker extends LinearLayout {
             }
         });
 
-        timeButton.setText("No time");
 
         timeButton.setOnClickListener(new OnClickListener() {
             boolean confirm;
@@ -349,7 +354,7 @@ public class DateTimePicker extends LinearLayout {
 
         public DateHolder(@Nullable Date date) {
             isOther = false;
-            if (date == null){
+            if (date == null) {
                 this.date = null;
             } else {
                 Calendar cal = Calendar.getInstance();
@@ -374,7 +379,7 @@ public class DateTimePicker extends LinearLayout {
             DateHolder that = (DateHolder) o;
 
             return (isOther == that.isOther) &&
-                   ((date == null) ? (that.date == null) : date.equals(that.date));
+                    ((date == null) ? (that.date == null) : date.equals(that.date));
 
         }
 
