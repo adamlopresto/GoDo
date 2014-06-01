@@ -60,17 +60,17 @@ public class DateTimePicker extends LinearLayout {
 
     public DateTimePicker(Context context) {
         super(context);
-        init(context, null, 0);
+        init(context);
     }
 
     public DateTimePicker(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs, 0);
+        init(context);
     }
 
     public DateTimePicker(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(context, attrs, defStyle);
+        init(context);
     }
 
     private static void addIfNotFound(Collection<DateHolder> collection, DateHolder newItem) {
@@ -78,7 +78,7 @@ public class DateTimePicker extends LinearLayout {
             collection.add(newItem);
     }
 
-    private void init(final Context context, AttributeSet attrs, int defStyle) {
+    private void init(final Context context) {
 
         setOrientation(VERTICAL);
 
@@ -237,18 +237,10 @@ public class DateTimePicker extends LinearLayout {
         init();
     }
 
-    public Date getDate() {
-        return date;
-    }
-
     public void setDate(Date date, boolean hasTime) {
         this.date = date;
         this.hasTime = hasTime;
         init();
-    }
-
-    public boolean hasTime() {
-        return hasTime;
     }
 
     private void init() {
@@ -331,7 +323,7 @@ public class DateTimePicker extends LinearLayout {
 
 
     private static class DateHolder {
-        public boolean isOther = false;
+        public boolean isOther;
         public Date date;
 
         public DateHolder(boolean isOther) {
@@ -364,26 +356,23 @@ public class DateTimePicker extends LinearLayout {
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (obj == null)
-                return false;
-            if (!(obj instanceof DateHolder))
-                return false;
-            DateHolder other = (DateHolder) obj;
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
 
-            if (other.isOther && isOther)
-                return true;
+            DateHolder that = (DateHolder) o;
 
-            if (other.isOther || isOther)
-                return false;
+            if (isOther != that.isOther) return false;
+            if (date == null ? that.date != null : !date.equals(that.date)) return false;
 
-            if (other.date == null && date == null)
-                return true;
+            return true;
+        }
 
-            if (other.date == null || date == null)
-                return false;
-
-            return other.date.equals(date);
+        @Override
+        public int hashCode() {
+            int result = (isOther ? 1 : 0);
+            result = 31 * result + (date != null ? date.hashCode() : 0);
+            return result;
         }
     }
 }
