@@ -28,6 +28,25 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
     private DateTimePicker due;
     private Spinner notification;
     private Spinner dueNotification;
+    private View startAfterPlan;
+    private View startAfterDue;
+    private View planAfterDue;
+
+    /**
+     * Return true iff the first date is strictly after the second date
+     * If either is null, return false
+     *
+     * @param first  first date
+     * @param second second date
+     * @return true only if both dates are defined and the second is after the first
+     */
+    private static boolean isAfter(@Nullable Date first, @Nullable Date second) {
+        return first != null && second != null && first.after(second);
+    }
+
+    private static void hideUnless(View view, boolean b) {
+        view.setVisibility(b ? View.VISIBLE : View.GONE);
+    }
 
     @Nullable
     @Override
@@ -53,6 +72,10 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         due.setColumn(RepetitionRuleColumns.NEW_DUE);
         due.setOnDateDateChangeListener(this);
 
+        startAfterPlan = v.findViewById(R.id.startAfterPlan);
+        startAfterDue = v.findViewById(R.id.startAfterDue);
+        planAfterDue = v.findViewById(R.id.planAfterDue);
+
         fillData();
 
         return v;
@@ -67,7 +90,6 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
     private Instance getInstance() {
         return ((TaskActivity) getActivity()).instance;
     }
-
 
     private void fillData() {
         extractTaskDetails();
@@ -87,14 +109,18 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         instanceNotes.setText(instance.getNotes());
         done.setChecked(instance.getDoneDate() != null);
 
-        Date date = instance.getStartDate();
-        start.setDate(date, instance.hasStartTime());
+        Date startDate = instance.getStartDate();
+        start.setDate(startDate, instance.hasStartTime());
 
-        date = instance.getPlanDate();
-        plan.setDate(date, instance.hasPlanTime());
+        Date planDate = instance.getPlanDate();
+        plan.setDate(planDate, instance.hasPlanTime());
 
-        date = instance.getDueDate();
-        due.setDate(date, instance.hasDueTime());
+        Date dueDate = instance.getDueDate();
+        due.setDate(dueDate, instance.hasDueTime());
+
+        hideUnless(startAfterPlan, isAfter(startDate, planDate));
+        hideUnless(startAfterDue, isAfter(startDate, dueDate));
+        hideUnless(planAfterDue, isAfter(planDate, dueDate));
     }
 
     @Override
@@ -141,18 +167,23 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
             case NEW_START:
                 instance.setStartDate(newDate);
                 instance.setHasStartTime(hasTime);
+                hideUnless(startAfterPlan, isAfter(newDate, instance.getPlanDate()));
+                hideUnless(startAfterDue, isAfter(newDate, instance.getDueDate()));
                 break;
             case NEW_PLAN:
                 instance.setPlanDate(newDate);
                 instance.setHasPlanTime(hasTime);
+                hideUnless(startAfterPlan, isAfter(instance.getStartDate(), newDate));
+                hideUnless(planAfterDue, isAfter(newDate, instance.getDueDate()));
                 break;
             case NEW_DUE:
                 instance.setDueDate(newDate);
                 instance.setHasDueTime(hasTime);
+                hideUnless(startAfterDue, isAfter(instance.getStartDate(), newDate));
+                hideUnless(planAfterDue, isAfter(instance.getPlanDate(), newDate));
                 break;
             default:
                 //no-op
         }
     }
-
 }
