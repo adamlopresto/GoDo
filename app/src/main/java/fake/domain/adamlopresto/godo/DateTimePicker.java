@@ -93,6 +93,7 @@ public class DateTimePicker extends LinearLayout {
         dateSpinner = (Spinner) getChildAt(0);
         timeButton = (Button) getChildAt(1);
 
+        assert timeButton != null;
         timeButton.setText("No time");
 
         if (isInEditMode()) {
@@ -127,7 +128,9 @@ public class DateTimePicker extends LinearLayout {
                         public void onClick(DialogInterface dialog, int which) {
                             //noinspection MagicConstant
                             cal.set(dp.getYear(), dp.getMonth(), dp.getDayOfMonth());
-                            listener.onDateChanged(cal.getTime(), hasTime, column);
+                            date = cal.getTime();
+                            update();
+                            listener.onDateChanged(date, hasTime, column);
                         }
                     });
                     dlg.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
@@ -141,6 +144,8 @@ public class DateTimePicker extends LinearLayout {
                         public void onClick(DialogInterface dialog, int which) {
                             date = null;
                             hasTime = false;
+                            dateSpinner.setSelection(adapter.getCount() - 1);
+                            timeButton.setVisibility(GONE);
                             listener.onDateChanged(null, false, column);
                         }
                     });
@@ -151,9 +156,11 @@ public class DateTimePicker extends LinearLayout {
                     });
                     dlg.show();
                 } else {
-                    if (date == null || holder.date == null || Utils.SOMEDAY.equals(holder.date)) {
+                    if (holder.date == null || Utils.SOMEDAY.equals(holder.date)) {
                         date = holder.date;
                         hasTime = false;
+                    } else if (date == null) {
+                        date = holder.date;
                     } else {
                         //change date without changing time
                         Calendar cal = new GregorianCalendar();
@@ -164,6 +171,7 @@ public class DateTimePicker extends LinearLayout {
                         cal.set(newCal.get(Calendar.YEAR), newCal.get(Calendar.MONTH), newCal.get(Calendar.DAY_OF_MONTH));
                         date = cal.getTime();
                     }
+                    update();
 
                     if (listener != null)
                         listener.onDateChanged(date, hasTime, column);
@@ -246,16 +254,16 @@ public class DateTimePicker extends LinearLayout {
 
     public void setColumn(RepetitionRuleColumns column) {
         this.column = column;
-        init();
+        update();
     }
 
     public void setDate(Date date, boolean hasTime) {
         this.date = date;
         this.hasTime = hasTime;
-        init();
+        update();
     }
 
-    private void init() {
+    private void update() {
         Collection<DateHolder> list = new ArrayList<>(8);
 
         Calendar cal = new GregorianCalendar();
@@ -318,6 +326,10 @@ public class DateTimePicker extends LinearLayout {
 
         dateSpinner.setSelection(adapter.getPosition(selectedDate));
 
+        showHideTime();
+    }
+
+    private void showHideTime() {
         if (date == null || Utils.SOMEDAY.equals(date))
             timeButton.setVisibility(GONE);
         else {

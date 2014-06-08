@@ -63,5 +63,8 @@
     <string name="mark_complete">Mark complete</string>
     <string name="search_hint">Search tasks</string>
     <string name="menu_search">Search</string>
+    <string name="start_after_due">Start date is after due date</string>
+    <string name="start_after_plan">Start date is after plan date</string>
+    <string name="plan_after_due">Plan date is after due date</string>
 
 </resources>
