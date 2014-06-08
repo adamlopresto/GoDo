@@ -169,7 +169,7 @@ public class NotificationService extends Service {
                 builder.setDefaults(Notification.DEFAULT_SOUND);
             if (vibrate)
                 //noinspection MagicNumber
-                builder.setVibrate(new long[]{0, 1000, 300, 1000});
+                builder.setVibrate(new long[]{0L, 1000L, 300L, 1000L});
             builder.setLights(Color.GREEN, 1000, 1000);
             builder.setAutoCancel(true);
 
@@ -224,6 +224,7 @@ public class NotificationService extends Service {
                 stopSelf();
             } else {
                 tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+                    @SuppressWarnings ("ConstantConditions")
                     @Override
                     public void onInit(int status) {
                         if (status == TextToSpeech.SUCCESS) {

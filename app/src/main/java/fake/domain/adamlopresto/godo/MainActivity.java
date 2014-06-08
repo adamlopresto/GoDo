@@ -302,12 +302,13 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     }
 
     @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        Intent i = new Intent(this, TaskActivity.class);
-        i.putExtra("instance", id);
-        startActivity(i);
+    protected void onListItemClick(ListView listView, View v, int position, long id) {
+        Intent intent = new Intent(this, TaskActivity.class);
+        intent.putExtra("instance", id);
+        startActivity(intent);
     }
 
+    @SuppressWarnings ("NonBooleanMethodNameMayNotStartWithQuestion")
     public void checkBoxClick(View v) {
         ListView lv = getListView();
         Checkable cb = (Checkable) v;

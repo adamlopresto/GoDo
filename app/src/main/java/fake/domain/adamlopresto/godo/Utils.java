@@ -20,7 +20,7 @@ import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 @SuppressLint ("SimpleDateFormat")
 public final class Utils {
 
-    public static final DateFormat SHORT_TIME = DateFormat.getTimeInstance(DateFormat.SHORT);
+    private static final DateFormat SHORT_TIME = DateFormat.getTimeInstance(DateFormat.SHORT);
     private static final long DECEMBER_31_2099_IN_MS = 64063198800000L;
     public static final Date SOMEDAY = new Date(DECEMBER_31_2099_IN_MS);
     @SuppressWarnings ("SpellCheckingInspection")
