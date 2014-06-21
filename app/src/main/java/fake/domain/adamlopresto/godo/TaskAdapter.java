@@ -21,7 +21,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
             "task_notes", "instance_notes", "due_date", "plan_date", "done_date"};
     public static final String SORT = "done_date is not null, " +
             "case when due_date <= DATETIME('now', 'localtime') then due_date || ' 23:59:59' else '9999-99-99' end, " +
-            "coalesce(plan_date || ' 23:59:59', DATETIME('now', 'localtime')), " +
+            "coalesce(plan_date || ' 00:00:00', DATETIME('now', 'localtime')), " +
             "due_date || ' 23:59:59', notification DESC, next_steps DESC, random()";
 
     @SuppressWarnings("UnusedDeclaration")
