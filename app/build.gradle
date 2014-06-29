@@ -23,6 +23,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:+'
+    compile 'com.android.support:support-v4:20.+'
     compile 'org.jetbrains:annotations:+@jar'
 }

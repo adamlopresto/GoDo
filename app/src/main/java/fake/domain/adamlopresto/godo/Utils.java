@@ -20,9 +20,10 @@ import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 @SuppressLint ("SimpleDateFormat")
 public final class Utils {
 
+    //private static final long DECEMBER_31_2099_IN_MS = 64063198800000L;
+    @SuppressWarnings ("MagicNumber")
+    public static final Date SOMEDAY = new GregorianCalendar(2099, Calendar.DECEMBER, 31).getTime();
     private static final DateFormat SHORT_TIME = DateFormat.getTimeInstance(DateFormat.SHORT);
-    private static final long DECEMBER_31_2099_IN_MS = 64063198800000L;
-    public static final Date SOMEDAY = new Date(DECEMBER_31_2099_IN_MS);
     @SuppressWarnings ("SpellCheckingInspection")
     private static final DateFormat weekday = new SimpleDateFormat("EEEE");
     private static final DateFormat SHORT_DATE = new SimpleDateFormat("MMM d");
