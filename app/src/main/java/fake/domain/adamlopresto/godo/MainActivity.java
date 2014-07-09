@@ -1,5 +1,6 @@
 package fake.domain.adamlopresto.godo;
 
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.LoaderManager;
@@ -14,6 +15,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -305,7 +307,11 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     protected void onListItemClick(ListView listView, View v, int position, long id) {
         Intent intent = new Intent(this, TaskActivity.class);
         intent.putExtra("instance", id);
-        startActivity(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            startActivity(intent, ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight()).toBundle());
+        } else {
+            startActivity(intent);
+        }
     }
 
     @SuppressWarnings ("NonBooleanMethodNameMayNotStartWithQuestion")
