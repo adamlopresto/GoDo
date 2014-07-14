@@ -147,20 +147,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="fill_horizontal"/>
 
-            <Button
-                android:id="@+id/pick_shortcut"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_columnSpan="2"
-                android:text="Pick shortcut"/>
-
-            <Button
-                android:id="@+id/run_shortcut"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_columnSpan="2"
-                android:text="Run shortcut"/>
-
         </GridLayout>
     </ScrollView>
 
