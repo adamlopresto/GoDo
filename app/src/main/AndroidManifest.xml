@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="fake.domain.adamlopresto.godo"
+    xmlns:tools="http://schemas.android.com/tools"
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <uses-sdk tools:node="replace" />
+
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
 
     <application
@@ -16,11 +19,12 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="fake.domain.adamlopresto.godo.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
@@ -33,42 +37,42 @@
         </activity>
 
         <provider
-            android:name="fake.domain.adamlopresto.godo.GoDoContentProvider"
+            android:name=".GoDoContentProvider"
             android:authorities="fake.domain.adamlopresto.godo.contentprovider"
             android:exported="false" >
         </provider>
 
         <activity
-            android:name="fake.domain.adamlopresto.godo.ContextsActivity"
+            android:name=".ContextsActivity"
             android:label="@string/title_activity_contexts"
             android:parentActivityName=".MainActivity"
-            tools:ignore="UnusedAttribute">
+            tools:ignore="UnusedAttribute" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name="fake.domain.adamlopresto.godo.TaskActivity"
+            android:name=".TaskActivity"
             android:exported="true"
             android:label="@string/title_activity_task"
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="stateHidden"
-            tools:ignore="UnusedAttribute">
-        <meta-data
+            tools:ignore="UnusedAttribute" >
+            <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name="fake.domain.adamlopresto.godo.SettingsActivity"
+            android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity"
-            tools:ignore="UnusedAttribute">
-        <meta-data
+            tools:ignore="UnusedAttribute" >
+            <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name="fake.domain.adamlopresto.godo.TaskerPluginEditActivity"
+            android:name=".TaskerPluginEditActivity"
             android:label="@string/title_activity_tasker_plugin_edit" >
             <intent-filter>
                 <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
@@ -76,7 +80,7 @@
         </activity>
 
         <receiver
-            android:name="fake.domain.adamlopresto.godo.GoDoReceiver"
+            android:name=".GoDoReceiver"
             android:enabled="true"
             android:exported="true"
             tools:ignore="ExportedReceiver" >
@@ -89,7 +93,7 @@
         </receiver>
 
         <activity
-            android:name="fake.domain.adamlopresto.godo.TaskRepetitionRuleActivity"
+            android:name=".TaskRepetitionRuleActivity"
             android:label="@string/title_activity_task_repetition_rule" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -97,12 +101,12 @@
         </activity>
 
         <service
-            android:name="fake.domain.adamlopresto.godo.NotificationService"
+            android:name=".NotificationService"
             android:enabled="true"
             android:exported="false" >
         </service>
 
-        <receiver android:name="fake.domain.adamlopresto.godo.GoDoAppWidget" >
+        <receiver android:name=".GoDoAppWidget" >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -113,10 +117,21 @@
         </receiver>
 
         <service
-            android:name="fake.domain.adamlopresto.godo.GoDoWidgetService"
+            android:name=".GoDoWidgetService"
             android:enabled="true"
-            android:exported="false" android:permission="android.permission.BIND_REMOTEVIEWS">
+            android:exported="false"
+            android:permission="android.permission.BIND_REMOTEVIEWS" >
         </service>
+
+        <activity
+            android:name=".RepetitionRulesListActivity"
+            android:label="@string/title_activity_repetition_rules_list"
+            android:parentActivityName=".TaskActivity"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fake.domain.adamlopresto.godo.TaskActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -64,7 +64,6 @@ public class TaskRepetitionRuleFragment extends ListFragment
                 inflater = new MenuInflater(getActivity());
             }
             inflater.inflate(R.menu.context_edit_delete, menu);
-            //noinspection ConstantConditions
             editItem = menu.findItem(R.id.edit);
             mode.setTitle("Rules");
             return true;
@@ -143,76 +142,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
 
             @Override
             public boolean setViewValue(@NotNull View view, @NotNull Cursor cursor, int columnIndex) {
-                String to;
-                switch (cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TO))) {
-                    case 0:
-                        to = "Starts ";
-                        break;
-                    case 1:
-                        to = "Planned for ";
-                        break;
-                    case 2:
-                        to = "Due ";
-                        break;
-                    default:
-                        to = "Error: to column is unexpectedly " + cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TO));
-                }
-
-                String from;
-                switch (cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_FROM))) {
-                    case 0:
-                        from = "new start date";
-                        break;
-                    case 1:
-                        from = "new plan date";
-                        break;
-                    case 2:
-                        from = "new due date";
-                        break;
-                    case 3:
-                        from = template() ? "creation date" : "completion date";
-                        break;
-                    case 4:
-                        from = template() ? "creation date" : "old start date";
-                        break;
-                    case 5:
-                        from = template() ? "creation date" : "old plan date";
-                        break;
-                    case 6:
-                        from = template() ? "creation date" : "old due date";
-                        break;
-                    default:
-                        from = "\nError: from column is unexpectedly " + cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_FROM));
-                }
-
-                String subvalue = cursor.getString(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_SUBVALUE));
-                if (subvalue == null)
-                    subvalue = "";
-                String direction = subvalue.startsWith("-") ? " before " : " after ";
-                subvalue = subvalue.replace("-", "");
-                String s = "1".equals(subvalue) ? "" : "s";
-
-                String full;
-                switch (cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TYPE))) {
-                    case 0:
-                        full = to + subvalue + " day" + s + direction + from;
-                        break;
-                    case 1:
-                        full = to + subvalue + " month" + s + direction + from;
-                        break;
-                    case 2:
-                        full = to + "next " + subvalue + direction + from;
-                        break;
-                    case 3:
-                        full = to + subvalue + " week" + s + direction + from;
-                        break;
-                    case 4:
-                        full = to + subvalue + " year" + s + direction + from;
-                        break;
-                    default:
-                        full = "Error: unknown rule type";
-                        break;
-                }
+                String full = Utils.repetitionRuleTextFromCursor(cursor, template());
                 ((TextView) view).setText(full);
                 return true;
             }
@@ -230,10 +160,9 @@ public class TaskRepetitionRuleFragment extends ListFragment
         lv.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
         lv.setMultiChoiceModeListener(mActionModeCallback);
         setListAdapter(null);
-        //noinspection ConstantConditions
         header = (Spinner) getLayoutInflater(savedInstanceState)
                 .inflate(R.layout.fragment_task_repetition_header, lv, false);
-        header.setSelection(((TaskActivity) getActivity()).task.getRepeat().ordinal());
+        header.setSelection(((InstanceHolderActivity) getActivity()).task.getRepeat().ordinal());
         lv.addHeaderView(header, null, false);
         header.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -256,7 +185,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
      */
     @Override
     public void onPause() {
-        Task task = ((TaskActivity) getActivity()).task;
+        Task task = ((InstanceHolderActivity) getActivity()).task;
         task.setRepeat(RepeatTypes.values()[header.getSelectedItemPosition()]);
         task.flush();
         super.onPause();
@@ -278,7 +207,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
     public boolean onOptionsItemSelected(@NotNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_new:
-                long taskId = ((TaskActivity) getActivity()).task.forceId();
+                long taskId = ((InstanceHolderActivity) getActivity()).task.forceId();
                 if (taskId == -1L)
                     Toast.makeText(getActivity(), "Enter a task name first", Toast.LENGTH_LONG).show();
                 else {
@@ -308,7 +237,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
                 new String[]{RepetitionRulesTable.COLUMN_ID, RepetitionRulesTable.COLUMN_TASK,
                         RepetitionRulesTable.COLUMN_TYPE, RepetitionRulesTable.COLUMN_SUBVALUE,
                         RepetitionRulesTable.COLUMN_FROM, RepetitionRulesTable.COLUMN_TO},
-                RepetitionRulesTable.COLUMN_TASK + "=?", new String[]{String.valueOf((((TaskActivity) getActivity()).task).forceId())}, null
+                RepetitionRulesTable.COLUMN_TASK + "=?", new String[]{String.valueOf((((InstanceHolderActivity) getActivity()).task).forceId())}, null
         );
     }
 

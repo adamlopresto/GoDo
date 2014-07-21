@@ -101,7 +101,6 @@ public class GoDoContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        //noinspection ConstantConditions
         helper = DatabaseHelper.getInstance(getContext());
         return true;
     }
@@ -201,7 +200,6 @@ public class GoDoContentProvider extends ContentProvider {
             case TASKS:
                 rowsUpdated = sqlDB.delete(TasksTable.TABLE, selection, selectionArgs);
                 if (rowsUpdated > 0) {
-                    //noinspection ConstantConditions
                     GoDoAppWidget.updateAllAppWidgets(getContext());
                     helper.notifyChange(TASKS_URI);
                 }
@@ -209,7 +207,6 @@ public class GoDoContentProvider extends ContentProvider {
             case INSTANCES:
                 rowsUpdated = sqlDB.delete(InstancesTable.TABLE, selection, selectionArgs);
                 if (rowsUpdated > 0) {
-                    //noinspection ConstantConditions
                     GoDoAppWidget.updateAllAppWidgets(getContext());
                     helper.notifyChange(INSTANCES_URI);
                 }
@@ -253,7 +250,6 @@ public class GoDoContentProvider extends ContentProvider {
         switch (uriType) {
             case INSTANCES:
                 id = sqlDB.insertOrThrow(InstancesTable.TABLE, null, values);
-                //noinspection ConstantConditions
                 GoDoAppWidget.updateAllAppWidgets(getContext());
                 break;
             case TASKS:
@@ -293,14 +289,12 @@ public class GoDoContentProvider extends ContentProvider {
         switch (uriType) {
             case TOGGLE_CONTEXT:
                 sqlDB.execSQL("UPDATE " + ContextsTable.TABLE + " SET " + ContextsTable.COLUMN_ACTIVE + "= NOT " + ContextsTable.COLUMN_ACTIVE + " WHERE " + selection, selectionArgs);
-                //noinspection ConstantConditions
                 GoDoAppWidget.updateAllAppWidgets(getContext());
                 helper.notifyChange(CONTEXTS_URI);
                 return 1;
             case TASKS:
                 rowsUpdated = sqlDB.update(TasksTable.TABLE, values, selection, selectionArgs);
                 if (rowsUpdated > 0) {
-                    //noinspection ConstantConditions
                     GoDoAppWidget.updateAllAppWidgets(getContext());
                     helper.notifyChange(TASKS_URI);
                 }
@@ -308,7 +302,6 @@ public class GoDoContentProvider extends ContentProvider {
             case INSTANCES:
                 rowsUpdated = sqlDB.update(InstancesTable.TABLE, values, selection, selectionArgs);
                 if (rowsUpdated > 0) {
-                    //noinspection ConstantConditions
                     GoDoAppWidget.updateAllAppWidgets(getContext());
                     helper.notifyChange(INSTANCES_URI);
                 }
@@ -316,7 +309,6 @@ public class GoDoContentProvider extends ContentProvider {
             case CONTEXTS:
                 rowsUpdated = sqlDB.update(ContextsTable.TABLE, values, selection, selectionArgs);
                 if (rowsUpdated > 0) {
-                    //noinspection ConstantConditions
                     GoDoAppWidget.updateAllAppWidgets(getContext());
                     helper.notifyChange(CONTEXTS_URI);
                 }

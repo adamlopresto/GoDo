@@ -9,8 +9,7 @@
     <string name="title_fragment_task_repetitions">Repetitions</string>
     <string name="title_fragment_task_details">Details</string>
     <string name="task_name_hint">Task name</string>
-    <string name="task_notes_label">Task notes</string>
-    <string name="instance_notes_label">Instance notes</string>
+    <string name="instance_notes_label">One time notes</string>
     <string name="pref_filtering_header">Filtering</string>
     <string name="pref_show_blocked_by_task_title">Show dependent tasks</string>
     <string name="pref_show_blocked_by_task_on">Show tasks that are blocked by an incomplete task</string>
@@ -24,12 +23,12 @@
     <string name="pref_show_future_title">Show future tasks</string>
     <string name="pref_show_future_on">Show tasks with start or plan dates in the future</string>
     <string name="pref_show_future_off">Show only tasks that have begun</string>
-    <string name="start_date_label">Start date</string>
-    <string name="plan_date_label">Plan date</string>
-    <string name="due_date_label">Due date</string>
+    <string name="start_date_label">Start</string>
+    <string name="plan_date_label">Plan</string>
+    <string name="due_date_label">Due</string>
     <string name="new_task">New task</string>
-    <string name="notification_label">Active notification</string>
-    <string name="due_notification_label">Due notification</string>
+    <string name="notification_label">Active</string>
+    <string name="due_notification_label">Due</string>
     <string name="title_activity_tasker_plugin_edit">GoDo Contexts</string>
     <string name="contexts_to_activate">Contexts to activate</string>
     <string name="none">None</string>
@@ -66,5 +65,11 @@
     <string name="start_after_due">Start date is after due date</string>
     <string name="start_after_plan">Start date is after plan date</string>
     <string name="plan_after_due">Plan date is after due date</string>
+    <string name="title_activity_repetition_rules_list">Repetition Rules</string>
+    <string name="notes_hint">Notes</string>
+    <string name="repetitions_header">Repetitions</string>
+    <string name="view_history_button">View History</string>
+    <string name="dates_header">Dates</string>
+    <string name="notifications_header">Notifications</string>
 
 </resources>

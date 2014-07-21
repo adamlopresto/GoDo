@@ -71,7 +71,6 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
                     inflater = new MenuInflater(ContextsActivity.this);
                 }
                 inflater.inflate(R.menu.context_edit_delete, menu);
-                //noinspection ConstantConditions
                 editItem = menu.findItem(R.id.edit);
                 mode.setTitle("Contexts");
                 return true;

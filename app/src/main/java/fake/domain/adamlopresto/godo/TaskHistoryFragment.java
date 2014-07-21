@@ -47,7 +47,7 @@ public class TaskHistoryFragment extends ListFragment
     }
 
     private long getTaskId() {
-        return ((TaskActivity) getActivity()).task.getId();
+        return ((InstanceHolderActivity) getActivity()).task.getId();
     }
 
     @Nullable

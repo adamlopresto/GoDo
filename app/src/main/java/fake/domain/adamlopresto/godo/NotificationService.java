@@ -191,7 +191,7 @@ public class NotificationService extends Service {
                         .setTicker(name);
                 PendingIntent markDone = PendingIntent.getBroadcast(this, 0,
                         new Intent(this, GoDoReceiver.class).setAction(GoDoReceiver.MARK_COMPLETE_INTENT)
-                                .putExtra("instance", id),
+                                .putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id),
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
                 builder.addAction(R.drawable.ic_action_accept, getString(R.string.mark_complete), markDone);
@@ -199,7 +199,7 @@ public class NotificationService extends Service {
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
                 //stackBuilder.addParentStack(TaskActivity.class);
                 stackBuilder.addNextIntentWithParentStack(
-                        new Intent(this, TaskActivity.class).putExtra("instance", id));
+                        new Intent(this, TaskActivity.class).putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id));
                 builder.setContentIntent(stackBuilder.getPendingIntent(0,
                         PendingIntent.FLAG_CANCEL_CURRENT));
             } else {

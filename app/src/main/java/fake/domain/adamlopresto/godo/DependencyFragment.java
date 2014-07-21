@@ -48,7 +48,6 @@ public class DependencyFragment extends ListFragment
             if (inflater == null)
                 inflater = new MenuInflater(getActivity());
             inflater.inflate(R.menu.context_edit_delete, menu);
-            //noinspection ConstantConditions
             editItem = menu.findItem(R.id.edit);
             mode.setTitle(prereq() ? "Prerequisites" : "Next Steps");
             return true;
@@ -87,7 +86,7 @@ public class DependencyFragment extends ListFragment
                     return true;
                 }
                 case R.id.edit:
-                    startActivity(new Intent(getActivity(), TaskActivity.class).putExtra("instance",
+                    startActivity(new Intent(getActivity(), TaskActivity.class).putExtra(InstanceHolderActivity.EXTRA_INSTANCE,
                             getListView().getCheckedItemIds()[0]));
                     return true;
                 default:
@@ -182,11 +181,11 @@ public class DependencyFragment extends ListFragment
     }
 
     private long forceInstanceId() {
-        return ((TaskActivity) getActivity()).instance.forceId();
+        return ((InstanceHolderActivity) getActivity()).instance.forceId();
     }
 
     private long getInstanceId() {
-        return ((TaskActivity) getActivity()).instance.getId();
+        return ((InstanceHolderActivity) getActivity()).instance.getId();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package fake.domain.adamlopresto.godo;
 
 import android.annotation.SuppressLint;
+import android.database.Cursor;
 import android.text.format.DateUtils;
 import android.widget.TextView;
 
@@ -15,6 +16,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
+import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
 
 
 @SuppressLint ("SimpleDateFormat")
@@ -28,6 +30,10 @@ public final class Utils {
     private static final DateFormat weekday = new SimpleDateFormat("EEEE");
     private static final DateFormat SHORT_DATE = new SimpleDateFormat("MMM d");
     private static final DateFormat SHORT_DATE_WITH_YEAR = new SimpleDateFormat("MMM d, yyyy");
+    @SuppressWarnings ("SpellCheckingInspection")
+    private static final DateFormat LONG_DATE = new SimpleDateFormat("MMMM d");
+    @SuppressWarnings ("SpellCheckingInspection")
+    private static final DateFormat LONG_DATE_WITH_YEAR = new SimpleDateFormat("MMMM d, yyyy");
     private static final DateFormat REALLY_SHORT_TIME = new SimpleDateFormat("h a");
 
     private Utils() {
@@ -126,8 +132,8 @@ public final class Utils {
         if (diff < 0 && diff >= -7)
             return "Last " + weekday.format(then);
         if (thenCal.get(Calendar.YEAR) == now.get(Calendar.YEAR))
-            return SHORT_DATE.format(then);
-        return SHORT_DATE_WITH_YEAR.format(then);
+            return LONG_DATE.format(then);
+        return LONG_DATE_WITH_YEAR.format(then);
     }
 
     public static String formatShortRelativeDate(@NotNull String formattedDate) {
@@ -177,5 +183,83 @@ public final class Utils {
         if (seq == null)
             return null;
         return seq.toString();
+    }
+
+    public static String repetitionRuleTextFromCursor(Cursor cursor, boolean template) {
+        String to;
+        switch (cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TO))) {
+            case 0:
+                to = "Starts ";
+                break;
+            case 1:
+                to = "Planned for ";
+                break;
+            case 2:
+                to = "Due ";
+                break;
+            default:
+                to = "Error: to column is unexpectedly " + cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TO));
+        }
+
+        String from;
+        switch (cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_FROM))) {
+            case 0:
+                from = "new start date";
+                break;
+            case 1:
+                from = "new plan date";
+                break;
+            case 2:
+                from = "new due date";
+                break;
+            case 3:
+                from = template ? "creation date" : "completion date";
+                break;
+            case 4:
+                from = template ? "creation date" : "old start date";
+                break;
+            case 5:
+                from = template ? "creation date" : "old plan date";
+                break;
+            case 6:
+                from = template ? "creation date" : "old due date";
+                break;
+            default:
+                from = "\nError: from column is unexpectedly " + cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_FROM));
+        }
+
+        String subvalue = cursor.getString(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_SUBVALUE));
+        if (subvalue == null)
+            subvalue = "";
+        String direction = subvalue.startsWith("-") ? " before " : " after ";
+        subvalue = subvalue.replace("-", "");
+        String s = "1".equals(subvalue) ? "" : "s";
+
+        String full;
+        switch (cursor.getInt(cursor.getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_TYPE))) {
+            case 0:
+                full = to + subvalue + " day" + s + direction + from;
+                break;
+            case 1:
+                full = to + subvalue + " month" + s + direction + from;
+                break;
+            case 2:
+                full = to + "next " + subvalue + direction + from;
+                break;
+            case 3:
+                full = to + subvalue + " week" + s + direction + from;
+                break;
+            case 4:
+                full = to + subvalue + " year" + s + direction + from;
+                break;
+            default:
+                full = "Error: unknown rule type";
+                break;
+        }
+        return full;
+    }
+
+    public static String[] idToSelectionArgs(long id) {
+        return new String[]{String.valueOf(id)};
     }
 }

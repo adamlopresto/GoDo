@@ -71,7 +71,6 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
             if (inflater == null)
                 inflater = new MenuInflater(MainActivity.this);
             inflater.inflate(R.menu.main_cab, menu);
-            //noinspection ConstantConditions
             editItem = menu.findItem(R.id.edit);
             mode.setTitle("Tasks");
             return true;
@@ -92,7 +91,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
                     final long id = getListView().getCheckedItemIds()[0];
                     mode.finish(); // Action picked, so close the CAB
                     Intent i = new Intent(MainActivity.this, TaskActivity.class);
-                    i.putExtra("instance", id);
+                    i.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id);
                     startActivity(i);
                     return true;
                 }
@@ -282,7 +281,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
                                         cursor.moveToPosition(which);
                                         long id = cursor.getLong(0);
                                         Intent i = new Intent(MainActivity.this, TaskActivity.class);
-                                        i.putExtra("task", id);
+                                        i.putExtra(InstanceHolderActivity.EXTRA_TASK, id);
                                         startActivity(i);
                                     }
 
@@ -306,7 +305,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     @Override
     protected void onListItemClick(ListView listView, View v, int position, long id) {
         Intent intent = new Intent(this, TaskActivity.class);
-        intent.putExtra("instance", id);
+        intent.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             startActivity(intent, ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight()).toBundle());
         } else {

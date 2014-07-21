@@ -68,7 +68,7 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
                 Utils.isAfterNow(cursor.getString(PLAN_DATE)) ? Color.GRAY :
                                                                 Color.WHITE);
         Bundle extras = new Bundle();
-        extras.putLong("instance", cursor.getLong(ID));
+        extras.putLong(InstanceHolderActivity.EXTRA_INSTANCE, cursor.getLong(ID));
         Intent fillInIntent = new Intent();
         fillInIntent.putExtras(extras);
         // Make it possible to distinguish the individual on-click

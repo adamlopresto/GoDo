@@ -73,7 +73,7 @@ public class Task {
                 new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES,
                         TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT,
                         TasksTable.COLUMN_DUE_NOTIFICATION},
-                TasksTable.COLUMN_ID + "=?", new String[]{String.valueOf(id)}, null, null, null
+                TasksTable.COLUMN_ID + "=?", Utils.idToSelectionArgs(id), null, null, null
         );
         if (!c.moveToFirst())
             throw new IllegalArgumentException("No task with id " + id);
@@ -166,7 +166,7 @@ public class Task {
                         RepetitionRulesTable.COLUMN_TYPE, RepetitionRulesTable.COLUMN_SUBVALUE
                 },
                 RepetitionRulesTable.COLUMN_TASK + "=?",
-                new String[]{String.valueOf(forceId())}, null, null, null
+                Utils.idToSelectionArgs(forceId()), null, null, null
         );
         rules.moveToFirst();
         RepetitionRuleColumns[] cols = RepetitionRuleColumns.values();
@@ -345,7 +345,7 @@ public class Task {
             id = db.insert(TasksTable.TABLE, null, values);
         else
             db.update(TasksTable.TABLE, values, TasksTable.COLUMN_ID + "=?",
-                    new String[]{String.valueOf(id)});
+                    Utils.idToSelectionArgs(id));
         dirty = false;
     }
 
