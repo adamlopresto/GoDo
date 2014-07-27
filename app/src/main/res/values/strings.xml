@@ -71,5 +71,6 @@
     <string name="view_history_button">View History</string>
     <string name="dates_header">Dates</string>
     <string name="notifications_header">Notifications</string>
+    <string name="history_activity_label">Task History</string>
 
 </resources>

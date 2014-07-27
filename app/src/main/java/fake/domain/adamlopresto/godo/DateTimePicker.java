@@ -14,6 +14,7 @@ import android.widget.CalendarView;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import org.jetbrains.annotations.Nullable;
@@ -54,7 +55,7 @@ public class DateTimePicker extends LinearLayout {
     private Date date;
     private RepetitionRuleColumns column;
     private Spinner dateSpinner;
-    private Button timeButton;
+    private TextView timeButton;
     private OnDateChangeListener listener;
     private ArrayAdapter<DateHolder> adapter;
     private boolean hasTime;
@@ -91,7 +92,7 @@ public class DateTimePicker extends LinearLayout {
         inflater.inflate(R.layout.date_time_spinner, this, true);
 
         dateSpinner = (Spinner) getChildAt(0);
-        timeButton = (Button) getChildAt(1);
+        timeButton = (TextView) getChildAt(1);
 
         assert timeButton != null;
         timeButton.setText("No time");

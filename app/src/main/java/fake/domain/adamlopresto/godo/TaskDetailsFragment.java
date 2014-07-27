@@ -2,11 +2,16 @@ package fake.domain.adamlopresto.godo;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +19,15 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.ViewAnimator;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
 
-import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
+import fake.domain.adamlopresto.godo.db.ContextsTable;
+import fake.domain.adamlopresto.godo.db.DatabaseHelper;
+import fake.domain.adamlopresto.godo.db.TaskContextTable;
 
 @SuppressWarnings ("InstanceVariableMayNotBeInitialized")
 public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDateChangeListener {
@@ -30,7 +36,6 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
     private EditText taskName;
     private EditText taskNotes;
     private TextView repetitionSummary;
-    private TextView repetitionSummary2;
     private TextView repetitionRuleList;
     private EditText instanceNotes;
     private TextView instanceNotesRo;
@@ -42,6 +47,13 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
     private View startAfterPlan;
     private View startAfterDue;
     private View planAfterDue;
+
+    private boolean showRepetitionCollapsed = true;
+    private View repetitionHeader;
+    private View repetitionDivider;
+    private View viewHistoryButton;
+
+    private TextView contexts;
 
     /**
      * Return true iff the first date is strictly after the second date
@@ -90,13 +102,29 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         v.findViewById(R.id.repetition_card).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((ViewAnimator) v).showNext();
+                showRepetitionCollapsed = ! showRepetitionCollapsed;
+                if (showRepetitionCollapsed){
+                    repetitionHeader.setVisibility(View.GONE);
+                    repetitionRuleList.setVisibility(View.GONE);
+                    instanceNotes.setVisibility(View.GONE);
+                    hideUnless(instanceNotesRo, !TextUtils.isEmpty(instanceNotesRo.getText()));
+                    repetitionDivider.setVisibility(View.GONE);
+                    viewHistoryButton.setVisibility(View.GONE);
+                } else {
+                    repetitionHeader.setVisibility(View.VISIBLE);
+                    repetitionRuleList.setVisibility(View.VISIBLE);
+                    instanceNotes.setVisibility(View.VISIBLE);
+                    instanceNotesRo.setVisibility(View.GONE);
+                    repetitionDivider.setVisibility(View.VISIBLE);
+                    viewHistoryButton.setVisibility(View.VISIBLE);
+                }
             }
         });
 
-        repetitionSummary = (TextView)v.findViewById(R.id.repetition_summary);
-        repetitionSummary2 = (TextView)v.findViewById(R.id.repetition_summary2);
+        repetitionHeader   =           v.findViewById(R.id.repetition_header);
+        repetitionSummary  = (TextView)v.findViewById(R.id.repetition_summary);
         repetitionRuleList = (TextView)v.findViewById(R.id.repetition_list);
+        repetitionDivider  =           v.findViewById(R.id.repetition_divider);
 
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
@@ -107,10 +135,26 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
             }
         };
 
-        repetitionSummary2.setOnClickListener(listener);
         repetitionRuleList.setOnClickListener(listener);
 
         instanceNotesRo = (TextView)v.findViewById(R.id.instance_notes_ro);
+        viewHistoryButton = v.findViewById(R.id.view_history_button);
+        viewHistoryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), HistoryActivity.class);
+                i.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, getInstance().getId());
+                startActivity(i);
+            }
+        });
+
+        contexts = (TextView) v.findViewById(R.id.contexts);
+        contexts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((TaskActivity)getActivity()).showContextsDialog();
+            }
+        });
 
         fillData();
 
@@ -143,20 +187,16 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         switch (task.getRepeat()) {
             case AUTOMATIC:
                 repetitionSummary.setText("Repeats automatically");
-                repetitionSummary2.setText("Repeats automatically");
                 break;
             case TEMPLATE:
                 repetitionSummary.setText("Repeats manually");
-                repetitionSummary2.setText("Repeats manually");
                 templateRW = true;
                 break;
             case NONE:
                 repetitionSummary.setText("Does not repeat");
-                repetitionSummary2.setText("Does not repeat");
         }
 
         final boolean template = templateRW;
-
         new AsyncTask<Long, Void, String>(){
 
             /**
@@ -176,11 +216,9 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
             @Override
             protected String doInBackground(Long... params) {
                 StringBuilder b = new StringBuilder();
-                Cursor cursor = getActivity().getContentResolver().query(GoDoContentProvider.REPETITION_RULES_URI,
-                        new String[]{RepetitionRulesTable.COLUMN_ID, RepetitionRulesTable.COLUMN_TASK,
-                                RepetitionRulesTable.COLUMN_TYPE, RepetitionRulesTable.COLUMN_SUBVALUE,
-                                RepetitionRulesTable.COLUMN_FROM, RepetitionRulesTable.COLUMN_TO},
-                        RepetitionRulesTable.COLUMN_TASK + "=?", Utils.idToSelectionArgs(params[0]),null);
+                Cursor cursor = getActivity().getContentResolver().query(GoDoContentProvider.CONTEXTS_URI,
+                        new String[]{ContextsTable.COLUMN_NAME, ContextsTable.COLUMN_ACTIVE},
+                        ContextsTable.COLUMN_ID + "=?", Utils.idToSelectionArgs(params[0]),null);
 
                 if (!cursor.moveToFirst()) {
                     return null;
@@ -198,15 +236,65 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
 
             @Override
             protected void onPostExecute(String s) {
-                if (s == null){
-                    repetitionRuleList.setVisibility(View.GONE);
-                } else {
-                    repetitionRuleList.setVisibility(View.VISIBLE);
-                    repetitionRuleList.setText(s);
-                }
+                repetitionRuleList.setVisibility(s == null || showRepetitionCollapsed
+                                                 ? View.GONE
+                                                 : View.VISIBLE);
+                repetitionRuleList.setText(s);
             }
         }.execute(task.getId());
 
+        loadContexts();
+    }
+
+    public void loadContexts(){
+        new AsyncTask<Void, Void, CharSequence>(){
+
+            /**
+             * Override this method to perform a computation on a background thread. The
+             * specified parameters are the parameters passed to {@link #execute}
+             * by the caller of this task.
+             * <p/>
+             * This method can call {@link #publishProgress} to publish updates
+             * on the UI thread.
+             *
+             * @return A result, defined by the subclass of this task.
+             * @see #onPreExecute()
+             * @see #onPostExecute
+             * @see #publishProgress
+             */
+            @Override
+            protected CharSequence doInBackground(Void... ignored) {
+                long task_id = getTask().getId();
+                SQLiteDatabase db = DatabaseHelper.getInstance(getActivity()).getReadableDatabase();
+                Cursor cursor = db.query(ContextsTable.TABLE, new String[]{ContextsTable.COLUMN_NAME,
+                                ContextsTable.COLUMN_ACTIVE},
+                        "exists (select * from " + TaskContextTable.TABLE + " where "
+                                + TaskContextTable.COLUMN_TASK + "=" + task_id
+                                + " and context=contexts._id)",
+                        null, null, null, ContextsTable.COLUMN_NAME);
+                cursor.moveToFirst();
+                if (cursor.isAfterLast())
+                    return "No contexts";
+                SpannableStringBuilder b = new SpannableStringBuilder();
+                int start = 0;
+                while (!cursor.isAfterLast()){
+                    b.append(cursor.getString(0));
+                    boolean active = cursor.getInt(1) != 0;
+                    cursor.moveToNext();
+                    if (!cursor.isAfterLast())
+                        b.append(", ");
+                    b.setSpan(new ForegroundColorSpan(active ? Color.BLACK : Color.GRAY),
+                            start, b.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    start = b.length();
+                }
+                return b;
+            }
+
+            @Override
+            protected void onPostExecute(CharSequence s) {
+                contexts.setText(s);
+            }
+        }.execute();
     }
 
     private void extractInstanceDetails() {

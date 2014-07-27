@@ -40,6 +40,8 @@ public class TaskActivity extends InstanceHolderActivity implements
      */
     private ViewPager mViewPager;
 
+    TaskDetailsFragment taskDetailsFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,65 +140,72 @@ public class TaskActivity extends InstanceHolderActivity implements
                 startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.action_contexts:
-                final long task_id = task.forceId();
-                final SQLiteDatabase db = DatabaseHelper.getInstance(this).getWritableDatabase();
-                Cursor cursor = db.query(ContextsTable.TABLE, new String[]{ContextsTable.COLUMN_ID, ContextsTable.COLUMN_NAME,
-                        "exists (select * from " + TaskContextTable.TABLE + " where " + TaskContextTable.COLUMN_TASK + "=" + task_id + " and context=contexts._id) AS selected"}, null, null, null, null, null);
-                final List<Long> orig = new ArrayList<>(cursor.getCount());
-                cursor.moveToFirst();
-                while (!cursor.isAfterLast()) {
-                    orig.add(cursor.getLong(0));
-                    cursor.moveToNext();
-                }
-                cursor.moveToFirst();
-
-                final Collection<Long> toAdd = new HashSet<>();
-                final Collection<Long> toDel = new HashSet<>();
-
-                new AlertDialog.Builder(this)
-                        .setMultiChoiceItems(cursor, "selected", ContextsTable.COLUMN_NAME,
-                                new DialogInterface.OnMultiChoiceClickListener() {
-
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                                        Long id = orig.get(which);
-                                        if (isChecked) {
-                                            if (!toDel.remove(id))
-                                                toAdd.add(id);
-                                        } else {
-                                            if (!toAdd.remove(id))
-                                                toDel.add(id);
-                                        }
-                                    }
-                                }
-                        )
-                        .setTitle(R.string.title_activity_contexts)
-                        .setNegativeButton("Cancel", null)
-                        .setPositiveButton("Set", new DialogInterface.OnClickListener() {
-
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String[] whereArgs = {String.valueOf(task_id), null};
-                                for (Long id : toDel) {
-                                    whereArgs[1] = String.valueOf(id);
-                                    db.delete(TaskContextTable.TABLE,
-                                            TaskContextTable.COLUMN_TASK + "=? AND " + TaskContextTable.COLUMN_CONTEXT + "=?",
-                                            whereArgs);
-                                }
-
-                                ContentValues cv = new ContentValues(2);
-                                cv.put(TaskContextTable.COLUMN_TASK, task_id);
-                                for (Long id : toAdd) {
-                                    cv.put(TaskContextTable.COLUMN_CONTEXT, id);
-                                    db.insert(TaskContextTable.TABLE, null, cv);
-                                }
-                            }
-                        })
-                        .show();
+                showContextsDialog();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showContextsDialog() {
+        final long task_id = task.forceId();
+        final SQLiteDatabase db = DatabaseHelper.getInstance(this).getWritableDatabase();
+        Cursor cursor = db.query(ContextsTable.TABLE, new String[]{ContextsTable.COLUMN_ID, ContextsTable.COLUMN_NAME,
+                "exists (select * from " + TaskContextTable.TABLE + " where " + TaskContextTable.COLUMN_TASK + "=" + task_id + " and context=contexts._id) AS selected"}, null, null, null, null, null);
+        final List<Long> orig = new ArrayList<>(cursor.getCount());
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            orig.add(cursor.getLong(0));
+            cursor.moveToNext();
+        }
+        cursor.moveToFirst();
+
+        final Collection<Long> toAdd = new HashSet<>();
+        final Collection<Long> toDel = new HashSet<>();
+
+        new AlertDialog.Builder(this)
+                .setMultiChoiceItems(cursor, "selected", ContextsTable.COLUMN_NAME,
+                        new DialogInterface.OnMultiChoiceClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                                Long id = orig.get(which);
+                                if (isChecked) {
+                                    if (!toDel.remove(id))
+                                        toAdd.add(id);
+                                } else {
+                                    if (!toAdd.remove(id))
+                                        toDel.add(id);
+                                }
+                            }
+                        }
+                )
+                .setTitle(R.string.title_activity_contexts)
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Set", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String[] whereArgs = {String.valueOf(task_id), null};
+                        for (Long id : toDel) {
+                            whereArgs[1] = String.valueOf(id);
+                            db.delete(TaskContextTable.TABLE,
+                                    TaskContextTable.COLUMN_TASK + "=? AND " + TaskContextTable.COLUMN_CONTEXT + "=?",
+                                    whereArgs);
+                        }
+
+                        ContentValues cv = new ContentValues(2);
+                        cv.put(TaskContextTable.COLUMN_TASK, task_id);
+                        for (Long id : toAdd) {
+                            cv.put(TaskContextTable.COLUMN_CONTEXT, id);
+                            db.insert(TaskContextTable.TABLE, null, cv);
+                        }
+
+                        if (taskDetailsFragment != null)
+                            taskDetailsFragment.loadContexts();
+                    }
+                })
+                .show();
     }
 
     /* (non-Javadoc)
@@ -243,7 +252,7 @@ public class TaskActivity extends InstanceHolderActivity implements
             // getItem is called to instantiate the fragment for the given page.
             switch (position) {
                 case 0: {
-                    return new TaskDetailsFragment();
+                    return taskDetailsFragment = new TaskDetailsFragment();
                 }
                 case 1: {
                     return new TaskRepetitionRuleFragment();
