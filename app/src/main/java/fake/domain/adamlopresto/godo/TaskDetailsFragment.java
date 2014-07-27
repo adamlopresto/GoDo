@@ -55,6 +55,38 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
 
     private TextView contexts;
 
+    private View.OnClickListener showRepetitionsActivityListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent i = new Intent(getActivity(), RepetitionRulesListActivity.class);
+            i.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, getInstance().getId());
+            startActivity(i);
+        }
+    };
+    private View.OnClickListener expandContractRepetitionsListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            showRepetitionCollapsed = !showRepetitionCollapsed;
+            if (showRepetitionCollapsed) {
+                repetitionHeader.setVisibility(View.GONE);
+                repetitionRuleList.setVisibility(View.GONE);
+                instanceNotes.setVisibility(View.GONE);
+                hideUnless(instanceNotesRo, !TextUtils.isEmpty(instanceNotesRo.getText()));
+                repetitionDivider.setVisibility(View.GONE);
+                viewHistoryButton.setVisibility(View.GONE);
+                repetitionSummary.setOnClickListener(expandContractRepetitionsListener);
+            } else {
+                repetitionHeader.setVisibility(View.VISIBLE);
+                repetitionRuleList.setVisibility(View.VISIBLE);
+                instanceNotes.setVisibility(View.VISIBLE);
+                instanceNotesRo.setVisibility(View.GONE);
+                repetitionDivider.setVisibility(View.VISIBLE);
+                viewHistoryButton.setVisibility(View.VISIBLE);
+                repetitionSummary.setOnClickListener(showRepetitionsActivityListener);
+            }
+        }
+    };
+
     /**
      * Return true iff the first date is strictly after the second date
      * If either is null, return false
@@ -99,54 +131,29 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         startAfterDue = v.findViewById(R.id.startAfterDue);
         planAfterDue = v.findViewById(R.id.planAfterDue);
 
-        v.findViewById(R.id.repetition_card).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showRepetitionCollapsed = ! showRepetitionCollapsed;
-                if (showRepetitionCollapsed){
-                    repetitionHeader.setVisibility(View.GONE);
-                    repetitionRuleList.setVisibility(View.GONE);
-                    instanceNotes.setVisibility(View.GONE);
-                    hideUnless(instanceNotesRo, !TextUtils.isEmpty(instanceNotesRo.getText()));
-                    repetitionDivider.setVisibility(View.GONE);
-                    viewHistoryButton.setVisibility(View.GONE);
-                } else {
-                    repetitionHeader.setVisibility(View.VISIBLE);
-                    repetitionRuleList.setVisibility(View.VISIBLE);
-                    instanceNotes.setVisibility(View.VISIBLE);
-                    instanceNotesRo.setVisibility(View.GONE);
-                    repetitionDivider.setVisibility(View.VISIBLE);
-                    viewHistoryButton.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+        //v.findViewById(R.id.repetition_card).setOnClickListener(expandContractRepetitionsListener);
 
         repetitionHeader   =           v.findViewById(R.id.repetition_header);
+        repetitionHeader.setOnClickListener(expandContractRepetitionsListener);
         repetitionSummary  = (TextView)v.findViewById(R.id.repetition_summary);
         repetitionRuleList = (TextView)v.findViewById(R.id.repetition_list);
         repetitionDivider  =           v.findViewById(R.id.repetition_divider);
 
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getActivity(), RepetitionRulesListActivity.class);
-                i.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, getInstance().getId());
-                startActivity(i);
-            }
-        };
 
-        repetitionRuleList.setOnClickListener(listener);
+        repetitionRuleList.setOnClickListener(showRepetitionsActivityListener);
 
         instanceNotesRo = (TextView)v.findViewById(R.id.instance_notes_ro);
         viewHistoryButton = v.findViewById(R.id.view_history_button);
-        viewHistoryButton.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener showHistoryListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), HistoryActivity.class);
                 i.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, getInstance().getId());
                 startActivity(i);
             }
-        });
+        };
+        viewHistoryButton.setOnClickListener(showHistoryListener);
+        repetitionDivider.setOnClickListener(showHistoryListener);
 
         contexts = (TextView) v.findViewById(R.id.contexts);
         contexts.setOnClickListener(new View.OnClickListener() {
@@ -187,13 +194,16 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         switch (task.getRepeat()) {
             case AUTOMATIC:
                 repetitionSummary.setText("Repeats automatically");
+                repetitionSummary.setOnClickListener(expandContractRepetitionsListener);
                 break;
             case TEMPLATE:
                 repetitionSummary.setText("Repeats manually");
+                repetitionSummary.setOnClickListener(expandContractRepetitionsListener);
                 templateRW = true;
                 break;
             case NONE:
                 repetitionSummary.setText("Does not repeat");
+                repetitionSummary.setOnClickListener(showRepetitionsActivityListener);
         }
 
         final boolean template = templateRW;
