@@ -43,6 +43,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
     private DateTimePicker plan;
     private DateTimePicker due;
     private Spinner notification;
+    private View dueNotificationLabel;
     private Spinner dueNotification;
     private View startAfterPlan;
     private View startAfterDue;
@@ -55,7 +56,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
 
     private TextView contexts;
 
-    private View.OnClickListener showRepetitionsActivityListener = new View.OnClickListener() {
+    private final View.OnClickListener showRepetitionsActivityListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent i = new Intent(getActivity(), RepetitionRulesListActivity.class);
@@ -63,7 +64,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
             startActivity(i);
         }
     };
-    private View.OnClickListener expandContractRepetitionsListener = new View.OnClickListener() {
+    private final View.OnClickListener expandContractRepetitionsListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             showRepetitionCollapsed = !showRepetitionCollapsed;
@@ -114,6 +115,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         instanceNotes = (EditText) v.findViewById(R.id.instance_notes);
         notification = (Spinner) v.findViewById(R.id.notification);
         dueNotification = (Spinner) v.findViewById(R.id.due_notification);
+        dueNotificationLabel = v.findViewById(R.id.due_label);
 
         start = (DateTimePicker) v.findViewById(R.id.start);
         start.setColumn(RepetitionRuleColumns.NEW_START);
@@ -388,6 +390,9 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                 instance.setHasDueTime(hasTime);
                 hideUnless(startAfterDue, isAfter(instance.getStartDate(), newDate));
                 hideUnless(planAfterDue, isAfter(instance.getPlanDate(), newDate));
+                boolean hasDueDate = newDate != null && !Utils.SOMEDAY.equals(newDate);
+                hideUnless(dueNotification, hasDueDate);
+                hideUnless(dueNotificationLabel, hasDueDate);
                 break;
             default:
                 //no-op

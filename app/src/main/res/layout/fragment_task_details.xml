@@ -299,7 +299,10 @@
                             android:layout_gravity="fill_horizontal"
                             android:entries="@array/notification_levels"/>
 
-                        <TextView android:text="@string/due_notification_label"/>
+                        <TextView
+                            android:text="@string/due_notification_label"
+                            android:id="@+id/due_label"
+                            />
 
                         <Spinner
                             android:id="@+id/due_notification"
