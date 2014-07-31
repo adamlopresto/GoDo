@@ -27,6 +27,7 @@ import java.util.Date;
 
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
+import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
 import fake.domain.adamlopresto.godo.db.TaskContextTable;
 
 @SuppressWarnings ("InstanceVariableMayNotBeInitialized")
@@ -165,9 +166,13 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
             }
         });
 
-        fillData();
-
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        fillData();
     }
 
     @NotNull
@@ -228,9 +233,11 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
             @Override
             protected String doInBackground(Long... params) {
                 StringBuilder b = new StringBuilder();
-                Cursor cursor = getActivity().getContentResolver().query(GoDoContentProvider.CONTEXTS_URI,
-                        new String[]{ContextsTable.COLUMN_NAME, ContextsTable.COLUMN_ACTIVE},
-                        ContextsTable.COLUMN_ID + "=?", Utils.idToSelectionArgs(params[0]),null);
+                Cursor cursor = getActivity().getContentResolver().query(GoDoContentProvider.REPETITION_RULES_URI,
+                        new String[]{RepetitionRulesTable.COLUMN_ID, RepetitionRulesTable.COLUMN_TASK,
+                                RepetitionRulesTable.COLUMN_TYPE, RepetitionRulesTable.COLUMN_SUBVALUE,
+                                RepetitionRulesTable.COLUMN_FROM, RepetitionRulesTable.COLUMN_TO},
+                        RepetitionRulesTable.COLUMN_TASK + "=?", Utils.idToSelectionArgs(params[0]),null);
 
                 if (!cursor.moveToFirst()) {
                     return null;

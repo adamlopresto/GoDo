@@ -187,7 +187,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
     public void onPause() {
         Task task = ((InstanceHolderActivity) getActivity()).task;
         task.setRepeat(RepeatTypes.values()[header.getSelectedItemPosition()]);
-        task.flush();
+        task.flushNow();
         super.onPause();
     }
 

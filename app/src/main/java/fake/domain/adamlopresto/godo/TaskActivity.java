@@ -255,19 +255,13 @@ public class TaskActivity extends InstanceHolderActivity implements
                     return taskDetailsFragment = new TaskDetailsFragment();
                 }
                 case 1: {
-                    return new TaskRepetitionRuleFragment();
-                }
-                case 2: {
-                    return new TaskHistoryFragment();
-                }
-                case 3: {
                     Fragment f = new DependencyFragment();
                     Bundle b = new Bundle();
                     b.putBoolean("prereq", true);
                     f.setArguments(b);
                     return f;
                 }
-                case 4: {
+                case 2: {
                     return new DependencyFragment();
                 }
                 default:
@@ -278,7 +272,7 @@ public class TaskActivity extends InstanceHolderActivity implements
         @Override
         public int getCount() {
             // total number of pages
-            return 5;
+            return 3;
         }
 
         @Nullable
@@ -289,12 +283,8 @@ public class TaskActivity extends InstanceHolderActivity implements
                 case 0:
                     return getString(R.string.title_fragment_task_details).toUpperCase(l);
                 case 1:
-                    return getString(R.string.title_fragment_task_repetitions).toUpperCase(l);
-                case 2:
-                    return "History";
-                case 3:
                     return "Prerequisites";
-                case 4:
+                case 2:
                     return "Next steps";
             }
             return null;
