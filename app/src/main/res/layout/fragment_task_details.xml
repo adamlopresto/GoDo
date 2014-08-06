@@ -4,6 +4,7 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:background="#e5e5e5"
     >
 
@@ -13,6 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="vertical"
+        android:animateLayoutChanges="true"
         >
 
         <TextView
@@ -53,9 +55,11 @@
         android:layout_height="match_parent"
         android:layout_above="@id/warnings"
         android:layout_alignParentTop="true"
+        android:animateLayoutChanges="true"
         >
 
         <LinearLayout
+            android:id="@+id/layout"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:animateLayoutChanges="true"
@@ -65,6 +69,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="fill_parent"
                 android:background="@color/appMain"
+                android:animateLayoutChanges="true"
                 >
 
                 <CheckBox
@@ -133,6 +138,32 @@
                         android:layout_marginRight="8dp"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"/>
+
+                    <FrameLayout
+                        android:animateLayoutChanges="true"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:id="@+id/instance_notes"
+                            android:visibility="gone"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_gravity="fill_horizontal"
+                            android:hint="@string/instance_notes_label"
+                            android:inputType="textMultiLine|textCapSentences"/>
+
+                        <TextView
+                            android:id="@+id/instance_notes_ro"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="8dp"
+                            android:layout_marginBottom="8dp"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            />
+                        </FrameLayout>
+
                     <TextView
                         android:layout_margin="8dp"
                         android:id="@+id/repetition_summary"
@@ -146,46 +177,22 @@
                         android:visibility="gone"
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="8dp"
+                        android:layout_marginBottom="8dp"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         tools:text="No repetitions"
                         />
-                    <EditText
-                        android:id="@+id/instance_notes"
-                        android:visibility="gone"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:layout_gravity="fill_horizontal"
-                        android:hint="@string/instance_notes_label"
-                        android:inputType="textMultiLine|textCapSentences"/>
 
                     <View
                         android:id="@+id/repetition_divider"
                         android:visibility="gone"
-                        android:layout_width="fill_parent"
-                        android:layout_height="1px"
-                        android:background="#CCC"
+                        style="@style/divider"
                         />
                     <TextView
                         android:id="@+id/view_history_button"
                         android:visibility="gone"
-                        android:layout_margin="8dp"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="#0277bd"
-                        android:textSize="16sp"
                         android:text="@string/view_history_button"
-                        />
-                    <TextView
-                        android:id="@+id/instance_notes_ro"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_marginBottom="8dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        />
+                        style="@style/textButton"/>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
@@ -196,6 +203,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
+            android:animateLayoutChanges="true"
             card_view:cardCornerRadius="4dp"
             >
 
@@ -216,6 +224,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
                 card_view:cardCornerRadius="4dp"
+                android:animateLayoutChanges="true"
                 >
 
                 <LinearLayout
@@ -223,6 +232,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_margin="8dp"
+                    android:animateLayoutChanges="true"
                     >
                     <TextView
                         android:text="@string/dates_header"
@@ -235,12 +245,14 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:columnCount="2"
+                        android:animateLayoutChanges="true"
                         >
                         <TextView android:text="@string/start_date_label"/>
 
                         <fake.domain.adamlopresto.godo.DateTimePicker
                             android:id="@+id/start"
                             android:layout_width="0dp"
+                            android:animateLayoutChanges="true"
                             android:layout_height="wrap_content"
                             android:layout_gravity="fill_horizontal"/>
 
@@ -249,6 +261,7 @@
                         <fake.domain.adamlopresto.godo.DateTimePicker
                             android:id="@+id/plan"
                             android:layout_width="0dp"
+                            android:animateLayoutChanges="true"
                             android:layout_height="wrap_content"
                             android:layout_gravity="fill_horizontal"/>
 
@@ -257,6 +270,7 @@
                         <fake.domain.adamlopresto.godo.DateTimePicker
                             android:id="@+id/due"
                             android:layout_width="0dp"
+                            android:animateLayoutChanges="true"
                             android:layout_height="wrap_content"
                             android:layout_gravity="fill_horizontal"/>
                     </GridLayout>
@@ -269,6 +283,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
+                android:animateLayoutChanges="true"
                 card_view:cardCornerRadius="4dp"
                 >
 
@@ -277,6 +292,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_margin="8dp"
+                    android:animateLayoutChanges="true"
                     >
                     <TextView
                         android:text="@string/notifications_header"
@@ -288,6 +304,7 @@
                     <GridLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:animateLayoutChanges="true"
                         android:columnCount="2"
                         >
                         <TextView android:text="@string/notification_label"/>
@@ -314,8 +331,7 @@
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
-    <!--
-            <android.support.v7.widget.CardView
+<!--            <android.support.v7.widget.CardView
                 android:layout_gravity="center"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -324,43 +340,13 @@
                 android:layout_marginBottom="8dp"
                 card_view:cardCornerRadius="4dp"
                 >
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                >
 
                 <TextView
                     android:text="Relationships"
-                    style="?android:attr/textAppearanceLarge"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
+                    android:layout_margin="8dp"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"/>
-                <TextView
-                    android:layout_margin="8dp"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Requires no other tasks"
-                    />
-
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="1px"
-                    android:background="#CCC"
-                    />
-                <TextView
-                    android:layout_margin="8dp"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="#0277bd"
-                    android:textSize="16sp"
-                    android:text="Pick from list"
-                    />
-                </LinearLayout>
-                </android.support.v7.widget.CardView>
-        -->
+                </android.support.v7.widget.CardView>-->
             </LinearLayout>
         </ScrollView>
 </RelativeLayout>

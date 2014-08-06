@@ -1,10 +1,14 @@
 package fake.domain.adamlopresto.godo;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.LayoutTransition;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -77,6 +81,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                 repetitionDivider.setVisibility(View.GONE);
                 viewHistoryButton.setVisibility(View.GONE);
                 repetitionSummary.setOnClickListener(expandContractRepetitionsListener);
+
             } else {
                 repetitionHeader.setVisibility(View.VISIBLE);
                 repetitionRuleList.setVisibility(View.VISIBLE);
@@ -134,7 +139,9 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         startAfterDue = v.findViewById(R.id.startAfterDue);
         planAfterDue = v.findViewById(R.id.planAfterDue);
 
-        //v.findViewById(R.id.repetition_card).setOnClickListener(expandContractRepetitionsListener);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            ((ViewGroup)v.findViewById(R.id.layout)).getLayoutTransition()
+                    .enableTransitionType(LayoutTransition.CHANGING);
 
         repetitionHeader   =           v.findViewById(R.id.repetition_header);
         repetitionHeader.setOnClickListener(expandContractRepetitionsListener);
@@ -146,6 +153,9 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         repetitionRuleList.setOnClickListener(showRepetitionsActivityListener);
 
         instanceNotesRo = (TextView)v.findViewById(R.id.instance_notes_ro);
+        instanceNotesRo.setOnClickListener(expandContractRepetitionsListener);
+
+
         viewHistoryButton = v.findViewById(R.id.view_history_button);
         View.OnClickListener showHistoryListener = new View.OnClickListener() {
             @Override
@@ -162,7 +172,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         contexts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((TaskActivity)getActivity()).showContextsDialog();
+                ((TaskActivity) getActivity()).showContextsDialog();
             }
         });
 
@@ -321,7 +331,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         CharSequence notes = instance.getNotes();
         instanceNotes.setText(notes);
         instanceNotesRo.setText(notes);
-        hideUnless(instanceNotesRo, !TextUtils.isEmpty(notes));
+        hideUnless(instanceNotesRo, showRepetitionCollapsed && !TextUtils.isEmpty(notes));
         done.setChecked(instance.getDoneDate() != null);
 
         Date startDate = instance.getStartDate();
