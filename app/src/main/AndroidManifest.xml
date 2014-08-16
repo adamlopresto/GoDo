@@ -141,6 +141,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fake.domain.adamlopresto.godo.TaskActivity" />
         </activity>
+        <activity
+            android:name=".DependenciesActivity"
+            android:label="Relationships"
+            android:parentActivityName=".TaskActivity"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fake.domain.adamlopresto.godo.TaskActivity" />
+        </activity>
     </application>
 
 </manifest>

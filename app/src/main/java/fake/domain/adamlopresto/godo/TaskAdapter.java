@@ -101,7 +101,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
 
     @SuppressWarnings ("BooleanMethodIsAlwaysInverted")
     @Contract("_, null -> true")
-    private boolean hideView(@NotNull TextView v, CharSequence s) {
+    private static boolean hideView(@NotNull TextView v, CharSequence s) {
         if (TextUtils.isEmpty(s)) {
             v.setVisibility(View.GONE);
             return true;

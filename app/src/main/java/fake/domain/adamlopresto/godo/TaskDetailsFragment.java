@@ -1,7 +1,5 @@
 package fake.domain.adamlopresto.godo;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.LayoutTransition;
 import android.content.Intent;
 import android.database.Cursor;
@@ -167,6 +165,15 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         };
         viewHistoryButton.setOnClickListener(showHistoryListener);
         repetitionDivider.setOnClickListener(showHistoryListener);
+
+        v.findViewById(R.id.relationships_card).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), DependenciesActivity.class);
+                i.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, getInstance().getId());
+                startActivity(i);
+            }
+        });
 
         contexts = (TextView) v.findViewById(R.id.contexts);
         contexts.setOnClickListener(new View.OnClickListener() {

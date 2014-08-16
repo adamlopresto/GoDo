@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <View
+        style="@style/divider"
+        />
+    <TextView
+        style="@style/textButton"
+        android:id="@+id/create_next_step"
+        android:text="Create next step"
+        />
+    <View
+        style="@style/divider"
+        />
+    <TextView
+        style="@style/textButton"
+        android:id="@+id/pick_next_step_from_list"
+        android:text="Pick from list"
+        />
+
+</LinearLayout>

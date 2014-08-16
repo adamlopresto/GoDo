@@ -50,11 +50,62 @@
 
     </LinearLayout>
 
+        <RelativeLayout
+            android:id="@+id/header"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:background="@color/appMain"
+            android:drawableBottom="?android:attr/windowContentOverlay"
+            android:animateLayoutChanges="true"
+            >
+
+            <CheckBox
+                android:id="@+id/check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@android:color/white"
+                />
+
+            <EditText
+                android:id="@+id/task_name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill_horizontal"
+                android:layout_alignBaseline="@id/check"
+                android:layout_toRightOf="@id/check"
+                android:hint="@string/task_name_hint"
+                android:textColorHint="#42FFFFFF"
+                android:inputType="textCapSentences|textMultiLine"
+                android:singleLine="false"
+                android:textColor="@android:color/white"
+                android:textAppearance="?android:attr/textAppearanceLarge">
+                <requestFocus />
+            </EditText>
+
+            <EditText
+                android:id="@+id/task_notes"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/task_name"
+                android:inputType="textMultiLine|textCapSentences"
+                android:textColor="@android:color/white"
+                android:textColorHint="#42FFFFFF"
+                android:hint="@string/notes_hint"
+                />
+
+        </RelativeLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/warnings"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/header"
         android:animateLayoutChanges="true"
         >
 
@@ -65,51 +116,6 @@
             android:animateLayoutChanges="true"
             android:orientation="vertical">
 
-            <RelativeLayout
-                android:layout_height="wrap_content"
-                android:layout_width="fill_parent"
-                android:background="@color/appMain"
-                android:animateLayoutChanges="true"
-                >
-
-                <CheckBox
-                    android:id="@+id/check"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@android:color/white"
-                    />
-
-                <EditText
-                    android:id="@+id/task_name"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="fill_horizontal"
-                    android:layout_alignBaseline="@id/check"
-                    android:layout_toRightOf="@id/check"
-                    android:hint="@string/task_name_hint"
-                    android:textColorHint="#42FFFFFF"
-                    android:inputType="textCapSentences|textMultiLine"
-                    android:singleLine="false"
-                    android:textColor="@android:color/white"
-                    android:textAppearance="?android:attr/textAppearanceLarge">
-                    <requestFocus />
-                </EditText>
-
-                <EditText
-                    android:id="@+id/task_notes"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/task_name"
-                    android:inputType="textMultiLine|textCapSentences"
-                    android:textColor="@android:color/white"
-                    android:textColorHint="#42FFFFFF"
-                    android:hint="@string/notes_hint"
-                    />
-
-            </RelativeLayout>
 
             <android.support.v7.widget.CardView
                 android:id="@+id/card_view"
@@ -331,7 +337,7 @@
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
-<!--            <android.support.v7.widget.CardView
+            <android.support.v7.widget.CardView
                 android:layout_gravity="center"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -339,14 +345,16 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
                 card_view:cardCornerRadius="4dp"
+                android:id="@+id/relationships_card"
                 >
 
                 <TextView
                     android:text="Relationships"
+                    android:id="@+id/relationships_label"
                     android:layout_margin="8dp"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"/>
-                </android.support.v7.widget.CardView>-->
+                </android.support.v7.widget.CardView>
             </LinearLayout>
         </ScrollView>
 </RelativeLayout>

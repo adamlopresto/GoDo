@@ -38,6 +38,7 @@ public class GoDoContentProvider extends ContentProvider {
     private static final int DEPENDENCIES = 10;
     private static final int DEPENDENCY_ID = 11;
     private static final int INSTANCES_SEARCH = 12;
+    private static final int DEPENDENT_INSTANCES = 14;
 
     private static final String INSTANCE_BASE_PATH = "instances";
     public static final Uri INSTANCES_URI = Uri.withAppendedPath(BASE, INSTANCE_BASE_PATH);
@@ -54,6 +55,8 @@ public class GoDoContentProvider extends ContentProvider {
     private static final String DEPENDENCY_BASE_PATH = "dependencies";
     public static final Uri DEPENDENCY_URI = Uri.withAppendedPath(BASE, DEPENDENCY_BASE_PATH);
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    private static final String DEPENDANT_INSTANCES_PATH = "dependent_instances";
+    public static final Uri DEPENDANT_INSTANCES_URI = Uri.withAppendedPath(BASE, DEPENDANT_INSTANCES_PATH);
 
     /*
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
@@ -73,6 +76,7 @@ public class GoDoContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, DEPENDENCY_BASE_PATH, DEPENDENCIES);
         sURIMatcher.addURI(AUTHORITY, DEPENDENCY_BASE_PATH + "/#", DEPENDENCY_ID);
         sURIMatcher.addURI(AUTHORITY, INSTANCE_SEARCH_PATH, INSTANCES_SEARCH);
+        sURIMatcher.addURI(AUTHORITY, DEPENDANT_INSTANCES_PATH+"/#", DEPENDENT_INSTANCES);
     }
 
     @NotNull
@@ -163,8 +167,31 @@ public class GoDoContentProvider extends ContentProvider {
             case TASKS:
                 queryBuilder.setTables(TasksTable.TABLE);
                 break;
+            case DEPENDENT_INSTANCES:{
+                String id = uri.getLastPathSegment();
+                return helper.getReadableDatabase().rawQuery(
+                        "SELECT _id, task_name, task_notes, instance_notes, due_date, plan_date, " +
+                                "done_date, 0 as item_type " +
+                        "FROM instances_view " +
+                        "WHERE _id in (SELECT " + InstanceDependencyTable.COLUMN_FIRST +
+                                     " FROM " + InstanceDependencyTable.TABLE +
+                                     " WHERE " + InstanceDependencyTable.COLUMN_SECOND + " = ? )" +
+                        "UNION "+
+                        "SELECT -1 as _id, null as task_name, null as task_notes, " +
+                                "null as instance_notes, null as due_date, null as plan_date, " +
+                                "null as done_date, 1 as item_type " +
+                        "UNION "+
+                        "SELECT _id, task_name, task_notes, instance_notes, due_date, plan_date, " +
+                                "done_date, 2 as item_type " +
+                        "FROM instances_view " +
+                        "WHERE _id in (SELECT " + InstanceDependencyTable.COLUMN_SECOND +
+                        " FROM " + InstanceDependencyTable.TABLE +
+                        " WHERE " + InstanceDependencyTable.COLUMN_FIRST + " = ? )" +
+                        "ORDER BY item_type ASC",
+                        new String[]{id, id});
+            }
             default:
-                throw new IllegalArgumentException("Unknown URI: " + uri);
+                throw new IllegalArgumentException("Unknown URI: " + uri+" of type "+uriType);
         }
 
         SQLiteDatabase db = helper.getReadableDatabase();
