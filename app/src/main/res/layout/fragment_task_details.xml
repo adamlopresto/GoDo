@@ -202,26 +202,6 @@
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
-        <android.support.v7.widget.CardView
-            android:layout_gravity="center"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:animateLayoutChanges="true"
-            card_view:cardCornerRadius="4dp"
-            >
-
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:id="@+id/contexts"
-                android:text="Contexts"
-                />
-        </android.support.v7.widget.CardView>
-
             <android.support.v7.widget.CardView
                 android:layout_gravity="center"
                 android:layout_width="fill_parent"
@@ -344,12 +324,32 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
+                android:animateLayoutChanges="true"
+                card_view:cardCornerRadius="4dp"
+                >
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:id="@+id/contexts"
+                    android:text="Contexts"
+                    />
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_gravity="center"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
                 card_view:cardCornerRadius="4dp"
                 android:id="@+id/relationships_card"
                 >
 
                 <TextView
-                    android:text="Relationships"
+                    android:text="Dependencies"
                     android:id="@+id/relationships_label"
                     android:layout_margin="8dp"
                     android:layout_width="fill_parent"

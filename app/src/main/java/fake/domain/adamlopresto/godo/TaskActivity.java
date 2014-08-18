@@ -2,50 +2,36 @@ package fake.domain.adamlopresto.godo;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.app.FragmentTransaction;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NavUtils;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstanceDependencyTable;
 import fake.domain.adamlopresto.godo.db.TaskContextTable;
 
-public class TaskActivity extends InstanceHolderActivity implements
-        ActionBar.TabListener {
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    private ViewPager mViewPager;
+public class TaskActivity extends InstanceHolderActivity {
 
     TaskDetailsFragment taskDetailsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task);
+        setContentView(R.layout.activity_repetition_rules_list);
 
         if (!extractTaskAndOrInstanceFromBundle(savedInstanceState)) {
             if (!extractTaskAndOrInstanceFromBundle(getIntent().getExtras())) {
@@ -56,11 +42,9 @@ public class TaskActivity extends InstanceHolderActivity implements
 
         long[] tmp = getIntent().getLongArrayExtra("prereq");
         if (tmp != null) {
-            Log.e("GoDo", "Create prerequisites");
             ContentValues cv = new ContentValues(2);
             cv.put(InstanceDependencyTable.COLUMN_SECOND, instance.forceId());
             for (long id : tmp) {
-                Log.e("GoDo", "Create " + id);
                 cv.put(InstanceDependencyTable.COLUMN_FIRST, id);
                 getContentResolver().insert(GoDoContentProvider.DEPENDENCY_URI, cv);
             }
@@ -80,47 +64,14 @@ public class TaskActivity extends InstanceHolderActivity implements
         final ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         }
 
-        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(
-                getSupportFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        if (actionBar == null) {
-            return;
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new TaskDetailsFragment())
+                    .commit();
         }
-        // When swiping between different sections, select the corresponding
-        // tab. We can also use ActionBar.Tab#select() to do this if we have
-        // a reference to the Tab.
-        mViewPager
-                .setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                    @Override
-                    public void onPageSelected(int position) {
-                        actionBar.setSelectedNavigationItem(position);
-                    }
-                });
 
-        // For each of the sections in the app, add a tab to the action bar.
-        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by
-            // the adapter. Also specify this Activity object, which implements
-            // the TabListener interface, as the callback (listener) for when
-            // this tab is selected.
-            actionBar.addTab(actionBar.newTab()
-                    .setText(mSectionsPagerAdapter.getPageTitle(i))
-                    .setTabListener(this));
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.task, menu);
-        return true;
     }
 
     @Override
@@ -135,12 +86,6 @@ public class TaskActivity extends InstanceHolderActivity implements
                 // http://developer.android.com/design/patterns/navigation.html#up-vs-back
                 //
                 NavUtils.navigateUpFromSameTask(this);
-                return true;
-            case R.id.action_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-            case R.id.action_contexts:
-                showContextsDialog();
                 return true;
         }
 
@@ -216,78 +161,5 @@ public class TaskActivity extends InstanceHolderActivity implements
         super.onSaveInstanceState(outState);
         outState.putLong(InstanceHolderActivity.EXTRA_TASK, task.forceId());
         outState.putLong(InstanceHolderActivity.EXTRA_INSTANCE, instance.forceId());
-    }
-
-    @Override
-    public void onTabSelected(@NotNull ActionBar.Tab tab,
-                              FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in
-        // the ViewPager.
-        mViewPager.setCurrentItem(tab.getPosition());
-    }
-
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab,
-                                FragmentTransaction fragmentTransaction) {
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab,
-                                FragmentTransaction fragmentTransaction) {
-    }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @NotNull
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            switch (position) {
-                case 0: {
-                    return taskDetailsFragment = new TaskDetailsFragment();
-                }
-                case 1: {
-                    Fragment f = new DependencyFragment();
-                    Bundle b = new Bundle();
-                    b.putBoolean("prereq", true);
-                    f.setArguments(b);
-                    return f;
-                }
-                case 2: {
-                    return new DependencyFragment();
-                }
-                default:
-                    throw new IllegalArgumentException("Expected fragment in range 0-4, got "+position);
-            }
-        }
-
-        @Override
-        public int getCount() {
-            // total number of pages
-            return 3;
-        }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            Locale l = Locale.getDefault();
-            switch (position) {
-                case 0:
-                    return getString(R.string.title_fragment_task_details).toUpperCase(l);
-                case 1:
-                    return "Prerequisites";
-                case 2:
-                    return "Next steps";
-            }
-            return null;
-        }
     }
 }

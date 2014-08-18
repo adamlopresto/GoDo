@@ -3,8 +3,10 @@ package fake.domain.adamlopresto.godo;
 import android.animation.LayoutTransition;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,6 +16,9 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.StrikethroughSpan;
+import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +34,7 @@ import java.util.Date;
 
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
+import fake.domain.adamlopresto.godo.db.InstancesView;
 import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
 import fake.domain.adamlopresto.godo.db.TaskContextTable;
 
@@ -58,6 +64,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
     private View viewHistoryButton;
 
     private TextView contexts;
+    private TextView relationships;
 
     private final View.OnClickListener showRepetitionsActivityListener = new View.OnClickListener() {
         @Override
@@ -175,6 +182,8 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
             }
         });
 
+        relationships = (TextView)v.findViewById(R.id.relationships_label);
+
         contexts = (TextView) v.findViewById(R.id.contexts);
         contexts.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -182,6 +191,8 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                 ((TaskActivity) getActivity()).showContextsDialog();
             }
         });
+
+
 
         return v;
     }
@@ -284,20 +295,6 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
 
     public void loadContexts(){
         new AsyncTask<Void, Void, CharSequence>(){
-
-            /**
-             * Override this method to perform a computation on a background thread. The
-             * specified parameters are the parameters passed to {@link #execute}
-             * by the caller of this task.
-             * <p/>
-             * This method can call {@link #publishProgress} to publish updates
-             * on the UI thread.
-             *
-             * @return A result, defined by the subclass of this task.
-             * @see #onPreExecute()
-             * @see #onPostExecute
-             * @see #publishProgress
-             */
             @Override
             protected CharSequence doInBackground(Void... ignored) {
                 long task_id = getTask().getId();
@@ -334,7 +331,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
     }
 
     private void extractInstanceDetails() {
-        Instance instance = getInstance();
+        final Instance instance = getInstance();
         CharSequence notes = instance.getNotes();
         instanceNotes.setText(notes);
         instanceNotesRo.setText(notes);
@@ -354,6 +351,73 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         hideUnless(startAfterDue, isAfter(startDate, dueDate));
         hideUnless(planAfterDue, isAfter(planDate, dueDate));
 
+        new AsyncTask<Void, Void, CharSequence>(){
+            @Override
+            protected CharSequence doInBackground(Void... ignored) {
+                Cursor cursor = getActivity().getContentResolver().query(
+                        Uri.withAppendedPath(GoDoContentProvider.DEPENDANT_INSTANCES_URI,
+                                String.valueOf(instance.forceId())),
+                        null, null, null, null);
+
+                if (cursor.getCount() == 1)
+                    return "No dependencies";
+
+                cursor.moveToFirst();
+                SpannableStringBuilder builder = new SpannableStringBuilder();
+                int itemColumn = cursor.getColumnIndexOrThrow("item_type");
+                if (cursor.getInt(itemColumn) == 0) {
+                    //At least one prereq.
+                    builder.append("Requires ");
+                    int start = builder.length();
+                    builder.append(cursor.getString(cursor.getColumnIndexOrThrow(InstancesView.COLUMN_TASK_NAME)));
+                    if (!cursor.isNull(cursor.getColumnIndexOrThrow(InstancesView.COLUMN_DONE_DATE)))
+                        builder.setSpan(new StrikethroughSpan(),
+                                start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                    do {
+                        cursor.moveToNext();
+                    } while (cursor.getInt(itemColumn) != 1);
+
+                    if (cursor.getPosition() != 1) {
+                        //More than one prereq
+                        builder.clear();
+                        builder.append("Requires ");
+                        builder.append(String.valueOf(cursor.getPosition()));
+                        builder.append(" tasks");
+                    }
+                }
+
+                //Now at divider. Do it all again to find out about next steps.
+
+                if (!cursor.moveToNext()) {
+                    //At end, so no next steps.
+                    return builder;
+                }
+
+                if (builder.length() != 0)
+                    builder.append('\n');
+                builder.append("Blocks ");
+
+                int numberOfNextSteps = cursor.getCount() - cursor.getPosition();
+                if (numberOfNextSteps == 1) {
+                    int start = builder.length();
+                    builder.append(cursor.getString(cursor.getColumnIndexOrThrow(InstancesView.COLUMN_TASK_NAME)));
+                    if (!cursor.isNull(cursor.getColumnIndexOrThrow(InstancesView.COLUMN_DONE_DATE)))
+                        builder.setSpan(new StrikethroughSpan(),
+                                start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                } else {
+                    builder.append(String.valueOf(numberOfNextSteps));
+                    builder.append(" tasks");
+
+                }
+                return builder;
+            }
+
+            @Override
+            protected void onPostExecute(CharSequence s) {
+                relationships.setText(s);
+            }
+        }.execute();
     }
 
     @Override

@@ -25,7 +25,8 @@ public final class Utils {
     //private static final long DECEMBER_31_2099_IN_MS = 64063198800000L;
     @SuppressWarnings ("MagicNumber")
     public static final Date SOMEDAY = new GregorianCalendar(2099, Calendar.DECEMBER, 31).getTime();
-    private static final DateFormat SHORT_TIME = DateFormat.getTimeInstance(DateFormat.SHORT);
+    //private static final DateFormat SHORT_TIME = DateFormat.getTimeInstance(DateFormat.SHORT);
+    private static final DateFormat SHORT_TIME = new SimpleDateFormat("h:mm\u00a0a");
     @SuppressWarnings ("SpellCheckingInspection")
     private static final DateFormat weekday = new SimpleDateFormat("EEEE");
     private static final DateFormat SHORT_DATE = new SimpleDateFormat("MMM d");
@@ -34,7 +35,7 @@ public final class Utils {
     private static final DateFormat LONG_DATE = new SimpleDateFormat("MMMM d");
     @SuppressWarnings ("SpellCheckingInspection")
     private static final DateFormat LONG_DATE_WITH_YEAR = new SimpleDateFormat("MMMM d, yyyy");
-    private static final DateFormat REALLY_SHORT_TIME = new SimpleDateFormat("h a");
+    private static final DateFormat REALLY_SHORT_TIME = new SimpleDateFormat("h\u00a0a");
 
     private Utils() {
     }
