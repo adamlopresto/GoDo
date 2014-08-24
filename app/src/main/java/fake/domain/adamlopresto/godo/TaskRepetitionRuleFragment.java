@@ -10,6 +10,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -186,6 +187,7 @@ public class TaskRepetitionRuleFragment extends ListFragment
     @Override
     public void onPause() {
         Task task = ((InstanceHolderActivity) getActivity()).task;
+        Log.e("GoDo", "Saving details for task " + task);
         task.setRepeat(RepeatTypes.values()[header.getSelectedItemPosition()]);
         task.flushNow();
         super.onPause();

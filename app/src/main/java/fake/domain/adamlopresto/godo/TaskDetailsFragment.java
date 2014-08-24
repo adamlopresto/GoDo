@@ -199,8 +199,8 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
 
     @Override
     public void onResume() {
-        super.onResume();
         fillData();
+        super.onResume();
     }
 
     @NotNull
@@ -220,6 +220,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
 
     private void extractTaskDetails() {
         Task task = getTask();
+        Log.e("GoDo", "Extracting details for task "+task);
         taskName.setText(task.getName());
         taskNotes.setText(task.getNotes());
         notification.setSelection(task.getNotification().ordinal());
@@ -422,8 +423,8 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
 
     @Override
     public void onPause() {
-        super.onPause();
         saveData();
+        super.onPause();
     }
 
     private void saveData() {

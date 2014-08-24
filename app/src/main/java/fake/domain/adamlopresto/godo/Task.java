@@ -341,8 +341,10 @@ public class Task {
         values.put(TasksTable.COLUMN_REPEAT, repeat.ordinal());
         values.put(TasksTable.COLUMN_DUE_NOTIFICATION, dueNotification.ordinal());
 
-        if (id == -1L)
+        if (id == -1L) {
             id = db.insert(TasksTable.TABLE, null, values);
+            cache.put(id, this);
+        }
         else
             db.update(TasksTable.TABLE, values, TasksTable.COLUMN_ID + "=?",
                     Utils.idToSelectionArgs(id));

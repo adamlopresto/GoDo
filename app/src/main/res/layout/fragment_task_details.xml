@@ -70,7 +70,7 @@
                 android:layout_alignParentLeft="true"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@android:color/white"
-                />
+                android:button="@drawable/checkbox"/>
 
             <EditText
                 android:id="@+id/task_name"
