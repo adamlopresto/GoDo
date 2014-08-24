@@ -5,7 +5,7 @@
 
     <item
         android:left="4dp"
-        android:right="4dp"
+        android:right="10dp"
         android:top="4dp"
         android:bottom="4dp"
         >
@@ -29,10 +29,10 @@
         </shape>
     </item>
     <item
-        android:top="7sp"
-        android:bottom="0sp"
+        android:top="10sp"
+        android:bottom="5sp"
         android:left="4sp"
-        android:right="16sp"
+        android:right="21sp"
         >
         <rotate
             android:fromDegrees="45"
@@ -52,10 +52,10 @@
             </rotate>
     </item>
     <item
-        android:top="-4sp"
+        android:top="-6sp"
         android:bottom="-2sp"
         android:left="13sp"
-        android:right="-4sp"
+        android:right="0sp"
         >
         <rotate
             android:fromDegrees="-45"
