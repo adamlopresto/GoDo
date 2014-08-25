@@ -17,6 +17,7 @@ public class SettingsActivity extends PreferenceActivity {
     public static final String PREF_SHOW_FUTURE = "pref_show_future";
     public static final String PREF_DEFAULT_NOTIFICATION = "pref_default_notification";
     public static final String PREF_DEFAULT_DUE_NOTIFICATION = "pref_default_due_notification";
+    public static final String PREF_COLORFUL_WIDGET = "pref_colorful_widget";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

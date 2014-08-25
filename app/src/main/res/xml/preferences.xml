@@ -7,6 +7,7 @@
         <CheckBoxPreference android:key="pref_show_future" android:summaryOn="@string/pref_show_future_on" android:title="@string/pref_show_future_title" android:summaryOff="@string/pref_show_future_off"/>
         <ListPreference android:entries="@array/notification_levels" android:key="pref_default_notification" android:title="@string/pref_default_notification_title" android:entryValues="@array/notification_levels_backend" android:defaultValue="NONE"/>
         <ListPreference android:entries="@array/notification_levels" android:key="pref_default_due_notification" android:title="@string/pref_default_due_notification_title" android:entryValues="@array/notification_levels_backend" android:defaultValue="NONE"/>
+        <CheckBoxPreference android:key="pref_colorful_widget" android:summaryOn="Use the new, more colorful widget" android:title="Use colorful widget" android:summaryOff="Use the old, grayscale widget" android:defaultValue="true"/>
     </PreferenceCategory>
     
 

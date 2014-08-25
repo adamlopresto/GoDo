@@ -6,6 +6,8 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -22,8 +24,11 @@ public class GoDoAppWidget extends AppWidgetProvider {
                                         @NotNull AppWidgetManager appWidgetManager, int appWidgetId) {
 
         // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(),
-                R.layout.app_widget);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        RemoteViews views;
+        views = new RemoteViews(context.getPackageName(),
+                prefs.getBoolean(SettingsActivity.PREF_COLORFUL_WIDGET, true) ?
+                R.layout.app_widget_colorful : R.layout.app_widget);
         views.setRemoteAdapter(android.R.id.list, new Intent(context, GoDoWidgetService.class));
         views.setOnClickPendingIntent(R.id.text,
                 PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class),
