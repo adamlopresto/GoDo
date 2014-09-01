@@ -57,6 +57,7 @@
             android:label="@string/title_activity_task"
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="stateHidden"
+            android:theme="@style/NoActionBarShadow"
             tools:ignore="UnusedAttribute" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -143,6 +144,7 @@
         </activity>
         <activity
             android:name=".DependenciesActivity"
+            android:theme="@style/NoActionBarShadow"
             android:label="Relationships"
             android:parentActivityName=".TaskActivity"
             tools:ignore="UnusedAttribute">

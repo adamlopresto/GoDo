@@ -150,8 +150,9 @@ public class AllDependenciesFragment extends ListFragment
         lv.setMultiChoiceModeListener(mActionModeCallback);
         Context context = getActivity();
         LayoutInflater inflater = LayoutInflater.from(context);
-        header = (TextView)inflater.inflate(R.layout.dependency_header, lv, false);
-        lv.addHeaderView(header, null, false);
+        View headerFull = inflater.inflate(R.layout.dependency_header, lv, false);
+        header = (TextView)headerFull.findViewById(R.id.text);
+        lv.addHeaderView(headerFull, null, false);
         ViewGroup footer = (ViewGroup) inflater.inflate(R.layout.dependency_footer, lv, false);
         footer.findViewById(R.id.create_next_step).setOnClickListener(new View.OnClickListener() {
             @Override
