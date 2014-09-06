@@ -50,7 +50,7 @@
         android:id="@+id/direction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left"
+        android:layout_gravity="start"
         android:entries="@array/repetition_directions" />
 
     <Spinner

@@ -10,7 +10,7 @@
         android:id="@+id/action_contexts"
         android:icon="@drawable/collections_labels"
         android:showAsAction="ifRoom"
-        android:title="@string/title_activity_contexts" />
+        android:title="@string/title_contexts" />
     <item
         android:id="@+id/action_new_from_template"
         android:icon="@drawable/ic_action_pick_from_list"

@@ -124,7 +124,7 @@ public class AllDependenciesFragment extends ListFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        adapter = new DependencyAdapter(getActivity(), null,
+        adapter = new DependencyAdapter(getActivity(),
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

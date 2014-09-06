@@ -21,12 +21,11 @@ public class DependencyAdapter extends BaseAdapter{
     private final View.OnClickListener newDependency;
     private final View.OnClickListener pickDependency;
 
-    public DependencyAdapter(@NotNull Context context, @Nullable Cursor cursor, View.OnClickListener newDependency, View.OnClickListener pickDependency){
+    public DependencyAdapter(@NotNull Context context, View.OnClickListener newDependency, View.OnClickListener pickDependency){
         this.context = context;
-        this.cursor = cursor;
         this.newDependency = newDependency;
         this.pickDependency = pickDependency;
-        taskAdapter = new TaskAdapter(context, cursor, false);
+        taskAdapter = new TaskAdapter(context, null, false);
         taskAdapter.registerDataSetObserver(new DataSetObserver() {
             /**
              * This method is called when the entire data set has changed,

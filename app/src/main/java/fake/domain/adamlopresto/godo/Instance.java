@@ -228,10 +228,12 @@ public class Instance {
     }
     */
 
-    public void setDoneDate(@Nullable Date doneDate) {
-        if (different(this.doneDate, doneDate))
-            this.doneDate = doneDate;
-    }
+// --Commented out by Inspection START (9/6/2014 1:03 PM):
+//    public void setDoneDate(@Nullable Date doneDate) {
+//        if (different(this.doneDate, doneDate))
+//            this.doneDate = doneDate;
+//    }
+// --Commented out by Inspection STOP (9/6/2014 1:03 PM)
 
     /**
      * Pushes any updates to the database.

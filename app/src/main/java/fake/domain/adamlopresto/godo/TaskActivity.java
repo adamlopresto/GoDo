@@ -4,12 +4,10 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +24,7 @@ import fake.domain.adamlopresto.godo.db.TaskContextTable;
 
 public class TaskActivity extends InstanceHolderActivity {
 
-    TaskDetailsFragment taskDetailsFragment;
+    private TaskDetailsFragment taskDetailsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +66,7 @@ public class TaskActivity extends InstanceHolderActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new TaskDetailsFragment())
+                    .add(R.id.container, taskDetailsFragment = new TaskDetailsFragment())
                     .commit();
         }
 
@@ -125,7 +123,7 @@ public class TaskActivity extends InstanceHolderActivity {
                             }
                         }
                 )
-                .setTitle(R.string.title_activity_contexts)
+                .setTitle(R.string.title_contexts)
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("Set", new DialogInterface.OnClickListener() {
 

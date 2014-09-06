@@ -3,11 +3,9 @@
 
     <string name="app_name">GoDo</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_contexts">Contexts</string>
+    <string name="title_contexts">Contexts</string>
     <string name="title_activity_task">Task</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="title_fragment_task_repetitions">Repetitions</string>
-    <string name="title_fragment_task_details">Details</string>
     <string name="task_name_hint">Task name</string>
     <string name="instance_notes_label">One time notes</string>
     <string name="pref_filtering_header">Filtering</string>
@@ -72,5 +70,8 @@
     <string name="dates_header">Dates</string>
     <string name="notifications_header">Notifications</string>
     <string name="history_activity_label">Task History</string>
+    <string name="prerequisites">Prerequisites</string>
+    <string name="next_steps">Next Steps</string>
+    <string name="relationships">Relationships</string>
 
 </resources>

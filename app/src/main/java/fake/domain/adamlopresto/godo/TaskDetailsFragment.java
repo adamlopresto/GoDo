@@ -3,7 +3,6 @@ package fake.domain.adamlopresto.godo;
 import android.animation.LayoutTransition;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.net.Uri;
@@ -17,8 +16,6 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
-import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -220,7 +217,6 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
 
     private void extractTaskDetails() {
         Task task = getTask();
-        Log.e("GoDo", "Extracting details for task "+task);
         taskName.setText(task.getName());
         taskNotes.setText(task.getNotes());
         notification.setSelection(task.getNotification().ordinal());

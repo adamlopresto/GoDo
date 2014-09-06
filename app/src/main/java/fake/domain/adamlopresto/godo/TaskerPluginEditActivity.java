@@ -182,7 +182,7 @@ public class TaskerPluginEditActivity extends Activity {
                                 }
                             }
                     )
-                    .setTitle(R.string.title_activity_contexts)
+                    .setTitle(R.string.title_contexts)
                     .setNegativeButton("Cancel", null)
                     .setPositiveButton("Update", new DialogInterface.OnClickListener() {
 

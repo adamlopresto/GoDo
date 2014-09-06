@@ -10,8 +10,6 @@ import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Date;
-
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 

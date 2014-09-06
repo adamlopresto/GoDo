@@ -10,7 +10,7 @@
     <TextView
         style="@style/textButton"
         android:id="@+id/create_prereq"
-        android:text="Create prerequisite"
+        android:text="@string/new_prereq"
         />
     <View
         style="@style/divider"
@@ -18,7 +18,7 @@
     <TextView
         style="@style/textButton"
         android:id="@+id/pick_prereq_from_list"
-        android:text="Pick from list"
+        android:text="@string/pick_from_list"
         />
     <View
         style="@style/divider"
@@ -33,7 +33,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="@android:style/TextAppearance.Large"
-        android:text="Next Steps"
+        android:text="@string/next_steps"
         />
     <View
         android:layout_width="fill_parent"

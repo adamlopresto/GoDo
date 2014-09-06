@@ -3,7 +3,8 @@
     package="fake.domain.adamlopresto.godo"
     xmlns:tools="http://schemas.android.com/tools"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0"
+    >
 
     <uses-sdk tools:node="replace" />
 
@@ -17,7 +18,9 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:supportsRtl="true"
+        >
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -44,7 +47,7 @@
 
         <activity
             android:name=".ContextsActivity"
-            android:label="@string/title_activity_contexts"
+            android:label="@string/title_contexts"
             android:parentActivityName=".MainActivity"
             tools:ignore="UnusedAttribute" >
             <meta-data
@@ -145,7 +148,7 @@
         <activity
             android:name=".DependenciesActivity"
             android:theme="@style/NoActionBarShadow"
-            android:label="Relationships"
+            android:label="@string/relationships"
             android:parentActivityName=".TaskActivity"
             tools:ignore="UnusedAttribute">
             <meta-data

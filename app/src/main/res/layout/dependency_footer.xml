@@ -10,7 +10,7 @@
     <TextView
         style="@style/textButton"
         android:id="@+id/create_next_step"
-        android:text="Create next step"
+        android:text="@string/new_next_step"
         />
     <View
         style="@style/divider"
@@ -18,7 +18,7 @@
     <TextView
         style="@style/textButton"
         android:id="@+id/pick_next_step_from_list"
-        android:text="Pick from list"
+        android:text="@string/pick_from_list"
         />
 
 </LinearLayout>

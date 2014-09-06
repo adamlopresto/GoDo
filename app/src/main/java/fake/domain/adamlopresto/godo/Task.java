@@ -318,6 +318,7 @@ public class Task {
      * Pushes any updates to the database.
      * Happens in the background without blocking the calling thread.
      */
+    /*
     public void flush() {
         if (dirty) {
             new Thread(new Runnable() {
@@ -328,6 +329,7 @@ public class Task {
             }).start();
         }
     }
+    */
 
     /**
      * Write changes to database immediately.
