@@ -1,7 +1,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
@@ -13,8 +13,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical"
         android:animateLayoutChanges="true"
+        android:orientation="vertical"
         >
 
         <TextView
@@ -50,63 +50,65 @@
 
     </LinearLayout>
 
-        <RelativeLayout
-            android:id="@+id/header"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:animateLayoutChanges="true"
+        android:background="@color/appMain"
+        >
+
+        <CheckBox
+            android:id="@+id/check"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="8dp"
+            android:button="@drawable/checkbox"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/white"/>
+
+        <EditText
+            android:id="@+id/task_name"
             android:layout_width="fill_parent"
-            android:background="@color/appMain"
-            android:animateLayoutChanges="true"
-            >
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/check"
+            android:layout_gravity="fill_horizontal"
+            android:layout_toRightOf="@id/check"
+            android:hint="@string/task_name_hint"
+            android:inputType="textCapSentences|textMultiLine"
+            android:singleLine="false"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/white"
+            android:textColorHint="#42FFFFFF">
 
-            <CheckBox
-                android:id="@+id/check"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@android:color/white"
-                android:button="@drawable/checkbox"/>
+            <requestFocus/>
+        </EditText>
 
-            <EditText
-                android:id="@+id/task_name"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="fill_horizontal"
-                android:layout_alignBaseline="@id/check"
-                android:layout_toRightOf="@id/check"
-                android:hint="@string/task_name_hint"
-                android:textColorHint="#42FFFFFF"
-                android:inputType="textCapSentences|textMultiLine"
-                android:singleLine="false"
-                android:textColor="@android:color/white"
-                android:textAppearance="?android:attr/textAppearanceLarge">
-                <requestFocus />
-            </EditText>
+        <EditText
+            android:id="@+id/task_notes"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/task_name"
+            android:hint="@string/notes_hint"
+            android:inputType="textMultiLine|textCapSentences"
+            android:textColor="@android:color/white"
+            android:textColorHint="#42FFFFFF"
+            />
 
-            <EditText
-                android:id="@+id/task_notes"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/task_name"
-                android:inputType="textMultiLine|textCapSentences"
-                android:textColor="@android:color/white"
-                android:textColorHint="#42FFFFFF"
-                android:hint="@string/notes_hint"
-                />
-
-        </RelativeLayout>
+    </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/warnings"
         android:layout_below="@id/header"
-        android:background="@drawable/title_bar_shadow"
         android:animateLayoutChanges="true"
+        android:background="@drawable/title_bar_shadow"
         >
 
         <LinearLayout
@@ -119,9 +121,9 @@
 
             <android.support.v7.widget.CardView
                 android:id="@+id/card_view"
-                android:layout_gravity="center"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_margin="8dp"
                 android:animateLayoutChanges="true"
                 card_view:cardCornerRadius="4dp"
@@ -129,146 +131,152 @@
 
                 <LinearLayout
                     android:id="@+id/repetition_card"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:animateLayoutChanges="true"
-                        >
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical"
+                    >
+
                     <TextView
                         android:id="@+id/repetition_header"
-                        android:visibility="gone"
-                        android:text="@string/repetitions_header"
                         style="?android:attr/textAppearanceLarge"
-                        android:layout_marginTop="8dp"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
                         android:layout_marginRight="8dp"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_marginTop="8dp"
+                        android:text="@string/repetitions_header"
+                        android:visibility="gone"/>
 
                     <FrameLayout
-                        android:animateLayoutChanges="true"
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:animateLayoutChanges="true">
+
                         <EditText
                             android:id="@+id/instance_notes"
-                            android:visibility="gone"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
                             android:layout_gravity="fill_horizontal"
+                            android:layout_marginBottom="8dp"
                             android:hint="@string/instance_notes_label"
-                            android:inputType="textMultiLine|textCapSentences"/>
+                            android:inputType="textMultiLine|textCapSentences"
+                            android:visibility="gone"/>
 
                         <TextView
                             android:id="@+id/instance_notes_ro"
-                            android:layout_marginLeft="8dp"
-                            android:layout_marginRight="8dp"
-                            android:layout_marginBottom="8dp"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="8dp"
                             android:visibility="gone"
                             />
-                        </FrameLayout>
+                    </FrameLayout>
 
                     <TextView
-                        android:layout_margin="8dp"
                         android:id="@+id/repetition_summary"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
                         tools:text="No repetitions"
                         />
 
                     <TextView
                         android:id="@+id/repetition_list"
-                        android:visibility="gone"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_marginBottom="8dp"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginRight="8dp"
+                        android:visibility="gone"
                         tools:text="No repetitions"
                         />
 
                     <View
                         android:id="@+id/repetition_divider"
-                        android:visibility="gone"
                         style="@style/divider"
+                        android:visibility="gone"
                         />
+
                     <TextView
                         android:id="@+id/view_history_button"
-                        android:visibility="gone"
+                        style="@style/textButton"
                         android:text="@string/view_history_button"
-                        style="@style/textButton"/>
+                        android:visibility="gone"/>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
-                android:layout_gravity="center"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                card_view:cardCornerRadius="4dp"
                 android:animateLayoutChanges="true"
+                card_view:cardCornerRadius="4dp"
                 >
 
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_margin="8dp"
                     android:animateLayoutChanges="true"
+                    android:orientation="vertical"
                     >
+
                     <TextView
-                        android:text="@string/dates_header"
                         style="?android:attr/textAppearanceLarge"
-                        android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/dates_header"
                         />
 
                     <GridLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:columnCount="2"
                         android:animateLayoutChanges="true"
+                        android:columnCount="2"
                         >
+
                         <TextView android:text="@string/start_date_label"/>
 
                         <fake.domain.adamlopresto.godo.DateTimePicker
                             android:id="@+id/start"
                             android:layout_width="0dp"
-                            android:animateLayoutChanges="true"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="fill_horizontal"/>
+                            android:layout_gravity="fill_horizontal"
+                            android:animateLayoutChanges="true"/>
 
                         <TextView android:text="@string/plan_date_label"/>
 
                         <fake.domain.adamlopresto.godo.DateTimePicker
                             android:id="@+id/plan"
                             android:layout_width="0dp"
-                            android:animateLayoutChanges="true"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="fill_horizontal"/>
+                            android:layout_gravity="fill_horizontal"
+                            android:animateLayoutChanges="true"/>
 
                         <TextView android:text="@string/due_date_label"/>
 
                         <fake.domain.adamlopresto.godo.DateTimePicker
                             android:id="@+id/due"
                             android:layout_width="0dp"
-                            android:animateLayoutChanges="true"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="fill_horizontal"/>
+                            android:layout_gravity="fill_horizontal"
+                            android:animateLayoutChanges="true"/>
                     </GridLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
+
             <android.support.v7.widget.CardView
-                android:layout_gravity="center"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
                 android:animateLayoutChanges="true"
                 card_view:cardCornerRadius="4dp"
                 >
@@ -276,15 +284,16 @@
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_margin="8dp"
                     android:animateLayoutChanges="true"
+                    android:orientation="vertical"
                     >
+
                     <TextView
-                        android:text="@string/notifications_header"
                         style="?android:attr/textAppearanceLarge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="@string/notifications_header"
                         />
 
                     <GridLayout
@@ -293,6 +302,7 @@
                         android:animateLayoutChanges="true"
                         android:columnCount="2"
                         >
+
                         <TextView android:text="@string/notification_label"/>
 
                         <Spinner
@@ -303,8 +313,8 @@
                             android:entries="@array/notification_levels"/>
 
                         <TextView
-                            android:text="@string/due_notification_label"
                             android:id="@+id/due_label"
+                            android:text="@string/due_notification_label"
                             />
 
                         <Spinner
@@ -318,45 +328,46 @@
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
-                android:layout_gravity="center"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
                 android:animateLayoutChanges="true"
                 card_view:cardCornerRadius="4dp"
                 >
 
                 <TextView
+                    android:id="@+id/contexts"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:id="@+id/contexts"
                     android:text="Contexts"
                     />
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
-                android:layout_gravity="center"
+                android:id="@+id/relationships_card"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
                 card_view:cardCornerRadius="4dp"
-                android:id="@+id/relationships_card"
                 >
 
                 <TextView
-                    android:text="Dependencies"
                     android:id="@+id/relationships_label"
-                    android:layout_margin="8dp"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"/>
-                </android.support.v7.widget.CardView>
-            </LinearLayout>
-        </ScrollView>
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:text="Dependencies"/>
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
+    </ScrollView>
+
     <View
         android:layout_width="fill_parent"
         android:layout_height="100dp"

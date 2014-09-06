@@ -4,10 +4,10 @@
     >
 
     <item
+        android:bottom="4dp"
         android:left="4dp"
         android:right="10dp"
         android:top="4dp"
-        android:bottom="4dp"
         >
         <shape
             android:shape="rectangle"
@@ -19,20 +19,20 @@
                 android:color="@android:color/white"
                 />
             <stroke
-                android:color="@android:color/black"
                 android:width="1dp"
+                android:color="@android:color/black"
                 />
             <size
-                android:height="32sp"
                 android:width="32sp"
+                android:height="32sp"
                 />
         </shape>
     </item>
     <item
-        android:top="10sp"
         android:bottom="5sp"
         android:left="4sp"
         android:right="21sp"
+        android:top="10sp"
         >
         <rotate
             android:fromDegrees="45"
@@ -40,22 +40,22 @@
             <shape
                 android:shape="line"
                 >
-            <stroke
-                android:color="#007000"
-                android:width="3sp"
-                />
+                <stroke
+                    android:width="3sp"
+                    android:color="#007000"
+                    />
                 <size
                     android:width="1dp"
                     android:height="10dp"
                     />
             </shape>
-            </rotate>
+        </rotate>
     </item>
     <item
-        android:top="-6sp"
         android:bottom="-2sp"
         android:left="13sp"
         android:right="0sp"
+        android:top="-6sp"
         >
         <rotate
             android:fromDegrees="-45"
@@ -65,8 +65,8 @@
                 >
                 <corners android:radius="1dp"/>
                 <stroke
-                    android:color="#007000"
                     android:width="3sp"
+                    android:color="#007000"
                     />
                 <size
                     android:width="1dp"
