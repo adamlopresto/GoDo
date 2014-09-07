@@ -3,7 +3,6 @@ package fake.domain.adamlopresto.godo;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
-import android.database.DatabaseUtils;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +40,6 @@ public class DependencyAdapter extends BaseAdapter{
     public void swapCursor(@Nullable Cursor c){
         cursor = c;
         taskAdapter.swapCursor(c);
-        DatabaseUtils.dumpCursor(c);
     }
 
     public Cursor getCursor(){

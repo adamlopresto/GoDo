@@ -173,9 +173,14 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         v.findViewById(R.id.relationships_card).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
                 Intent i = new Intent(getActivity(), DependenciesActivity.class);
                 i.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, getInstance().getId());
                 startActivity(i);
+                */
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, new AllDependenciesFragment())
+                        .addToBackStack(null).commit();
             }
         });
 
@@ -188,8 +193,6 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                 ((TaskActivity) getActivity()).showContextsDialog();
             }
         });
-
-
 
         return v;
     }
@@ -265,6 +268,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                         RepetitionRulesTable.COLUMN_TASK + "=?", Utils.idToSelectionArgs(params[0]),null);
 
                 if (!cursor.moveToFirst()) {
+                    cursor.close();
                     return null;
                 }
 
@@ -275,6 +279,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                         b.append('\n');
                 }
 
+                cursor.close();
                 return b.toString();
             }
 
@@ -285,7 +290,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                                                  : View.VISIBLE);
                 repetitionRuleList.setText(s);
             }
-        }.execute(task.getId());
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, task.getId());
 
         loadContexts();
     }
@@ -303,8 +308,10 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                                 + " and context=contexts._id)",
                         null, null, null, ContextsTable.COLUMN_NAME);
                 cursor.moveToFirst();
-                if (cursor.isAfterLast())
+                if (cursor.isAfterLast()) {
+                    cursor.close();
                     return "No contexts";
+                }
                 SpannableStringBuilder b = new SpannableStringBuilder();
                 int start = 0;
                 while (!cursor.isAfterLast()){
@@ -317,6 +324,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                             start, b.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     start = b.length();
                 }
+                cursor.close();
                 return b;
             }
 
@@ -324,7 +332,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
             protected void onPostExecute(CharSequence s) {
                 contexts.setText(s);
             }
-        }.execute();
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void extractInstanceDetails() {
@@ -356,8 +364,10 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                                 String.valueOf(instance.forceId())),
                         null, null, null, null);
 
-                if (cursor.getCount() == 1)
+                if (cursor.getCount() == 1) {
+                    cursor.close();
                     return "No dependencies";
+                }
 
                 cursor.moveToFirst();
                 SpannableStringBuilder builder = new SpannableStringBuilder();
@@ -388,6 +398,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
 
                 if (!cursor.moveToNext()) {
                     //At end, so no next steps.
+                    cursor.close();
                     return builder;
                 }
 
@@ -407,6 +418,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                     builder.append(" tasks");
 
                 }
+                cursor.close();
                 return builder;
             }
 

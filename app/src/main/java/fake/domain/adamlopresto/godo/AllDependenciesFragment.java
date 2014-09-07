@@ -13,7 +13,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -83,7 +82,6 @@ public class AllDependenciesFragment extends ListFragment
                         if (positions.valueAt(i)){
                             int pos = positions.keyAt(i) - 1; // shift down to accommodate header
                             c.moveToPosition(pos);
-                            Log.e("GoDo", "Moving cursor to position "+pos +" for i="+i);
                             switch (c.getInt(c.getColumnIndexOrThrow("item_type"))){
                                 case 0:
                                     idArray[0] = String.valueOf(c.getLong(0));
@@ -93,8 +91,7 @@ public class AllDependenciesFragment extends ListFragment
                                     idArray[0] = id;
                                     idArray[1] = String.valueOf(c.getLong(0));
                             }
-                            int numDeleted = res.delete(GoDoContentProvider.DEPENDENCY_URI, where, idArray);
-                            Log.e("GoDo", "Deleted " + numDeleted + " items, first=" + idArray[0] + " second=" + idArray[1]);
+                            res.delete(GoDoContentProvider.DEPENDENCY_URI, where, idArray);
                         }
                     }
 
