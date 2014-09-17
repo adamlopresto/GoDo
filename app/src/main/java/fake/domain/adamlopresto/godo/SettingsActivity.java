@@ -46,7 +46,6 @@ public class SettingsActivity extends PreferenceActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static class SettingsFragment extends PreferenceFragment {
         @Override
         public void onCreate(final Bundle savedInstanceState) {
