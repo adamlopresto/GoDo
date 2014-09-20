@@ -3,5 +3,6 @@
     <color name="appMain">#e51c23</color>
     <color name="appMainLight">#f9bdbb</color>
     <color name="appMainDark">#d01716</color>
+    <color name="accent">#7c4dff</color>
 
 </resources>
