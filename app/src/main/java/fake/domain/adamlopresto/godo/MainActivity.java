@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.ActionMode;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -159,6 +161,16 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         setListAdapter(adapter);
 
         handleIntent(getIntent());
+
+        /*
+        Resources res = getResources();
+        FloatingActionButton fab = new FloatingActionButton.Builder(this)
+                .withDrawable( res.getDrawable(R.drawable.content_new))
+                .withButtonColor(res.getColor(R.color.accent))
+                .withGravity(Gravity.BOTTOM | Gravity.END)
+                .withMargins(0, 0, 16, 16)
+                .create();
+                */
 
         restartLoader();
     }
