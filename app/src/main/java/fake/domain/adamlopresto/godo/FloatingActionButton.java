@@ -18,6 +18,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 
+@SuppressWarnings ("ALL")
 public class FloatingActionButton extends View {
 
     final static OvershootInterpolator overshootInterpolator = new OvershootInterpolator();
