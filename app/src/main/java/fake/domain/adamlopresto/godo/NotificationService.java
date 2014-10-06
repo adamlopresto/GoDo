@@ -10,14 +10,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +37,7 @@ import fake.domain.adamlopresto.godo.db.InstancesView;
 public class NotificationService extends Service {
     @Nullable
     private TextToSpeech tts;
+    public static final String GROUP_KEY = "GoDoGroup";
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
@@ -72,7 +76,7 @@ public class NotificationService extends Service {
             Log.e("GoDo", "Parse error parsing next date");
         }
 
-        NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManagerCompat nm = NotificationManagerCompat.from(this);
         nm.cancelAll();
 
         if (max == 0) {
@@ -147,8 +151,15 @@ public class NotificationService extends Service {
                         default:
                             break;
                     }
-
                     id = c.getLong(4);
+
+                    NotificationCompat.Builder builder = makeBuilder(audible, vibrate);
+                    populateBuilder(builder, id, name, taskNotes,
+                            instanceNotes);
+                    builder.setGroup(GROUP_KEY);
+                    nm.notify((int)id, builder.build());
+
+
                 }
                 c.moveToNext();
             }
@@ -157,51 +168,10 @@ public class NotificationService extends Service {
 
         if (numToNotify > 0) {
 
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-
-                    // Set required fields, including the small icon, the
-                    // notification title, and text.
-                    .setSmallIcon(R.drawable.ic_stat_tasks)
-                    .setContentTitle("GoDo")
-                    .setAutoCancel(true);
-
-            if (audible)
-                builder.setDefaults(Notification.DEFAULT_SOUND);
-            if (vibrate)
-                //noinspection MagicNumber
-                builder.setVibrate(new long[]{0L, 1000L, 300L, 1000L});
-            builder.setLights(Color.GREEN, 1000, 1000);
-            builder.setAutoCancel(true);
+            NotificationCompat.Builder builder = makeBuilder(audible, vibrate);
 
             if (numToNotify == 1) {
-                StringBuilder sb = new StringBuilder();
-                if (!TextUtils.isEmpty(taskNotes)) {
-                    sb.append(taskNotes);
-                }
-                if (!TextUtils.isEmpty(instanceNotes)) {
-                    if (sb.length() > 0) {
-                        sb.append('\n');
-                    }
-                    sb.append(instanceNotes);
-
-                }
-                builder.setContentTitle(name)
-                        .setContentText(sb)
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(sb))
-                        .setTicker(name);
-                PendingIntent markDone = PendingIntent.getBroadcast(this, 0,
-                        new Intent(this, GoDoReceiver.class).setAction(GoDoReceiver.MARK_COMPLETE_INTENT)
-                                .putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id),
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-                builder.addAction(R.drawable.ic_action_accept, getString(R.string.mark_complete), markDone);
-
-                TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-                //stackBuilder.addParentStack(TaskActivity.class);
-                stackBuilder.addNextIntentWithParentStack(
-                        new Intent(this, TaskActivity.class).putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id));
-                builder.setContentIntent(stackBuilder.getPendingIntent(0,
-                        PendingIntent.FLAG_CANCEL_CURRENT));
+                populateBuilder(builder, id, name, taskNotes, instanceNotes);
             } else {
                 builder.setContentTitle(numToNotify + " tasks")
                         .setContentText("GoDo")
@@ -215,7 +185,9 @@ public class NotificationService extends Service {
                                         new Intent(this, MainActivity.class),
                                         PendingIntent.FLAG_UPDATE_CURRENT)
                         )
-                        .setStyle(inbox);
+                        .setStyle(inbox)
+                        .setGroup(GROUP_KEY)
+                        .setGroupSummary(true);
             } // end switch on numToNotify
 
             nm.notify("Tasks", 0, builder.build());
@@ -308,6 +280,58 @@ public class NotificationService extends Service {
 
     }
 
+    private void populateBuilder(NotificationCompat.Builder builder,  long id,
+                                                       String name, String taskNotes,
+                                                       String instanceNotes){
+
+    StringBuilder sb = new StringBuilder();
+    if (!TextUtils.isEmpty(taskNotes)) {
+        sb.append(taskNotes);
+    }
+    if (!TextUtils.isEmpty(instanceNotes)) {
+        if (sb.length() > 0) {
+            sb.append('\n');
+        }
+        sb.append(instanceNotes);
+
+    }
+    builder.setContentTitle(name)
+            .setContentText(sb)
+            .setStyle(new NotificationCompat.BigTextStyle().bigText(sb))
+            .setTicker(name);
+    PendingIntent markDone = PendingIntent.getBroadcast(this, 0,
+            new Intent(this, GoDoReceiver.class).setAction(GoDoReceiver.MARK_COMPLETE_INTENT)
+                    .putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id),
+            PendingIntent.FLAG_UPDATE_CURRENT
+    );
+    builder.addAction(R.drawable.ic_action_accept, getString(R.string.mark_complete), markDone);
+
+    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+    //stackBuilder.addParentStack(TaskActivity.class);
+    stackBuilder.addNextIntentWithParentStack(
+            new Intent(this, TaskActivity.class).putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id));
+    builder.setContentIntent(stackBuilder.getPendingIntent(0,
+            PendingIntent.FLAG_CANCEL_CURRENT));
+    }
+
+    private NotificationCompat.Builder makeBuilder(boolean audible, boolean vibrate) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+
+                // Set required fields, including the small icon, the
+                // notification title, and text.
+                .setSmallIcon(R.drawable.ic_stat_tasks)
+                .setContentTitle("GoDo")
+                .setAutoCancel(true);
+
+        if (audible)
+                builder.setDefaults(Notification.DEFAULT_SOUND);
+        if (vibrate)
+                //noinspection MagicNumber
+                builder.setVibrate(new long[]{0L, 1000L, 300L, 1000L});
+        builder.setLights(Color.GREEN, 1000, 1000);
+        builder.setAutoCancel(true);
+        return builder;
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
