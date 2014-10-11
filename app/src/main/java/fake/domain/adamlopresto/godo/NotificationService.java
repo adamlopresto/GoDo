@@ -151,8 +151,9 @@ public class NotificationService extends Service {
 
                     NotificationCompat.Builder builder = makeBuilder(audible, vibrate);
                     populateBuilder(builder, id, name, taskNotes,
-                            instanceNotes);
+                            instanceNotes, numToNotify);
                     builder.setGroup(GROUP_KEY);
+                    builder.setSortKey(String.format("%03d", numToNotify));
                     nm.notify((int)id, builder.build());
 
 
@@ -167,7 +168,7 @@ public class NotificationService extends Service {
             NotificationCompat.Builder builder = makeBuilder(audible, vibrate);
 
             if (numToNotify == 1) {
-                populateBuilder(builder, id, name, taskNotes, instanceNotes);
+                populateBuilder(builder, id, name, taskNotes, instanceNotes, 0);
             } else {
                 builder.setContentTitle(numToNotify + " tasks")
                         .setContentText("GoDo")
@@ -278,7 +279,8 @@ public class NotificationService extends Service {
 
     private void populateBuilder(NotificationCompat.Builder builder,  long id,
                                                        CharSequence name, String taskNotes,
-                                                       String instanceNotes){
+                                                       String instanceNotes,
+                                                       int seq){
 
     StringBuilder sb = new StringBuilder();
     if (!TextUtils.isEmpty(taskNotes)) {
@@ -295,7 +297,7 @@ public class NotificationService extends Service {
             .setContentText(sb)
             .setStyle(new NotificationCompat.BigTextStyle().bigText(sb))
             .setTicker(name);
-    PendingIntent markDone = PendingIntent.getBroadcast(this, 0,
+    PendingIntent markDone = PendingIntent.getBroadcast(this, seq,
             new Intent(this, GoDoReceiver.class).setAction(GoDoReceiver.MARK_COMPLETE_INTENT)
                     .putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id),
             PendingIntent.FLAG_UPDATE_CURRENT
@@ -306,7 +308,7 @@ public class NotificationService extends Service {
     //stackBuilder.addParentStack(TaskActivity.class);
     stackBuilder.addNextIntentWithParentStack(
             new Intent(this, TaskActivity.class).putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id));
-    builder.setContentIntent(stackBuilder.getPendingIntent(0,
+    builder.setContentIntent(stackBuilder.getPendingIntent(seq,
             PendingIntent.FLAG_CANCEL_CURRENT));
     }
 
