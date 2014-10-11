@@ -10,7 +10,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -20,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -39,11 +37,11 @@ import fake.domain.adamlopresto.godo.db.TaskContextTable;
 public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDateChangeListener {
 
     private CheckBox done;
-    private EditText taskName;
-    private EditText taskNotes;
+    private TextView taskName;
+    private TextView taskNotes;
     private TextView repetitionSummary;
     private TextView repetitionRuleList;
-    private EditText instanceNotes;
+    private TextView instanceNotes;
     private TextView instanceNotesRo;
     private DateTimePicker start;
     private DateTimePicker plan;
@@ -118,9 +116,9 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         View v = inflater.inflate(R.layout.fragment_task_details, group, false);
         assert v != null;
         done = (CheckBox) v.findViewById(R.id.check);
-        taskName = (EditText) v.findViewById(R.id.task_name);
-        taskNotes = (EditText) v.findViewById(R.id.task_notes);
-        instanceNotes = (EditText) v.findViewById(R.id.instance_notes);
+        taskName = (TextView) v.findViewById(R.id.task_name);
+        taskNotes = (TextView) v.findViewById(R.id.task_notes);
+        instanceNotes = (TextView) v.findViewById(R.id.instance_notes);
         notification = (Spinner) v.findViewById(R.id.notification);
         dueNotification = (Spinner) v.findViewById(R.id.due_notification);
         dueNotificationLabel = v.findViewById(R.id.due_label);
@@ -454,10 +452,10 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
     }
 
     @Nullable
-    private String nullString(@Nullable EditText in) {
+    private String nullString(@Nullable TextView in) {
         if (in == null)
             return null;
-        Editable edit = in.getText();
+        CharSequence edit = in.getText();
         if (edit == null)
             return null;
         String out = edit.toString();

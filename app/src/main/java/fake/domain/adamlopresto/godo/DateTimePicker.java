@@ -126,7 +126,6 @@ public class DateTimePicker extends LinearLayout {
                     dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Set", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            // noinspection ResourceType
                             cal.set(dp.getYear(), dp.getMonth(), dp.getDayOfMonth());
                             date = cal.getTime();
                             update();
@@ -167,7 +166,6 @@ public class DateTimePicker extends LinearLayout {
                         cal.setTime(date);
                         Calendar newCal = new GregorianCalendar();
                         newCal.setTime(holder.date);
-                        // noinspection ResourceType
                         cal.set(newCal.get(Calendar.YEAR), newCal.get(Calendar.MONTH), newCal.get(Calendar.DAY_OF_MONTH));
                         date = cal.getTime();
                     }

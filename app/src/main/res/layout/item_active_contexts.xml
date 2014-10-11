@@ -17,8 +17,8 @@
     
     <TextView 
         android:id="@android:id/text1"
-        android:layout_toRightOf="@id/active"
         android:layout_toEndOf="@id/active"
+        android:layout_toRightOf="@id/active"
         android:layout_alignParentTop="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

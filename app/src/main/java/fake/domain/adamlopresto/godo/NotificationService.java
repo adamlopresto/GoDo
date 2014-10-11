@@ -2,15 +2,12 @@ package fake.domain.adamlopresto.godo;
 
 import android.app.AlarmManager;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
@@ -20,7 +17,6 @@ import android.support.v4.app.TaskStackBuilder;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.text.style.StyleSpan;
 import android.util.Log;
 
 import org.jetbrains.annotations.NotNull;
@@ -281,7 +277,7 @@ public class NotificationService extends Service {
     }
 
     private void populateBuilder(NotificationCompat.Builder builder,  long id,
-                                                       String name, String taskNotes,
+                                                       CharSequence name, String taskNotes,
                                                        String instanceNotes){
 
     StringBuilder sb = new StringBuilder();
