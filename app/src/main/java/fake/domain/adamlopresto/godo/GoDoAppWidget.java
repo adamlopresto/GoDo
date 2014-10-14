@@ -38,9 +38,9 @@ public class GoDoAppWidget extends AppWidgetProvider {
         //stackBuilder.addParentStack(TaskActivity.class);
         stackBuilder.addNextIntentWithParentStack(
                 new Intent(context, TaskActivity.class));
-        views.setPendingIntentTemplate(android.R.id.list, stackBuilder.getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT));
+        views.setPendingIntentTemplate(android.R.id.list, stackBuilder.getPendingIntent(-1, PendingIntent.FLAG_UPDATE_CURRENT));
         views.setOnClickPendingIntent(R.id.action_new_task,
-                stackBuilder.getPendingIntent(2, PendingIntent.FLAG_UPDATE_CURRENT));
+                stackBuilder.getPendingIntent(-1, PendingIntent.FLAG_UPDATE_CURRENT));
 
         Intent recognizer = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         recognizer.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);

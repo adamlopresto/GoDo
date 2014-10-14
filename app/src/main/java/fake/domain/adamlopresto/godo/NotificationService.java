@@ -114,6 +114,7 @@ public class NotificationService extends Service {
         long id = -1L;
         if (c != null) {
             c.moveToFirst();
+            int total = c.getCount();
             while (!c.isAfterLast()) {
                 SpannableStringBuilder sb = new SpannableStringBuilder();
                 numToNotify++;
@@ -151,9 +152,11 @@ public class NotificationService extends Service {
 
                     NotificationCompat.Builder builder = makeBuilder(audible, vibrate);
                     populateBuilder(builder, id, name, taskNotes,
-                            instanceNotes, numToNotify);
-                    builder.setGroup(GROUP_KEY);
-                    builder.setSortKey(String.format("%03d", numToNotify));
+                            instanceNotes);
+                    if (total != 1) {
+                        builder.setGroup(GROUP_KEY);
+                        builder.setSortKey(String.format("%03d", numToNotify));
+                    }
                     nm.notify((int)id, builder.build());
 
 
@@ -163,32 +166,29 @@ public class NotificationService extends Service {
             c.close();
         }
 
-        if (numToNotify > 0) {
+        if (numToNotify > 1) {
 
             NotificationCompat.Builder builder = makeBuilder(audible, vibrate);
 
-            if (numToNotify == 1) {
-                populateBuilder(builder, id, name, taskNotes, instanceNotes, 0);
-            } else {
-                builder.setContentTitle(numToNotify + " tasks")
-                        .setContentText("GoDo")
-                        .setTicker(numToNotify + " tasks")
-                        .setNumber(numToNotify)
+            builder.setContentTitle(numToNotify + " tasks")
+                    .setContentText("GoDo")
+                    .setTicker(numToNotify + " tasks")
+                    .setNumber(numToNotify)
 
-                        .setContentIntent(
-                                PendingIntent.getActivity(
-                                        this,
-                                        0,
-                                        new Intent(this, MainActivity.class),
-                                        PendingIntent.FLAG_UPDATE_CURRENT)
-                        )
-                        .setStyle(inbox)
-                        .setGroup(GROUP_KEY)
-                        .setGroupSummary(true);
-            } // end switch on numToNotify
+                    .setContentIntent(
+                            PendingIntent.getActivity(
+                                    this,
+                                    0,
+                                    new Intent(this, MainActivity.class),
+                                    PendingIntent.FLAG_UPDATE_CURRENT)
+                    )
+                    .setStyle(inbox)
+                    .setGroup(GROUP_KEY)
+                    .setGroupSummary(true);
 
             nm.notify("Tasks", 0, builder.build());
-
+        }
+        if (numToNotify > 0){
             if (spoken.isEmpty()) {
                 stopSelf();
             } else {
@@ -277,10 +277,9 @@ public class NotificationService extends Service {
 
     }
 
-    private void populateBuilder(NotificationCompat.Builder builder,  long id,
-                                                       CharSequence name, String taskNotes,
-                                                       String instanceNotes,
-                                                       int seq){
+    private void populateBuilder(NotificationCompat.Builder builder, long id,
+                                 CharSequence name, String taskNotes,
+                                 String instanceNotes){
 
     StringBuilder sb = new StringBuilder();
     if (!TextUtils.isEmpty(taskNotes)) {
@@ -297,7 +296,7 @@ public class NotificationService extends Service {
             .setContentText(sb)
             .setStyle(new NotificationCompat.BigTextStyle().bigText(sb))
             .setTicker(name);
-    PendingIntent markDone = PendingIntent.getBroadcast(this, seq,
+    PendingIntent markDone = PendingIntent.getBroadcast(this, (int)id,
             new Intent(this, GoDoReceiver.class).setAction(GoDoReceiver.MARK_COMPLETE_INTENT)
                     .putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id),
             PendingIntent.FLAG_UPDATE_CURRENT
@@ -308,8 +307,8 @@ public class NotificationService extends Service {
     //stackBuilder.addParentStack(TaskActivity.class);
     stackBuilder.addNextIntentWithParentStack(
             new Intent(this, TaskActivity.class).putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id));
-    builder.setContentIntent(stackBuilder.getPendingIntent(seq,
-            PendingIntent.FLAG_CANCEL_CURRENT));
+    builder.setContentIntent(stackBuilder.getPendingIntent((int)id,
+            PendingIntent.FLAG_UPDATE_CURRENT));
     }
 
     private NotificationCompat.Builder makeBuilder(boolean audible, boolean vibrate) {
