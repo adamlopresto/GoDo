@@ -31,9 +31,9 @@ import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesView;
 
 public class NotificationService extends Service {
+    private static final String GROUP_KEY = "GoDoGroup";
     @Nullable
     private TextToSpeech tts;
-    public static final String GROUP_KEY = "GoDoGroup";
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
@@ -107,11 +107,11 @@ public class NotificationService extends Service {
         boolean audible = false;
         boolean vibrate = false;
         NotificationCompat.InboxStyle inbox = new NotificationCompat.InboxStyle();
-        String name = null;
-        String taskNotes = null;
-        String instanceNotes = null;
+        String name;
+        String taskNotes;
+        String instanceNotes;
         final ArrayList<String> spoken = new ArrayList<>();
-        long id = -1L;
+        long id;
         if (c != null) {
             c.moveToFirst();
             int total = c.getCount();
