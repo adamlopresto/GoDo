@@ -6,10 +6,10 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.LruCache;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -39,14 +39,14 @@ public class Task {
     /*
      * Constructor to create a new, empty task
      */
-    public Task(DatabaseHelper helper, @NotNull Context context) {
+    public Task(DatabaseHelper helper, @NonNull Context context) {
         this.helper = helper;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         notification = NotificationLevels.valueOf(prefs.getString(SettingsActivity.PREF_DEFAULT_NOTIFICATION, "NONE"));
         dueNotification = NotificationLevels.valueOf(prefs.getString(SettingsActivity.PREF_DEFAULT_DUE_NOTIFICATION, "NONE"));
     }
 
-    public Task(DatabaseHelper helper, @NotNull Context context, String name) {
+    public Task(DatabaseHelper helper, @NonNull Context context, String name) {
         this(helper, context);
         this.name = name;
     }
@@ -63,8 +63,8 @@ public class Task {
         this.dueNotification = dueNotification;
     }
 
-    @NotNull
-    public static Task get(@NotNull DatabaseHelper helper, long id) {
+    @NonNull
+    public static Task get(@NonNull DatabaseHelper helper, long id) {
         Task task = cache.get(id);
         if (task != null)
             return task;
@@ -155,7 +155,7 @@ public class Task {
      *
      * @param old If not null, then provides values for old dates
      */
-    @NotNull
+    @NonNull
     public Instance createRepetition(@Nullable Instance old) {
         Instance next = new Instance(helper, this);
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -175,7 +175,7 @@ public class Task {
             RepetitionRuleColumns from = cols[rules.getInt(0)];
             RepetitionRuleColumns to = cols[rules.getInt(1)];
             RepetitionRuleTypes type = types[rules.getInt(2)];
-            @Nullable Date date = null;
+            Date date = null;
             boolean hasTime = false;
             switch (from) {
                 case NEW_DUE:

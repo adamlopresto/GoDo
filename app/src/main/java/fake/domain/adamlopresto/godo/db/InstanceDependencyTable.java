@@ -1,8 +1,7 @@
 package fake.domain.adamlopresto.godo.db;
 
 import android.database.sqlite.SQLiteDatabase;
-
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 public class InstanceDependencyTable {
 
@@ -15,7 +14,7 @@ public class InstanceDependencyTable {
     public static final String COLUMN_SECOND = "second";
 
 
-    public static void onCreate(@NotNull SQLiteDatabase db) {
+    public static void onCreate(@NonNull SQLiteDatabase db) {
         db.execSQL("create table " + TABLE
                         + "("
                         + COLUMN_ID + " integer primary key autoincrement, "

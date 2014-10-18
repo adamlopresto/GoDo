@@ -6,9 +6,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
-
-import org.jetbrains.annotations.NotNull;
 
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
@@ -17,7 +16,7 @@ public class GoDoReceiver extends BroadcastReceiver {
     public static final String MARK_COMPLETE_INTENT = "fake.domain.adamlopresto.godo.MARK_COMPLETE";
 
     @Override
-    public void onReceive(@NotNull Context context, @NotNull Intent intent) {
+    public void onReceive(@NonNull Context context, @NonNull Intent intent) {
 
         String action = intent.getAction();
         if (action == null ||

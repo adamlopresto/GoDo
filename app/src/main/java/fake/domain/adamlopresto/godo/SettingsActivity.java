@@ -4,10 +4,9 @@ import android.app.ActionBar;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
-
-import org.jetbrains.annotations.NotNull;
 
 public class SettingsActivity extends PreferenceActivity {
 
@@ -28,7 +27,7 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // This ID represents the Home or Up button. In the case of this

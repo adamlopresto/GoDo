@@ -4,9 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -35,7 +34,7 @@ public class Instance {
 //    private Date createDate;
 // --Commented out by Inspection STOP (4/5/2014 1:24 PM)
 
-    public Instance(DatabaseHelper helper, @NotNull Context context) {
+    public Instance(DatabaseHelper helper, @NonNull Context context) {
         this(helper, new Task(helper, context));
     }
 
@@ -62,8 +61,8 @@ public class Instance {
         //this.createDate = createDate;
     }
 
-    @NotNull
-    public static Instance get(@NotNull DatabaseHelper helper, long id) {
+    @NonNull
+    public static Instance get(@NonNull DatabaseHelper helper, long id) {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor c = db.query(InstancesTable.TABLE,
                 new String[]{InstancesTable.COLUMN_TASK, InstancesTable.COLUMN_NOTES,
@@ -114,7 +113,7 @@ public class Instance {
         return dateString != null && dateString.length() > 10;
     }
 
-    private static void putDate(@NotNull ContentValues values, String key, @Nullable Date date, boolean hasTime) {
+    private static void putDate(@NonNull ContentValues values, String key, @Nullable Date date, boolean hasTime) {
         if (date == null)
             values.putNull(key);
         else

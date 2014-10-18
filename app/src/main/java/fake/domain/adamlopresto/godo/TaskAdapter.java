@@ -4,16 +4,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
-
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class TaskAdapter extends ResourceCursorAdapter {
 
@@ -34,7 +32,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
     private static final int DONE_DATE = 6;
     private final boolean showCheckBox;
 
-    public TaskAdapter(@NotNull Context context, Cursor c, boolean showCheckBox) {
+    public TaskAdapter(@NonNull Context context, Cursor c, boolean showCheckBox) {
         super(context, R.layout.main_list_item, c, 0);
         this.showCheckBox = showCheckBox;
     }
@@ -56,7 +54,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
     }
 
     @Override
-    public void bindView(@NotNull View v, Context context, @NotNull Cursor cursor) {
+    public void bindView(@NonNull View v, Context context, @NonNull Cursor cursor) {
         TaskHolder holder = (TaskHolder) v.getTag();
         boolean done = !cursor.isNull(DONE_DATE);
         String dueDate = cursor.getString(DUE_DATE);
@@ -71,20 +69,20 @@ public class TaskAdapter extends ResourceCursorAdapter {
         setTextViewDate(holder.planDate, "P: ", cursor.getString(PLAN_DATE), done, overdue, future);
     }
 
-    private void setTextViewDate(@NotNull TextView v, String prefix, @Nullable String s, boolean done, boolean overdue,
+    private void setTextViewDate(@NonNull TextView v, String prefix, @Nullable String s, boolean done, boolean overdue,
                                  boolean future) {
         if (!hideView(v, s))
             setTextViewInner(v, prefix + Utils.formatShortRelativeDate(s), done, overdue, future);
     }
 
-    private void setTextView(@NotNull TextView v, CharSequence s, boolean done, boolean overdue,
+    private void setTextView(@NonNull TextView v, CharSequence s, boolean done, boolean overdue,
                              boolean future) {
         if (!hideView(v, s))
             setTextViewInner(v, s, done, overdue, future);
 
     }
 
-    private void setTextViewInner(@NotNull TextView v, CharSequence s, boolean done, boolean overdue,
+    private void setTextViewInner(@NonNull TextView v, CharSequence s, boolean done, boolean overdue,
                                   boolean future) {
 
         v.setText(s);
@@ -100,8 +98,8 @@ public class TaskAdapter extends ResourceCursorAdapter {
     }
 
     @SuppressWarnings ("BooleanMethodIsAlwaysInverted")
-    @Contract("_, null -> true")
-    private static boolean hideView(@NotNull TextView v, CharSequence s) {
+    //@Contract("_, null -> true")
+    private static boolean hideView(@NonNull TextView v, CharSequence s) {
         if (TextUtils.isEmpty(s)) {
             v.setVisibility(View.GONE);
             return true;

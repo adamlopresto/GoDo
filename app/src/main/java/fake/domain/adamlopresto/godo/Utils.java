@@ -2,11 +2,11 @@ package fake.domain.adamlopresto.godo;
 
 import android.annotation.SuppressLint;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
 import android.widget.TextView;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -137,7 +137,7 @@ public final class Utils {
         return LONG_DATE_WITH_YEAR.format(then);
     }
 
-    public static String formatShortRelativeDate(@NotNull String formattedDate) {
+    public static String formatShortRelativeDate(@NonNull String formattedDate) {
         try {
             if (formattedDate.length() <= 10)
                 return formatShortRelativeDate(DatabaseHelper.dateFormatter.parse(formattedDate), false);
@@ -179,7 +179,7 @@ public final class Utils {
     }
 
     @Nullable
-    public static String getString(@NotNull TextView view) {
+    public static String getString(@NonNull TextView view) {
         CharSequence seq = view.getText();
         if (seq == null)
             return null;

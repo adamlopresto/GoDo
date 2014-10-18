@@ -9,19 +9,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
+import android.support.annotation.NonNull;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.RemoteViews;
-
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class GoDoAppWidget extends AppWidgetProvider {
 
-    private static void updateAppWidget(@NotNull Context context,
-                                        @NotNull AppWidgetManager appWidgetManager, int appWidgetId) {
+    private static void updateAppWidget(@NonNull Context context,
+                                        @NonNull AppWidgetManager appWidgetManager, int appWidgetId) {
 
         // Construct the RemoteViews object
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -55,7 +54,7 @@ public class GoDoAppWidget extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
-    public static void updateAllAppWidgets(@NotNull Context context) {
+    public static void updateAllAppWidgets(@NonNull Context context) {
         AppWidgetManager man = AppWidgetManager.getInstance(context);
         if (man == null) {
             return;
@@ -65,8 +64,8 @@ public class GoDoAppWidget extends AppWidgetProvider {
     }
 
     @Override
-    public void onUpdate(@NotNull Context context, @NotNull AppWidgetManager appWidgetManager,
-                         @NotNull int[] appWidgetIds) {
+    public void onUpdate(@NonNull Context context, @NonNull AppWidgetManager appWidgetManager,
+                         @NonNull int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
         Log.e("GoDo", "GoDoAppWidget.onUpdate, " + appWidgetIds.length);
         for (int appWidgetId : appWidgetIds) {

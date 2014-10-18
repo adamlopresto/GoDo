@@ -1,9 +1,8 @@
 package fake.domain.adamlopresto.godo;
 
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.widget.RemoteViewsService;
-
-import org.jetbrains.annotations.Nullable;
 
 public class GoDoWidgetService extends RemoteViewsService {
 

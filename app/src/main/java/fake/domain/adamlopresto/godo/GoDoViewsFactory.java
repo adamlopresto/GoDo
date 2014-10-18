@@ -6,12 +6,11 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Binder;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import fake.domain.adamlopresto.godo.db.InstancesView;
 
@@ -20,12 +19,12 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private static final int TASK_NAME = 1;
     private static final int DUE_DATE = 2;
     private static final int PLAN_DATE = 3;
-    @NotNull
+    @NonNull
     private final Context context;
     @Nullable
     private Cursor cursor;
 
-    GoDoViewsFactory(@NotNull Context context) {
+    GoDoViewsFactory(@NonNull Context context) {
         Log.e("GoDo", "Creating new factory");
         this.context = context;
     }
@@ -54,7 +53,7 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         return null;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public RemoteViews getViewAt(int position) {
         Log.e("GoDo", "getViewAt(" + position + ")");

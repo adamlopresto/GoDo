@@ -3,6 +3,8 @@ package fake.domain.adamlopresto.godo;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -12,9 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import fake.domain.adamlopresto.godo.db.InstancesView;
 
@@ -83,12 +82,12 @@ public class TaskHistoryFragment extends ListFragment
         @SuppressWarnings("UnusedDeclaration")
         private static final int ID = 0, NOTES = 1, CREATED = 2, START = 3, PLAN = 4, DUE = 5, DONE = 6;
 
-        public HistoryAdapter(@NotNull Context context) {
+        public HistoryAdapter(@NonNull Context context) {
             super(context, android.R.layout.simple_list_item_2, null, 0);
         }
 
         @Override
-        public void bindView(@NotNull View view, Context context, @NotNull Cursor cursor) {
+        public void bindView(@NonNull View view, Context context, @NonNull Cursor cursor) {
             String notes = cursor.getString(NOTES);
             TextView noteView = (TextView) view.findViewById(android.R.id.text1);
             if (TextUtils.isEmpty(notes))
@@ -121,7 +120,7 @@ public class TaskHistoryFragment extends ListFragment
             return v;
         }
 
-        private void appendIfContents(@NotNull StringBuilder sb, String label, @NotNull Cursor cursor, int col) {
+        private void appendIfContents(@NonNull StringBuilder sb, String label, @NonNull Cursor cursor, int col) {
             String tmp = cursor.getString(col);
             if (!TextUtils.isEmpty(tmp)) {
                 if (sb.length() > 0)

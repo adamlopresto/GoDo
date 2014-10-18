@@ -11,6 +11,8 @@ import android.graphics.Color;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -18,9 +20,6 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -242,7 +241,7 @@ public class NotificationService extends Service {
     }
 
     @Nullable
-    private String nextDate(@NotNull ContentResolver res, String column) {
+    private String nextDate(@NonNull ContentResolver res, String column) {
         Cursor c = res.query(GoDoContentProvider.INSTANCES_URI,
                 new String[]{column},
                 column + " > datetime('now', 'localtime') AND done_date is null",

@@ -7,11 +7,10 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,7 +73,7 @@ public class TaskActivity extends InstanceHolderActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // This ID represents the Home or Up button. In the case of this
@@ -160,7 +159,7 @@ public class TaskActivity extends InstanceHolderActivity {
      * @see android.support.v4.app.FragmentActivity#onSaveInstanceState(android.os.Bundle)
      */
     @Override
-    protected void onSaveInstanceState(@NotNull Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(InstanceHolderActivity.EXTRA_TASK, task.forceId());
         outState.putLong(InstanceHolderActivity.EXTRA_INSTANCE, instance.forceId());

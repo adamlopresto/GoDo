@@ -1,8 +1,7 @@
 package fake.domain.adamlopresto.godo.db;
 
 import android.database.sqlite.SQLiteDatabase;
-
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 @SuppressWarnings("WeakerAccess")
 public class InstancesView {
@@ -27,7 +26,7 @@ public class InstancesView {
     public static final String COLUMN_BLOCKED_BY_TASK = "blocked_by_task";
     public static final String COLUMN_NEXT_STEPS = "next_steps";
 
-    public static void onCreate(@NotNull SQLiteDatabase db) {
+    public static void onCreate(@NonNull SQLiteDatabase db) {
         db.execSQL("CREATE VIEW " + VIEW
                         + " AS SELECT "
                         + "i._id AS " + COLUMN_ID + ", "
@@ -56,7 +55,7 @@ public class InstancesView {
         );
     }
 
-    public static void onUpgrade(@NotNull SQLiteDatabase db, int oldVersion) {
+    public static void onUpgrade(@NonNull SQLiteDatabase db, int oldVersion) {
         if (oldVersion < 5) {
             db.execSQL("DROP VIEW " + VIEW);
             onCreate(db);

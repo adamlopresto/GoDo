@@ -12,6 +12,8 @@ import android.content.DialogInterface;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -26,25 +28,22 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.SimpleCursorAdapter.ViewBinder;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 
 public class ContextsActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private final String[] projection = {ContextsTable.COLUMN_NAME, ContextsTable.COLUMN_DESC, ContextsTable.COLUMN_ACTIVE};
-    @NotNull
+    @NonNull
     private final AbsListView.MultiChoiceModeListener mActionModeCallback;
     private SimpleCursorAdapter adapter;
 
     public ContextsActivity() {
         mActionModeCallback = new AbsListView.MultiChoiceModeListener() {
-            @NotNull
+            @NonNull
             private MenuItem editItem;
 
             @Override
-            public void onItemCheckedStateChanged(@NotNull ActionMode mode, int position,
+            public void onItemCheckedStateChanged(@NonNull ActionMode mode, int position,
                                                   long id, boolean checked) {
                 final int checkedCount = getListView().getCheckedItemCount();
                 switch (checkedCount) {
@@ -64,7 +63,7 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
 
             // Called when the action mode is created; startActionMode() was called
             @Override
-            public boolean onCreateActionMode(@NotNull ActionMode mode, @NotNull Menu menu) {
+            public boolean onCreateActionMode(@NonNull ActionMode mode, @NonNull Menu menu) {
                 // Inflate a menu resource providing context menu items
                 MenuInflater inflater = mode.getMenuInflater();
                 if (inflater == null) {
@@ -85,7 +84,7 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
 
             // Called when the user selects a contextual menu item
             @Override
-            public boolean onActionItemClicked(@NotNull ActionMode mode, @NotNull MenuItem item) {
+            public boolean onActionItemClicked(@NonNull ActionMode mode, @NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.edit: {
                         AlertDialog.Builder b = new AlertDialog.Builder(ContextsActivity.this);
@@ -173,7 +172,7 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
         adapter.setViewBinder(new ViewBinder() {
 
             @Override
-            public boolean setViewValue(@NotNull View v, @NotNull Cursor c, int column) {
+            public boolean setViewValue(@NonNull View v, @NonNull Cursor c, int column) {
                 if (column == 3) {
                     ((Checkable) v).setChecked(c.getInt(3) != 0);
                     return true;
@@ -199,7 +198,7 @@ public class ContextsActivity extends ListActivity implements LoaderManager.Load
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // This ID represents the Home or Up button. In the case of this

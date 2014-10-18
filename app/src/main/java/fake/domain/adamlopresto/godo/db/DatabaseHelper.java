@@ -5,9 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -29,24 +28,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int CURRENT_VERSION = 5;
     @Nullable
     private static DatabaseHelper mInstance;
-    @NotNull
+    @NonNull
     private final Context context;
 
-    private DatabaseHelper(@NotNull Context context) {
+    private DatabaseHelper(@NonNull Context context) {
         super(context, getDatabaseName(context), null, CURRENT_VERSION);
         this.context = context;
     }
 
-    @NotNull
-    private static String getDatabaseName(@NotNull Context context) {
+    @NonNull
+    private static String getDatabaseName(@NonNull Context context) {
         File path = context.getExternalFilesDir(null);
         if (path == null)
             return DATABASE_NAME;
         return path + "/" + DATABASE_NAME;
     }
 
-    @NotNull
-    public static DatabaseHelper getInstance(@NotNull Context ctx) {
+    @NonNull
+    public static DatabaseHelper getInstance(@NonNull Context ctx) {
         // Use the application context, which will ensure that you
         // don't accidentally leak an Activity's context.
         // See this article for more information: http://bit.ly/6LRzfx
@@ -56,7 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(@NotNull SQLiteDatabase db) {
+    public void onCreate(@NonNull SQLiteDatabase db) {
         TasksTable.onCreate(db);
         InstancesTable.onCreate(db);
         ContextsTable.onCreate(db);
@@ -67,7 +66,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(@NotNull SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(@NonNull SQLiteDatabase db, int oldVersion, int newVersion) {
         TasksTable.onUpgrade(db, oldVersion);
         InstancesTable.onUpgrade(db, oldVersion);
         //ContextsTable.onUpgrade(db, oldVersion, newVersion);
@@ -77,7 +76,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         RepetitionRulesTable.onUpgrade(db, oldVersion);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public SQLiteDatabase getReadableDatabase() {
         SQLiteDatabase db = super.getReadableDatabase();
@@ -87,7 +86,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db;
     }
 
-    @NotNull
+    @NonNull
     @Override
     public SQLiteDatabase getWritableDatabase() {
         SQLiteDatabase db = super.getWritableDatabase();
@@ -98,7 +97,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onOpen(@NotNull SQLiteDatabase db) {
+    public void onOpen(@NonNull SQLiteDatabase db) {
         db.execSQL("PRAGMA foreign_keys = ON;");
     }
 
@@ -106,7 +105,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         context.getContentResolver().notifyChange(uri, null);
     }
 
-    @NotNull
+    @NonNull
     public Context getContext() {
         return context;
     }

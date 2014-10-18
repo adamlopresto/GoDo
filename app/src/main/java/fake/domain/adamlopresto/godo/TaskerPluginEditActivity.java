@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,8 +18,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -131,7 +130,7 @@ public class TaskerPluginEditActivity extends Activity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();

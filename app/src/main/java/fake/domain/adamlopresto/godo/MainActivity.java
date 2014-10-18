@@ -18,6 +18,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -30,9 +32,6 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SimpleCursorAdapter;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesView;
 import fake.domain.adamlopresto.godo.db.TasksTable;
@@ -41,11 +40,11 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
     @Nullable
     private final AbsListView.MultiChoiceModeListener mActionModeCallback = new AbsListView.MultiChoiceModeListener() {
-        @NotNull
+        @NonNull
         private MenuItem editItem;
 
         @Override
-        public void onItemCheckedStateChanged(@NotNull ActionMode mode, int position,
+        public void onItemCheckedStateChanged(@NonNull ActionMode mode, int position,
                                               long id, boolean checked) {
             final int checkedCount = getListView().getCheckedItemCount();
             switch (checkedCount) {
@@ -65,7 +64,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
         // Called when the action mode is created; startActionMode() was called
         @Override
-        public boolean onCreateActionMode(@NotNull ActionMode mode, @NotNull Menu menu) {
+        public boolean onCreateActionMode(@NonNull ActionMode mode, @NonNull Menu menu) {
             // Inflate a menu resource providing context menu items
             MenuInflater inflater = mode.getMenuInflater();
             if (inflater == null)
@@ -85,7 +84,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
         // Called when the user selects a contextual menu item
         @Override
-        public boolean onActionItemClicked(@NotNull ActionMode mode, @NotNull MenuItem item) {
+        public boolean onActionItemClicked(@NonNull ActionMode mode, @NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.edit: {
                     final long id = getListView().getCheckedItemIds()[0];
@@ -261,7 +260,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NotNull MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_contexts:
                 startActivity(new Intent(this, ContextsActivity.class));

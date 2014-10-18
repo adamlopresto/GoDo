@@ -9,9 +9,8 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
@@ -79,7 +78,7 @@ public class GoDoContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, DEPENDANT_INSTANCES_PATH+"/#", DEPENDENT_INSTANCES);
     }
 
-    @NotNull
+    @NonNull
     @SuppressWarnings("InstanceVariableMayNotBeInitialized")
     private DatabaseHelper helper;
 
@@ -111,7 +110,7 @@ public class GoDoContentProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Cursor query(@NotNull Uri uri, String[] projection, String selection,
+    public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
 
         // Using SQLiteQueryBuilder instead of query() method
@@ -210,7 +209,7 @@ public class GoDoContentProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(@NotNull Uri uri, String selection, String[] selectionArgs) {
+    public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = helper.getWritableDatabase();
         int rowsUpdated;
@@ -270,7 +269,7 @@ public class GoDoContentProvider extends ContentProvider {
 
     @Nullable
     @Override
-    public Uri insert(@NotNull Uri uri, ContentValues values) {
+    public Uri insert(@NonNull Uri uri, ContentValues values) {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = helper.getWritableDatabase();
         long id;
@@ -299,7 +298,7 @@ public class GoDoContentProvider extends ContentProvider {
     }
 
     @Override
-    public int update(@NotNull Uri uri, ContentValues values, String selection,
+    public int update(@NonNull Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
         int uriType = sURIMatcher.match(uri);
         SQLiteDatabase sqlDB = helper.getWritableDatabase();

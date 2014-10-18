@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -21,9 +23,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
 
@@ -112,7 +111,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
 
     @Nullable
     @Override
-    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_task_details, group, false);
         assert v != null;
         done = (CheckBox) v.findViewById(R.id.check);
@@ -201,12 +200,12 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         super.onResume();
     }
 
-    @NotNull
+    @NonNull
     private Task getTask() {
         return ((InstanceHolderActivity) getActivity()).task;
     }
 
-    @NotNull
+    @NonNull
     private Instance getInstance() {
         return ((InstanceHolderActivity) getActivity()).instance;
     }

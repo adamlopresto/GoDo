@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -25,9 +27,6 @@ import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import fake.domain.adamlopresto.godo.db.InstanceDependencyTable;
 
 public class AllDependenciesFragment extends ListFragment
@@ -35,11 +34,11 @@ public class AllDependenciesFragment extends ListFragment
 
     @Nullable
     private final AbsListView.MultiChoiceModeListener mActionModeCallback = new AbsListView.MultiChoiceModeListener() {
-        @NotNull
+        @NonNull
         private MenuItem editItem;
 
         @Override
-        public void onItemCheckedStateChanged(@NotNull ActionMode mode, int position,
+        public void onItemCheckedStateChanged(@NonNull ActionMode mode, int position,
                                               long id, boolean checked) {
             final int checkedCount = getListView().getCheckedItemCount();
             mode.setSubtitle("" + checkedCount + " items selected");
@@ -48,7 +47,7 @@ public class AllDependenciesFragment extends ListFragment
 
         // Called when the action mode is created; startActionMode() was called
         @Override
-        public boolean onCreateActionMode(@NotNull ActionMode mode, @NotNull Menu menu) {
+        public boolean onCreateActionMode(@NonNull ActionMode mode, @NonNull Menu menu) {
             // Inflate a menu resource providing context menu items
             MenuInflater inflater = mode.getMenuInflater();
             if (inflater == null)
@@ -67,7 +66,7 @@ public class AllDependenciesFragment extends ListFragment
 
         // Called when the user selects a contextual menu item
         @Override
-        public boolean onActionItemClicked(@NotNull ActionMode mode, @NotNull MenuItem item) {
+        public boolean onActionItemClicked(@NonNull ActionMode mode, @NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.delete: {
                     SparseBooleanArray positions = getListView().getCheckedItemPositions();
@@ -231,7 +230,7 @@ public class AllDependenciesFragment extends ListFragment
         //getActivity().startActionMode(mActionModeCallback);
     }
 
-    @NotNull
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 

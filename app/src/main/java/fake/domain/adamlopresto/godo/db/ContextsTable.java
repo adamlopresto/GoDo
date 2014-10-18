@@ -1,8 +1,7 @@
 package fake.domain.adamlopresto.godo.db;
 
 import android.database.sqlite.SQLiteDatabase;
-
-import org.jetbrains.annotations.NotNull;
+import android.support.annotation.NonNull;
 
 public class ContextsTable {
     public static final String TABLE = "contexts";
@@ -13,7 +12,7 @@ public class ContextsTable {
     public static final String COLUMN_DESC = "description";
     public static final String COLUMN_ACTIVE = "active";
 
-    public static void onCreate(@NotNull SQLiteDatabase db) {
+    public static void onCreate(@NonNull SQLiteDatabase db) {
         db.execSQL("create table " + TABLE
                         + "("
                         + COLUMN_ID + " integer primary key autoincrement, "

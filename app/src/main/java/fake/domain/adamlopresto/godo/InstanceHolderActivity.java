@@ -2,10 +2,9 @@ package fake.domain.adamlopresto.godo;
 
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -14,9 +13,9 @@ import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 public abstract class InstanceHolderActivity extends FragmentActivity {
     public static final String EXTRA_INSTANCE = "instance";
     public static final String EXTRA_TASK = "task";
-    @NotNull
+    @NonNull
     public Task task;
-    @NotNull
+    @NonNull
     public Instance instance;
 
     @SuppressWarnings ("BooleanMethodIsAlwaysInverted")

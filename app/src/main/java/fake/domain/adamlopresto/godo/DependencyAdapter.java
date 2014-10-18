@@ -3,14 +3,13 @@ package fake.domain.adamlopresto.godo;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-
-import org.jetbrains.annotations.NotNull;
 
 public class DependencyAdapter extends BaseAdapter{
 
@@ -20,7 +19,7 @@ public class DependencyAdapter extends BaseAdapter{
     private final View.OnClickListener newDependency;
     private final View.OnClickListener pickDependency;
 
-    public DependencyAdapter(@NotNull Context context, View.OnClickListener newDependency, View.OnClickListener pickDependency){
+    public DependencyAdapter(@NonNull Context context, View.OnClickListener newDependency, View.OnClickListener pickDependency){
         this.context = context;
         this.newDependency = newDependency;
         this.pickDependency = pickDependency;
