@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
@@ -58,11 +59,13 @@ public class TaskActivity extends InstanceHolderActivity {
             }
         }
 
+        /*
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        */
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()

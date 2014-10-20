@@ -4,13 +4,13 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 
 import java.util.List;
 
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 
-public abstract class InstanceHolderActivity extends FragmentActivity {
+public abstract class InstanceHolderActivity extends ActionBarActivity {
     public static final String EXTRA_INSTANCE = "instance";
     public static final String EXTRA_TASK = "task";
     @NonNull
