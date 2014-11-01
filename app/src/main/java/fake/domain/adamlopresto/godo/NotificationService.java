@@ -321,6 +321,7 @@ public class NotificationService extends Service {
                 // Set required fields, including the small icon, the
                 // notification title, and text.
                 .setSmallIcon(R.drawable.ic_stat_tasks)
+                .setColor(getResources().getColor(R.color.appMain))
                 .setContentTitle("GoDo")
                 .setAutoCancel(true);
 
