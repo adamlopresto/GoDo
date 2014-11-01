@@ -15,6 +15,8 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.MenuCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -50,8 +52,10 @@ public class AllDependenciesFragment extends ListFragment
         public boolean onCreateActionMode(@NonNull ActionMode mode, @NonNull Menu menu) {
             // Inflate a menu resource providing context menu items
             MenuInflater inflater = mode.getMenuInflater();
+            /*
             if (inflater == null)
                 inflater = new MenuInflater(getActivity());
+                */
             inflater.inflate(R.menu.context_edit_delete, menu);
             editItem = menu.findItem(R.id.edit);
             return true;

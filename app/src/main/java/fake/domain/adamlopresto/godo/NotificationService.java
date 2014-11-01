@@ -8,6 +8,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
@@ -18,7 +19,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Log;
 
 import java.text.ParseException;
@@ -120,7 +121,11 @@ public class NotificationService extends Service {
                 name = c.getString(0);
                 if (!TextUtils.isEmpty(name)) {
                     sb.append(name);
+                    /*
                     sb.setSpan(new ForegroundColorSpan(Color.WHITE), 0,
+                            name.length(), 0);
+                            */
+                    sb.setSpan(new StyleSpan(Typeface.BOLD), 0,
                             name.length(), 0);
                     taskNotes = c.getString(1);
                     if (!TextUtils.isEmpty(taskNotes)) {

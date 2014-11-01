@@ -54,6 +54,10 @@ public class MainActivity extends ActionBarActivity {
         getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
     }
 
+    public void checkBoxClick(View v) {
+        fragment.checkBoxClick(v);
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
@@ -305,6 +309,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
             Log.e("GoDo", "onLoadFinished");
+            DatabaseUtils.dumpCursor(c);
             adapter.swapCursor(c);
         }
 

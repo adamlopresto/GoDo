@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
@@ -194,10 +195,11 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         });
 
         Toolbar toolbar = (Toolbar) v.findViewById(R.id.header);
-        toolbar.setTitle(R.string.title_activity_task);
         ActionBarActivity activity = (ActionBarActivity) getActivity();
         activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar =  activity.getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setTitle(R.string.title_activity_task);
 
         return v;
     }

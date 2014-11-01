@@ -1,9 +1,5 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
-    <item android:id="@+id/action_new_context" android:icon="@drawable/collections_new_label" android:title="@string/new_context" android:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_new_context" android:icon="@drawable/collections_new_label" android:title="@string/new_context" app:showAsAction="ifRoom"/>
 </menu>
