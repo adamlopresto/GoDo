@@ -82,6 +82,7 @@
 
         <EditText
             android:id="@+id/task_name"
+            android:transitionName="taskName"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/check"
@@ -100,6 +101,7 @@
 
         <EditText
             android:id="@+id/task_notes"
+            android:transitionName="taskNotes"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/task_name"
@@ -174,6 +176,7 @@
 
                         <TextView
                             android:id="@+id/instance_notes_ro"
+                            android:transitionName="instanceNotes"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
@@ -262,6 +265,7 @@
 
                         <fake.domain.adamlopresto.godo.DateTimePicker
                             android:id="@+id/plan"
+                            android:transitionName="planDate"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="fill_horizontal"
@@ -271,6 +275,7 @@
 
                         <fake.domain.adamlopresto.godo.DateTimePicker
                             android:id="@+id/due"
+                            android:transitionName="dueDate"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="fill_horizontal"
