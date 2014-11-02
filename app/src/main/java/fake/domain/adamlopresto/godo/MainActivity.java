@@ -1,7 +1,5 @@
 package fake.domain.adamlopresto.godo;
 
-import android.app.Activity;
-import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.ContentResolver;
@@ -15,7 +13,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -24,7 +21,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.util.Pair;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -41,8 +37,6 @@ import android.widget.AbsListView;
 import android.widget.Checkable;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-
-import java.util.ArrayList;
 
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesView;
@@ -74,7 +68,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void startActivityWithTransitions(Intent intent){
-        Bundle options =  ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle();
+        //Bundle options =  ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle();
         ActivityCompat.startActivity(this, intent, null);
     }
 
@@ -281,12 +275,14 @@ public class MainActivity extends ActionBarActivity {
             }
         }
 
+        /*
         private void addViewIfFound(ArrayList<Pair<View, String>> list, View parent, @IdRes int id, String transitionName){
             View view = parent.findViewById(id);
             if (view != null && view.getVisibility() == View.VISIBLE){
                 list.add(new Pair<>(view, transitionName));
             }
         }
+        */
 
         @SuppressWarnings ("NonBooleanMethodNameMayNotStartWithQuestion")
         public void checkBoxClick(View v) {
