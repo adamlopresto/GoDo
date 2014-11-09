@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,11 +97,11 @@ public class DependencyAdapter extends BaseAdapter{
                     convertView.findViewById(R.id.create_prereq).setOnClickListener(newDependency);
                 }
 
-                ((TextView)convertView.findViewById(R.id.next_steps_label))
-                        .setText(cursor != null && cursor.getCount() == position + 1
-                           ? "No next steps"
-                           : "Next steps"
-                );
+                ((Toolbar)convertView.findViewById(R.id.next_steps_label))
+                        .setTitle(cursor != null && cursor.getCount() == position + 1
+                                  ? "No next steps"
+                                  : "Next steps"
+                        );
 
 
                 return convertView;
