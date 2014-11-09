@@ -1,7 +1,7 @@
 package fake.domain.adamlopresto.godo;
 
-import android.app.ActionBar;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -20,16 +20,17 @@ public class DependenciesActivity extends InstanceHolderActivity {
                 finish();
             }
         }
-        setContentView(R.layout.activity_repetition_rules_list);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new AllDependenciesFragment())
-                    .commit();
-        }
-
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setElevation(0.0f);
+        }
+        //setContentView(R.layout.activity_repetition_rules_list);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(android.R.id.content, new AllDependenciesFragment())
+                    //.replace(R.id.container, new AllDependenciesFragment())
+                    .commit();
         }
     }
 

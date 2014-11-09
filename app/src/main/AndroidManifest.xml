@@ -150,7 +150,6 @@
         </activity>
         <activity
             android:name=".DependenciesActivity"
-            android:theme="@style/NoActionBar"
             android:label="@string/relationships"
             android:parentActivityName=".TaskActivity"
             tools:ignore="UnusedAttribute">

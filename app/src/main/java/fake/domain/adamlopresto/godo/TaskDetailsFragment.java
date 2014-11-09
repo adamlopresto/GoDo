@@ -173,14 +173,14 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         v.findViewById(R.id.relationships_card).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*
                 Intent i = new Intent(getActivity(), DependenciesActivity.class);
                 i.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, getInstance().getId());
                 startActivity(i);
-                */
+                /*
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container, new AllDependenciesFragment())
                         .addToBackStack(null).commit();
+                        */
             }
         });
 

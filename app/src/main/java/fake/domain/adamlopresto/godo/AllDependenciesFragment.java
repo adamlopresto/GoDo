@@ -17,6 +17,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -118,7 +119,7 @@ public class AllDependenciesFragment extends ListFragment
     };
 
     private DependencyAdapter adapter;
-    private TextView header;
+    private Toolbar header;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -151,7 +152,7 @@ public class AllDependenciesFragment extends ListFragment
         Context context = getActivity();
         LayoutInflater inflater = LayoutInflater.from(context);
         View headerFull = inflater.inflate(R.layout.dependency_header, lv, false);
-        header = (TextView)headerFull.findViewById(R.id.text);
+        header = (Toolbar)headerFull.findViewById(R.id.text);
         lv.addHeaderView(headerFull, null, false);
         ViewGroup footer = (ViewGroup) inflater.inflate(R.layout.dependency_footer, lv, false);
         footer.findViewById(R.id.create_next_step).setOnClickListener(new View.OnClickListener() {
@@ -249,7 +250,7 @@ public class AllDependenciesFragment extends ListFragment
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         adapter.swapCursor(data);
-        header.setText(adapter.getItemViewType(0) == 1
+        header.setTitle(adapter.getItemViewType(0) == 1
                        ? "No prerequisites"
                        : "Prerequisites");
     }
