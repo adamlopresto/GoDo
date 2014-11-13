@@ -25,7 +25,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -299,8 +298,6 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-            Log.e("GoDo", "onCreateLoader, " + id);
-
             Uri uri;
             String sort;
 
@@ -341,14 +338,11 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor c) {
-            Log.e("GoDo", "onLoadFinished");
-            DatabaseUtils.dumpCursor(c);
             adapter.swapCursor(c);
         }
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-            Log.e("GoDo", "onLoadFinished");
             adapter.swapCursor(null);
         }
 
