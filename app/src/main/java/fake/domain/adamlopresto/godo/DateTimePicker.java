@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -120,8 +121,10 @@ public class DateTimePicker extends LinearLayout {
                     dp.setSpinnersShown(false);
                     dp.setCalendarViewShown(true);
                     dlg.setTitle(null);
-                    CalendarView cv = dp.getCalendarView();
-                    if (cv != null) cv.setShowWeekNumber(false);
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                        CalendarView cv = dp.getCalendarView();
+                        if (cv != null) cv.setShowWeekNumber(false);
+                    }
                     dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Set", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
