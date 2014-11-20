@@ -142,7 +142,6 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onResume() {
             super.onResume();
-            getActivity().startService(new Intent(getActivity(), NotificationService.class).putExtra("max_notify", 0));
             if (paused) {
                 restartLoader();
                 paused = false;
