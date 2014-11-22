@@ -1,5 +1,6 @@
 package fake.domain.adamlopresto.godo;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.ContentResolver;
@@ -7,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
@@ -28,6 +30,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.ActionMode;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,6 +41,8 @@ import android.widget.AbsListView;
 import android.widget.Checkable;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -94,22 +99,24 @@ public class MainActivity extends ActionBarActivity {
             getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
             getListView().setMultiChoiceModeListener(mActionModeCallback);
 
-            adapter = new TaskAdapter(getActivity(), null, true);
+            Activity activity = getActivity();
+
+            adapter = new TaskAdapter(activity, null, true);
             setListAdapter(adapter);
 
             setHasOptionsMenu(true);
 
-            handleIntent(getActivity().getIntent());
+            handleIntent(activity.getIntent());
 
-        /*
-        Resources res = getResources();
-        FloatingActionButton fab = new FloatingActionButton.Builder(this)
-                .withDrawable( res.getDrawable(R.drawable.content_new))
-                .withButtonColor(res.getColor(R.color.accent))
-                .withGravity(Gravity.BOTTOM | Gravity.END)
-                .withMargins(0, 0, 16, 16)
-                .create();
-                */
+            FloatingActionButton fab = (FloatingActionButton)activity.findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getActivity(), TaskActivity.class));
+                }
+            });
+
+            fab.attachToListView(getListView());
 
             restartLoader();
         }

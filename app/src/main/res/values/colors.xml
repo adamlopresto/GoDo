@@ -3,6 +3,10 @@
     <color name="appMain">#e51c23</color>
     <color name="appMainLight">#f9bdbb</color>
     <color name="appMainDark">#d01716</color>
+    <!-- Deep Purple, from http://www.google.com/design/spec/style/color.html#color-color-palette -->
     <color name="accent">#7c4dff</color>
+    <color name="accentLight">#B388FF</color>
+    <color name="accentDark">#651FFF</color>
+
 
 </resources>
