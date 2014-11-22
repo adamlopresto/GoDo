@@ -6,12 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 
 /**
- * Created by adam on 11/19/2014.
+ * Used to determine when the app loses focus, so we can put up a notification.
+ * Code adapted from http://www.mjbshaw.com/2012/12/determining-if-your-android-application.html
  */
 public class GoDoApplication extends Application implements Application.ActivityLifecycleCallbacks {
 
-    // I use two separate variables here. You can, of course, just use one and
-    // increment/decrement it instead of using two and incrementing both.
+    //Number of current activities with focus. Will be 0 when GoDo is in the background, 1 when it's
+    //not, and 2 occasionally as we move from one activity to another.
     private int current;
 
     @Override
@@ -30,6 +31,7 @@ public class GoDoApplication extends Application implements Application.Activity
     public void onActivityDestroyed(Activity activity) {
     }
 
+    @Override
     public void onActivityResumed(Activity activity) {
         ++current;
         startService(new Intent(this, NotificationService.class).putExtra("max_notify", 0));
