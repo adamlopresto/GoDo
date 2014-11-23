@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.net.Uri;
@@ -25,9 +26,12 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.util.Pair;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,6 +40,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Checkable;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -43,6 +49,7 @@ import android.widget.SimpleCursorAdapter;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesView;
@@ -56,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         fragment = new MainListFragment();
 
@@ -78,10 +85,24 @@ public class MainActivity extends ActionBarActivity {
         ActivityCompat.startActivity(this, intent, null);
     }
 
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        fragment.drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        fragment.drawerToggle.onConfigurationChanged(newConfig);
+    }
+
     public static class MainListFragment extends ListFragment  implements LoaderManager.LoaderCallbacks<Cursor> {
 
         private TaskAdapter adapter;
         private boolean paused = false;
+        public ActionBarDrawerToggle drawerToggle;
 
         @Nullable
         private String query;
@@ -97,7 +118,7 @@ public class MainActivity extends ActionBarActivity {
             getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
             getListView().setMultiChoiceModeListener(mActionModeCallback);
 
-            Activity activity = getActivity();
+            final Activity activity = getActivity();
 
             adapter = new TaskAdapter(activity, null, true);
             setListAdapter(adapter);
@@ -106,7 +127,7 @@ public class MainActivity extends ActionBarActivity {
 
             handleIntent(activity.getIntent());
 
-            FloatingActionButton fab = (FloatingActionButton)activity.findViewById(R.id.fab);
+            final FloatingActionButton fab = (FloatingActionButton)activity.findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -115,6 +136,90 @@ public class MainActivity extends ActionBarActivity {
             });
 
             fab.attachToListView(getListView());
+
+            ListView drawerList = (ListView) activity.findViewById(R.id.left_drawer);
+            drawerList.setAdapter(new ArrayAdapter<String>(activity,
+                    android.R.layout.simple_list_item_1, new String[]{
+                    "Active", "Plan", "Archive", "Contexts", "Settings"
+            }));
+
+
+            final DrawerLayout drawerLayout = (DrawerLayout)activity.findViewById(R.id.drawer_layout);
+
+            drawerList.setOnItemClickListener(
+                    new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            drawerLayout.closeDrawers();
+                            switch (position) {
+                                case 0: {
+                                    //Active
+                                    SharedPreferences.Editor editor =
+                                            PreferenceManager.getDefaultSharedPreferences(getActivity())
+                                                    .edit();
+                                    editor.putBoolean(SettingsActivity.PREF_SHOW_BLOCKED_BY_TASK, false)
+                                            .putBoolean(SettingsActivity.PREF_SHOW_BLOCKED_BY_CONTEXT, false)
+                                            .putBoolean(SettingsActivity.PREF_SHOW_DONE, false)
+                                            .putBoolean(SettingsActivity.PREF_SHOW_FUTURE, false)
+                                            .commit();
+                                    restartLoader();
+                                    break;
+                                }
+                                case 1: {
+                                    //Plan
+                                    SharedPreferences.Editor editor =
+                                            PreferenceManager.getDefaultSharedPreferences(getActivity())
+                                                    .edit();
+                                    editor.putBoolean(SettingsActivity.PREF_SHOW_BLOCKED_BY_TASK, true)
+                                            .putBoolean(SettingsActivity.PREF_SHOW_BLOCKED_BY_CONTEXT, true)
+                                            .putBoolean(SettingsActivity.PREF_SHOW_DONE, false)
+                                            .putBoolean(SettingsActivity.PREF_SHOW_FUTURE, true)
+                                            .commit();
+                                    restartLoader();
+                                    break;
+                                }
+                                case 2: {
+                                    //Archive
+                                    SharedPreferences.Editor editor =
+                                            PreferenceManager.getDefaultSharedPreferences(getActivity())
+                                                    .edit();
+                                    editor.putBoolean(SettingsActivity.PREF_SHOW_BLOCKED_BY_TASK, false)
+                                            .putBoolean(SettingsActivity.PREF_SHOW_BLOCKED_BY_CONTEXT, false)
+                                            .putBoolean(SettingsActivity.PREF_SHOW_DONE, true)
+                                            .putBoolean(SettingsActivity.PREF_SHOW_FUTURE, false)
+                                            .commit();
+                                    restartLoader();
+                                    break;
+                                }
+                                case 3:
+                                    startActivity(new Intent(getActivity(), ContextsActivity.class));
+                                    break;
+                                case 4:
+                                    //Settings
+                                    startActivity(new Intent(getActivity(), SettingsActivity.class));
+                                    break;
+                            }
+                        }
+                    });
+
+            drawerToggle = new ActionBarDrawerToggle(activity, drawerLayout,
+                    R.string.drawer_opened, R.string.drawer_closed){
+
+                public void onDrawerClosed(View view) {
+                    super.onDrawerClosed(view);
+                    //activity.invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                    fab.show();
+                }
+
+                /** Called when a drawer has settled in a completely open state. */
+                public void onDrawerOpened(View drawerView) {
+                    super.onDrawerOpened(drawerView);
+                    //activity.invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+                    fab.hide();
+                }
+            };
+
+            drawerLayout.setDrawerListener(drawerToggle);
 
             restartLoader();
         }
@@ -204,7 +309,11 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+            if (drawerToggle.onOptionsItemSelected(item))
+                return true;
+
             switch (item.getItemId()) {
+                /*
                 case R.id.action_contexts:
                     startActivity(new Intent(getActivity(), ContextsActivity.class));
                     return true;
@@ -214,6 +323,7 @@ public class MainActivity extends ActionBarActivity {
                 case R.id.action_new_task:
                     startActivity(new Intent(getActivity(), TaskActivity.class));
                     return true;
+                    */
                 case R.id.action_new_from_template: {
                     final Cursor cursor = getActivity().getContentResolver().query(GoDoContentProvider.TASKS_URI,
                             new String[]{TasksTable.COLUMN_ID, TasksTable.COLUMN_NAME,
@@ -244,9 +354,11 @@ public class MainActivity extends ActionBarActivity {
 
                     return true;
                 }
+                /*
                 case R.id.action_notify:
                     getActivity().startService(new Intent(getActivity(), NotificationService.class));
                     return true;
+                    */
                 case R.id.action_search:
                     return true;
             }
@@ -326,13 +438,14 @@ public class MainActivity extends ActionBarActivity {
                 if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_FUTURE, false))
                     where = DatabaseUtils.concatenateWhere(where, "coalesce(start_date,0) < DATETIME('now', 'localtime')");
 
-                where = (where == null) ? "" : "(" + where + ") or ";
-                where += "(length(due_date) > 10 and due_date <= DATETIME('now', 'localtime'))";
+                String overdue = "(length(due_date) > 10 and due_date <= DATETIME('now', 'localtime'))";
+                where = (where == null) ? "" : "(" + where + ") or "+overdue;
 
                 if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_DONE, false))
                     where = DatabaseUtils.concatenateWhere(where, "done_date is null or done_date > DATETIME('now', '-1 hours', 'localtime')");
 
                 where = DatabaseUtils.concatenateWhere(where, "task_name is not null");
+                Log.e("GoDo", "where clause in full: " + where);
                 sort = TaskAdapter.SORT;
             }
 

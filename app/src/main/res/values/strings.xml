@@ -73,5 +73,7 @@
     <string name="prerequisites">Prerequisites</string>
     <string name="next_steps">Next Steps</string>
     <string name="relationships">Relationships</string>
+    <string name="drawer_opened">Opened drawer</string>
+    <string name="drawer_closed">Closed drawer</string>
 
 </resources>
