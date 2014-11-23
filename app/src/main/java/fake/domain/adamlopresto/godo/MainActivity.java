@@ -1,5 +1,6 @@
 package fake.domain.adamlopresto.godo;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
@@ -49,7 +50,7 @@ import android.widget.SimpleCursorAdapter;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.Collection;
 
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesView;
@@ -57,7 +58,7 @@ import fake.domain.adamlopresto.godo.db.TasksTable;
 
 public class MainActivity extends ActionBarActivity {
 
-    MainListFragment fragment;
+    private MainListFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +81,7 @@ public class MainActivity extends ActionBarActivity {
         fragment.handleIntent(intent);
     }
 
-    public void startActivityWithTransitions(Intent intent){
+    protected void startActivityWithTransitions(Intent intent){
         //Bundle options =  ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle();
         ActivityCompat.startActivity(this, intent, null);
     }
@@ -138,7 +139,7 @@ public class MainActivity extends ActionBarActivity {
             fab.attachToListView(getListView());
 
             ListView drawerList = (ListView) activity.findViewById(R.id.left_drawer);
-            drawerList.setAdapter(new ArrayAdapter<String>(activity,
+            drawerList.setAdapter(new ArrayAdapter<>(activity,
                     android.R.layout.simple_list_item_1, new String[]{
                     "Active", "Plan", "Archive", "Contexts", "Settings"
             }));
@@ -148,6 +149,7 @@ public class MainActivity extends ActionBarActivity {
 
             drawerList.setOnItemClickListener(
                     new AdapterView.OnItemClickListener() {
+                        @SuppressLint ("CommitPrefEdits")
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             drawerLayout.closeDrawers();
@@ -205,6 +207,7 @@ public class MainActivity extends ActionBarActivity {
             drawerToggle = new ActionBarDrawerToggle(activity, drawerLayout,
                     R.string.drawer_opened, R.string.drawer_closed){
 
+                @Override
                 public void onDrawerClosed(View view) {
                     super.onDrawerClosed(view);
                     //activity.invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
@@ -212,6 +215,7 @@ public class MainActivity extends ActionBarActivity {
                 }
 
                 /** Called when a drawer has settled in a completely open state. */
+                @Override
                 public void onDrawerOpened(View drawerView) {
                     super.onDrawerOpened(drawerView);
                     //activity.invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
@@ -366,12 +370,13 @@ public class MainActivity extends ActionBarActivity {
             return super.onOptionsItemSelected(item);
         }
 
+        @SuppressWarnings ("unchecked")
         @Override
         public void onListItemClick(ListView listView, View v, int position, long id) {
             Intent intent = new Intent(getActivity(), TaskActivity.class);
             intent.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ArrayList<Pair<View, String>> list = new ArrayList<>(5);
+                Collection<Pair<View, String>> list = new ArrayList<>(5);
                 addViewIfFound(list, v, R.id.task_name, "taskName");
                 addViewIfFound(list, v, R.id.task_notes, "taskNotes");
                 addViewIfFound(list, v, R.id.instance_notes, "instanceNotes");
@@ -393,14 +398,13 @@ public class MainActivity extends ActionBarActivity {
             }
         }
 
-        private void addViewIfFound(ArrayList<Pair<View, String>> list, View parent, @IdRes int id, String transitionName){
+        private void addViewIfFound(Collection<Pair<View, String>> list, View parent, @IdRes int id, String transitionName){
             View view = parent.findViewById(id);
             if (view != null && view.getVisibility() == View.VISIBLE){
                 list.add(new Pair<>(view, transitionName));
             }
         }
 
-        @SuppressWarnings ("NonBooleanMethodNameMayNotStartWithQuestion")
         public void checkBoxClick(View v) {
             ListView lv = getListView();
             Checkable cb = (Checkable) v;

@@ -33,7 +33,7 @@ import fake.domain.adamlopresto.godo.db.ContextsTable;
 
 public class ContextsActivity extends ActionBarActivity {
 
-    ContextFragment fragment;
+    private ContextFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

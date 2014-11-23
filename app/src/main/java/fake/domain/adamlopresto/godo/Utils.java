@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
 import android.widget.TextView;
 
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -15,8 +15,6 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -28,7 +26,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import fake.domain.adamlopresto.godo.db.InstanceDependencyTable;
 
@@ -152,7 +149,7 @@ public class AllDependenciesFragment extends ListFragment
         Context context = getActivity();
         LayoutInflater inflater = LayoutInflater.from(context);
         View headerFull = inflater.inflate(R.layout.dependency_header, lv, false);
-        header = (Toolbar)headerFull.findViewById(R.id.text);
+        header = (Toolbar)headerFull.findViewById(R.id.header);
         lv.addHeaderView(headerFull, null, false);
         ViewGroup footer = (ViewGroup) inflater.inflate(R.layout.dependency_footer, lv, false);
         footer.findViewById(R.id.create_next_step).setOnClickListener(new View.OnClickListener() {
