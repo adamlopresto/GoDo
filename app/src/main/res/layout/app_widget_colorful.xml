@@ -1,12 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#88000000"
-    android:orientation="vertical"
-    android:padding="@dimen/widget_margin"
-    android:theme="@style/WidgetTheme"
-    tools:ignore="Overdraw">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#88000000"
+              android:orientation="vertical"
+              android:padding="@dimen/widget_margin"
+              android:theme="@style/WidgetTheme"
+              tools:ignore="Overdraw">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,22 +16,23 @@
         <TextView
             android:id="@+id/text"
             android:layout_width="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|fill"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:text="@string/app_name"
-            android:textColor="@android:color/white"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/white"/>
 
         <ImageView
             android:id="@+id/action_new_task_voice"
-            android:layout_width="33sp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:contentDescription="@string/new_task_voice"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_microphone" />
+            android:src="@drawable/ic_mic_white_24dp"
+            />
 
         <ImageView
             android:id="@+id/action_new_task"
@@ -39,7 +40,7 @@
             android:layout_height="match_parent"
             android:contentDescription="@string/new_task"
             android:scaleType="centerInside"
-            android:src="@drawable/content_new" />
+            android:src="@drawable/ic_add_white_24dp"/>
 
     </LinearLayout>
 
@@ -47,6 +48,6 @@
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-         />
+        />
 
 </LinearLayout>
