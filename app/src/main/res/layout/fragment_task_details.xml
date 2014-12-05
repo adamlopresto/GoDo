@@ -159,32 +159,16 @@
                         android:text="@string/repetitions_header"
                         android:visibility="gone"/>
 
-                    <FrameLayout
+                    <EditText
+                        android:id="@+id/instance_notes"
+                        android:transitionName="instanceNotes"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:animateLayoutChanges="true">
-
-                        <EditText
-                            android:id="@+id/instance_notes"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="fill_horizontal"
-                            android:layout_marginBottom="8dp"
-                            android:hint="@string/instance_notes_label"
-                            android:inputType="textMultiLine|textCapSentences"
-                            android:visibility="gone"/>
-
-                        <TextView
-                            android:id="@+id/instance_notes_ro"
-                            android:transitionName="instanceNotes"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:layout_marginLeft="8dp"
-                            android:layout_marginRight="8dp"
-                            android:visibility="gone"
-                            />
-                    </FrameLayout>
+                        android:layout_gravity="fill_horizontal"
+                        android:layout_marginBottom="8dp"
+                        android:hint="@string/instance_notes_label"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:visibility="gone"/>
 
                     <TextView
                         android:id="@+id/repetition_summary"

@@ -44,7 +44,6 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
     private TextView repetitionSummary;
     private TextView repetitionRuleList;
     private TextView instanceNotes;
-    private TextView instanceNotesRo;
     private DateTimePicker start;
     private DateTimePicker plan;
     private DateTimePicker due;
@@ -76,10 +75,13 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         public void onClick(View v) {
             showRepetitionCollapsed = !showRepetitionCollapsed;
             if (showRepetitionCollapsed) {
+                //collapse the repetitions section
                 repetitionHeader.setVisibility(View.GONE);
                 repetitionRuleList.setVisibility(View.GONE);
-                instanceNotes.setVisibility(View.GONE);
-                hideUnless(instanceNotesRo, !TextUtils.isEmpty(instanceNotesRo.getText()));
+                hideUnless(instanceNotes,
+                        !TextUtils.isEmpty(instanceNotes.getText())
+                                || getTask().getRepeat() != RepeatTypes.NONE
+                       );
                 repetitionDivider.setVisibility(View.GONE);
                 viewHistoryButton.setVisibility(View.GONE);
                 repetitionSummary.setOnClickListener(expandContractRepetitionsListener);
@@ -88,7 +90,6 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                 repetitionHeader.setVisibility(View.VISIBLE);
                 repetitionRuleList.setVisibility(View.VISIBLE);
                 instanceNotes.setVisibility(View.VISIBLE);
-                instanceNotesRo.setVisibility(View.GONE);
                 repetitionDivider.setVisibility(View.VISIBLE);
                 viewHistoryButton.setVisibility(View.VISIBLE);
                 repetitionSummary.setOnClickListener(showRepetitionsActivityListener);
@@ -153,10 +154,6 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
 
 
         repetitionRuleList.setOnClickListener(showRepetitionsActivityListener);
-
-        instanceNotesRo = (TextView)v.findViewById(R.id.instance_notes_ro);
-        instanceNotesRo.setOnClickListener(expandContractRepetitionsListener);
-
 
         viewHistoryButton = v.findViewById(R.id.view_history_button);
         View.OnClickListener showHistoryListener = new View.OnClickListener() {
@@ -346,8 +343,10 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         final Instance instance = getInstance();
         CharSequence notes = instance.getNotes();
         instanceNotes.setText(notes);
-        instanceNotesRo.setText(notes);
-        hideUnless(instanceNotesRo, showRepetitionCollapsed && !TextUtils.isEmpty(notes));
+        hideUnless(instanceNotes,
+                !showRepetitionCollapsed || !TextUtils.isEmpty(notes)
+                || getTask().getRepeat() != RepeatTypes.NONE
+        );
         done.setChecked(instance.getDoneDate() != null);
 
         Date startDate = instance.getStartDate();
