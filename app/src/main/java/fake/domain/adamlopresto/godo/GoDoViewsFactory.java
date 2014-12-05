@@ -8,7 +8,6 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -25,22 +24,18 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private Cursor cursor;
 
     GoDoViewsFactory(@NonNull Context context) {
-        Log.e("GoDo", "Creating new factory");
         this.context = context;
     }
 
     @Override
     public int getCount() {
-        Log.e("GoDo", "getCount()");
         getCursor();
         assert cursor != null;
-        Log.e("GoDo", "count is " + cursor.getCount());
         return cursor.getCount();
     }
 
     @Override
     public long getItemId(int position) {
-        Log.e("GoDo", "getItemId(" + position + ")");
         getCursor();
         assert cursor != null;
         cursor.moveToPosition(position);
@@ -56,7 +51,6 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     @NonNull
     @Override
     public RemoteViews getViewAt(int position) {
-        Log.e("GoDo", "getViewAt(" + position + ")");
         getCursor();
         assert cursor != null;
         cursor.moveToPosition(position);
@@ -89,12 +83,10 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onCreate() {
-        Log.e("GoDo", "onCreate");
     }
 
     @Override
     public void onDataSetChanged() {
-        Log.e("GoDo", "onDataSetChanged");
         if (cursor != null && !cursor.isClosed())
             cursor.close();
         getCursor();
@@ -105,7 +97,6 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     //TODO This probably isn't the right way to proceed.
     private void getCursor() {
         if (cursor == null || cursor.isClosed()) {
-            Log.e("GoDo", "Opening cursor");
             String where = "((((NOT blocked_by_context) " +
                     "          AND (NOT blocked_by_task)) " +
                     "         AND (coalesce(start_date, 0) <= DATETIME('now', 'localtime')))" +
@@ -131,7 +122,6 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     }
 
     private void cleanup() {
-        Log.e("GoDo", "cleanup");
         if (cursor != null && !cursor.isClosed())
             cursor.close();
         cursor = null;
@@ -139,7 +129,6 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDestroy() {
-        Log.e("GoDo", "onDestroy");
         cleanup();
     }
 }

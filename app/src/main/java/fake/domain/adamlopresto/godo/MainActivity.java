@@ -32,7 +32,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -449,7 +448,6 @@ public class MainActivity extends ActionBarActivity {
                     where = DatabaseUtils.concatenateWhere(where, "done_date is null or done_date > DATETIME('now', '-1 hours', 'localtime')");
 
                 where = DatabaseUtils.concatenateWhere(where, "task_name is not null");
-                Log.e("GoDo", "where clause in full: " + where);
                 sort = TaskAdapter.SORT;
             }
 
