@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
@@ -104,6 +105,7 @@ public class NotificationService extends Service {
         );
 
         int numToNotify = 0;
+        int total = 0;
         boolean audible = false;
         boolean vibrate = false;
         NotificationCompat.InboxStyle inbox = new NotificationCompat.InboxStyle();
@@ -114,70 +116,76 @@ public class NotificationService extends Service {
         long id;
         if (c != null) {
             c.moveToFirst();
-            int total = c.getCount();
-            while (!c.isAfterLast()) {
-                SpannableStringBuilder sb = new SpannableStringBuilder();
-                numToNotify++;
-                name = c.getString(0);
-                if (!TextUtils.isEmpty(name)) {
-                    sb.append(name);
+            total = c.getCount();
+            /*
+            On older versions, notification grouping doesn't work.  We only need it for Jellybean
+            and onward, so that we can gather the lines for the index.
+             */
+            if (total == 1 || Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                while (!c.isAfterLast()) {
+                    SpannableStringBuilder sb = new SpannableStringBuilder();
+                    numToNotify++;
+                    name = c.getString(0);
+                    if (!TextUtils.isEmpty(name)) {
+                        sb.append(name);
                     /*
                     sb.setSpan(new ForegroundColorSpan(Color.WHITE), 0,
                             name.length(), 0);
                             */
-                    sb.setSpan(new StyleSpan(Typeface.BOLD), 0,
-                            name.length(), 0);
-                    taskNotes = c.getString(1);
-                    if (!TextUtils.isEmpty(taskNotes)) {
-                        sb.append(' ');
-                        sb.append(taskNotes);
-                    }
-                    instanceNotes = c.getString(2);
-                    if (!TextUtils.isEmpty(instanceNotes)) {
-                        sb.append(' ');
-                        sb.append(instanceNotes);
-                    }
-                    inbox.addLine(sb);
+                        sb.setSpan(new StyleSpan(Typeface.BOLD), 0,
+                                name.length(), 0);
+                        taskNotes = c.getString(1);
+                        if (!TextUtils.isEmpty(taskNotes)) {
+                            sb.append(' ');
+                            sb.append(taskNotes);
+                        }
+                        instanceNotes = c.getString(2);
+                        if (!TextUtils.isEmpty(instanceNotes)) {
+                            sb.append(' ');
+                            sb.append(instanceNotes);
+                        }
+                        inbox.addLine(sb);
 
-                    switch (NotificationLevels.values()[Math.min(c.getInt(3), max)]) {
-                        case SPOKEN:
-                            spoken.add(name);
-                            break;
-                        case NOISY:
-                            audible = true;
-                            //fall through
-                        case VIBRATE:
-                            vibrate = true;
-                            break;
-                        default:
-                            break;
+                        switch (NotificationLevels.values()[Math.min(c.getInt(3), max)]) {
+                            case SPOKEN:
+                                spoken.add(name);
+                                break;
+                            case NOISY:
+                                audible = true;
+                                //fall through
+                            case VIBRATE:
+                                vibrate = true;
+                                break;
+                            default:
+                                break;
+                        }
+                        id = c.getLong(4);
+
+                        NotificationCompat.Builder builder = makeBuilder(audible, vibrate);
+                        populateBuilder(builder, id, name, taskNotes,
+                                instanceNotes);
+                        if (total != 1) {
+                            builder.setGroup(GROUP_KEY);
+                            builder.setSortKey(String.format("%03d", numToNotify));
+                        }
+                        nm.notify((int) id, builder.build());
+
+
                     }
-                    id = c.getLong(4);
-
-                    NotificationCompat.Builder builder = makeBuilder(audible, vibrate);
-                    populateBuilder(builder, id, name, taskNotes,
-                            instanceNotes);
-                    if (total != 1) {
-                        builder.setGroup(GROUP_KEY);
-                        builder.setSortKey(String.format("%03d", numToNotify));
-                    }
-                    nm.notify((int)id, builder.build());
-
-
+                    c.moveToNext();
                 }
-                c.moveToNext();
             }
             c.close();
         }
 
-        if (numToNotify > 1) {
+        if (total > 1) {
 
             NotificationCompat.Builder builder = makeBuilder(audible, vibrate);
 
-            builder.setContentTitle(numToNotify + " tasks")
+            builder.setContentTitle(total + " tasks")
                     .setContentText("GoDo")
-                    .setTicker(numToNotify + " tasks")
-                    .setNumber(numToNotify)
+                    .setTicker(total + " tasks")
+                    .setNumber(total)
 
                     .setContentIntent(
                             PendingIntent.getActivity(
@@ -192,7 +200,7 @@ public class NotificationService extends Service {
 
             nm.notify("Tasks", 0, builder.build());
         }
-        if (numToNotify > 0){
+        if (total > 0){
             if (spoken.isEmpty()) {
                 stopSelf();
             } else {
