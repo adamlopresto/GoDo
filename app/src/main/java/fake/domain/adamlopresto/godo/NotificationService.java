@@ -117,50 +117,47 @@ public class NotificationService extends Service {
         if (c != null) {
             c.moveToFirst();
             total = c.getCount();
-            /*
-            On older versions, notification grouping doesn't work.  We only need it for Jellybean
-            and onward, so that we can gather the lines for the index.
-             */
-            if (total == 1 || Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                while (!c.isAfterLast()) {
-                    SpannableStringBuilder sb = new SpannableStringBuilder();
-                    numToNotify++;
-                    name = c.getString(0);
-                    if (!TextUtils.isEmpty(name)) {
-                        sb.append(name);
+
+            while (!c.isAfterLast()) {
+                SpannableStringBuilder sb = new SpannableStringBuilder();
+                numToNotify++;
+                name = c.getString(0);
+                if (!TextUtils.isEmpty(name)) {
+                    sb.append(name);
                     /*
                     sb.setSpan(new ForegroundColorSpan(Color.WHITE), 0,
                             name.length(), 0);
                             */
-                        sb.setSpan(new StyleSpan(Typeface.BOLD), 0,
-                                name.length(), 0);
-                        taskNotes = c.getString(1);
-                        if (!TextUtils.isEmpty(taskNotes)) {
-                            sb.append(' ');
-                            sb.append(taskNotes);
-                        }
-                        instanceNotes = c.getString(2);
-                        if (!TextUtils.isEmpty(instanceNotes)) {
-                            sb.append(' ');
-                            sb.append(instanceNotes);
-                        }
-                        inbox.addLine(sb);
+                    sb.setSpan(new StyleSpan(Typeface.BOLD), 0,
+                            name.length(), 0);
+                    taskNotes = c.getString(1);
+                    if (!TextUtils.isEmpty(taskNotes)) {
+                        sb.append(' ');
+                        sb.append(taskNotes);
+                    }
+                    instanceNotes = c.getString(2);
+                    if (!TextUtils.isEmpty(instanceNotes)) {
+                        sb.append(' ');
+                        sb.append(instanceNotes);
+                    }
+                    inbox.addLine(sb);
 
-                        switch (NotificationLevels.values()[Math.min(c.getInt(3), max)]) {
-                            case SPOKEN:
-                                spoken.add(name);
-                                break;
-                            case NOISY:
-                                audible = true;
-                                //fall through
-                            case VIBRATE:
-                                vibrate = true;
-                                break;
-                            default:
-                                break;
-                        }
+                    switch (NotificationLevels.values()[Math.min(c.getInt(3), max)]) {
+                        case SPOKEN:
+                            spoken.add(name);
+                            break;
+                        case NOISY:
+                            audible = true;
+                            //fall through
+                        case VIBRATE:
+                            vibrate = true;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (total == 1 || Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         id = c.getLong(4);
-
                         NotificationCompat.Builder builder = makeBuilder(audible, vibrate);
                         populateBuilder(builder, id, name, taskNotes,
                                 instanceNotes);
@@ -169,11 +166,11 @@ public class NotificationService extends Service {
                             builder.setSortKey(String.format("%03d", numToNotify));
                         }
                         nm.notify((int) id, builder.build());
-
-
                     }
-                    c.moveToNext();
+
+
                 }
+                c.moveToNext();
             }
             c.close();
         }
