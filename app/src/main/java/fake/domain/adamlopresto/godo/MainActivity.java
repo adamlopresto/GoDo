@@ -80,7 +80,7 @@ public class MainActivity extends ActionBarActivity {
         fragment.handleIntent(intent);
     }
 
-    protected void startActivityWithTransitions(Intent intent){
+    private void startActivityWithTransitions(Intent intent){
         //Bundle options =  ActivityOptionsCompat.makeSceneTransitionAnimation(this).toBundle();
         ActivityCompat.startActivity(this, intent, null);
     }

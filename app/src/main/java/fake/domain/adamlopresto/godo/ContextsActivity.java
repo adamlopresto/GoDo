@@ -33,15 +33,13 @@ import fake.domain.adamlopresto.godo.db.ContextsTable;
 
 public class ContextsActivity extends ActionBarActivity {
 
-    private ContextFragment fragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        fragment = new ContextFragment();
+        ContextFragment fragment = new ContextFragment();
 
         getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
     }

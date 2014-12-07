@@ -205,7 +205,7 @@ public class NotificationService extends Service {
                 stopSelf();
             } else {
                 tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-                    @SuppressWarnings ("ConstantConditions")
+                    @SuppressWarnings ({"ConstantConditions", "deprecation"})
                     @Override
                     public void onInit(int status) {
                         if (status == TextToSpeech.SUCCESS) {

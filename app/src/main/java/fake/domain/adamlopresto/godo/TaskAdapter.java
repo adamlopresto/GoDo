@@ -72,6 +72,7 @@ public class TaskAdapter extends ResourceCursorAdapter {
     private void setTextViewDate(@NonNull TextView v, String prefix, @Nullable String s, boolean done, boolean overdue,
                                  boolean future) {
         if (!hideView(v, s))
+            //noinspection ConstantConditions
             setTextViewInner(v, prefix + Utils.formatShortRelativeDate(s), done, overdue, future);
     }
 
