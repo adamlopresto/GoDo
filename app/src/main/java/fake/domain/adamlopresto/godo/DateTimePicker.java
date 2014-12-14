@@ -218,7 +218,8 @@ public class DateTimePicker extends LinearLayout {
                         cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), false
                 );
 
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN &&
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                     dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Set", (DialogInterface.OnClickListener) null);
                 }
                 dlg.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
