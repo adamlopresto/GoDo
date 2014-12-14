@@ -112,6 +112,7 @@ public class NotificationService extends Service {
         String name;
         String taskNotes;
         String instanceNotes;
+        int maxNotificationLevel = 0;
         final ArrayList<String> spoken = new ArrayList<>();
         long id;
         if (c != null) {
@@ -142,7 +143,8 @@ public class NotificationService extends Service {
                     }
                     inbox.addLine(sb);
 
-                    switch (NotificationLevels.values()[Math.min(c.getInt(3), max)]) {
+                    int notificationLevel = c.getInt(3);
+                    switch (NotificationLevels.values()[Math.min(notificationLevel, max)]) {
                         case SPOKEN:
                             spoken.add(name);
                             break;
@@ -155,6 +157,8 @@ public class NotificationService extends Service {
                         default:
                             break;
                     }
+                    if (notificationLevel > maxNotificationLevel)
+                        maxNotificationLevel = notificationLevel;
 
                     if (total == 1 || Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         id = c.getLong(4);
@@ -165,6 +169,7 @@ public class NotificationService extends Service {
                             builder.setGroup(GROUP_KEY);
                             builder.setSortKey(String.format("%03d", numToNotify));
                         }
+                        builder.setPriority(priorityFromLevel(notificationLevel));
                         nm.notify((int) id, builder.build());
                     }
 
@@ -192,6 +197,7 @@ public class NotificationService extends Service {
                                     PendingIntent.FLAG_UPDATE_CURRENT)
                     )
                     .setStyle(inbox)
+                    .setPriority(priorityFromLevel(maxNotificationLevel))
                     .setGroup(GROUP_KEY)
                     .setGroupSummary(true);
 
@@ -343,6 +349,19 @@ public class NotificationService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private static int priorityFromLevel(int level){
+        switch (NotificationLevels.values()[level]) {
+            case SPOKEN:
+                return NotificationCompat.PRIORITY_MAX;
+            case NOISY:
+                return NotificationCompat.PRIORITY_HIGH;
+            case VIBRATE:
+                return NotificationCompat.PRIORITY_DEFAULT;
+            default:
+                return NotificationCompat.PRIORITY_LOW;
+        }
     }
 
 }
