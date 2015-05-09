@@ -54,7 +54,7 @@ public class GoDoReceiver extends BroadcastReceiver {
                 context.startService(new Intent(context, NotificationService.class).putExtra("max_notify", max));
         } else if (action.equals(MARK_COMPLETE_INTENT)) {
             long id = intent.getLongExtra(InstanceHolderActivity.EXTRA_INSTANCE, -1L);
-            if (id != -1) {
+            if (id != -1L) {
                 Instance instance = Instance.get(DatabaseHelper.getInstance(context), id);
                 instance.updateDone(true);
                 instance.flush();
