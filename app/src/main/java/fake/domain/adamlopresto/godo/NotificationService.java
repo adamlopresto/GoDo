@@ -296,34 +296,34 @@ public class NotificationService extends Service {
                                  CharSequence name, String taskNotes,
                                  String instanceNotes){
 
-    StringBuilder sb = new StringBuilder();
-    if (!TextUtils.isEmpty(taskNotes)) {
-        sb.append(taskNotes);
-    }
-    if (!TextUtils.isEmpty(instanceNotes)) {
-        if (sb.length() > 0) {
-            sb.append('\n');
+        StringBuilder sb = new StringBuilder();
+        if (!TextUtils.isEmpty(taskNotes)) {
+            sb.append(taskNotes);
         }
-        sb.append(instanceNotes);
+        if (!TextUtils.isEmpty(instanceNotes)) {
+            if (sb.length() > 0) {
+                sb.append('\n');
+            }
+            sb.append(instanceNotes);
 
-    }
-    builder.setContentTitle(name)
-            .setContentText(sb)
-            .setStyle(new NotificationCompat.BigTextStyle().bigText(sb))
-            .setTicker(name);
-    PendingIntent markDone = PendingIntent.getBroadcast(this, (int)id,
-            new Intent(this, GoDoReceiver.class).setAction(GoDoReceiver.MARK_COMPLETE_INTENT)
-                    .putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id),
-            PendingIntent.FLAG_UPDATE_CURRENT
-    );
-    builder.addAction(R.drawable.ic_action_accept, getString(R.string.mark_complete), markDone);
+        }
+        builder.setContentTitle(name)
+                .setContentText(sb)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(sb))
+                .setTicker(name);
+        PendingIntent markDone = PendingIntent.getBroadcast(this, (int)id,
+                new Intent(this, GoDoReceiver.class).setAction(GoDoReceiver.MARK_COMPLETE_INTENT)
+                        .putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id),
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+        builder.addAction(R.drawable.ic_action_accept, getString(R.string.mark_complete), markDone);
 
-    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-    //stackBuilder.addParentStack(TaskActivity.class);
-    stackBuilder.addNextIntentWithParentStack(
-            new Intent(this, TaskActivity.class).putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id));
-    builder.setContentIntent(stackBuilder.getPendingIntent((int)id,
-            PendingIntent.FLAG_UPDATE_CURRENT));
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        //stackBuilder.addParentStack(TaskActivity.class);
+        stackBuilder.addNextIntentWithParentStack(
+                new Intent(this, TaskActivity.class).putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id));
+        builder.setContentIntent(stackBuilder.getPendingIntent((int)id,
+                PendingIntent.FLAG_UPDATE_CURRENT));
     }
 
     private NotificationCompat.Builder makeBuilder(boolean audible, boolean vibrate) {
