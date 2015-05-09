@@ -316,7 +316,11 @@ public class NotificationService extends Service {
                         .putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id),
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
-        builder.addAction(R.drawable.ic_action_accept, getString(R.string.mark_complete), markDone);
+        builder.addAction(R.drawable.ic_done_black_18dp, getString(R.string.mark_complete), markDone);
+
+        NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
+        wearableExtender.setContentAction(0);
+        builder.extend(wearableExtender);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         //stackBuilder.addParentStack(TaskActivity.class);
