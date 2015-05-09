@@ -143,7 +143,6 @@ public class MainActivity extends ActionBarActivity {
                     "Active", "Plan", "Archive", "Contexts", "Settings"
             }));
 
-
             final DrawerLayout drawerLayout = (DrawerLayout)activity.findViewById(R.id.drawer_layout);
 
             drawerList.setOnItemClickListener(
