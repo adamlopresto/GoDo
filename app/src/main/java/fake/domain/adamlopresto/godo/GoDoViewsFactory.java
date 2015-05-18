@@ -110,10 +110,12 @@ public class GoDoViewsFactory implements RemoteViewsService.RemoteViewsFactory {
                         new String[]{
                                 InstancesView.COLUMN_ID, InstancesView.COLUMN_TASK_NAME,
                                 InstancesView.COLUMN_DUE_DATE, InstancesView.COLUMN_PLAN_DATE
-                        }, where, null,
+                        }, where, null, TaskAdapter.SORT
+                        /*
                         "case when due_date <= DATETIME('now', 'localtime') then due_date || ' 23:59:59' else '9999-99-99' end, "
                                 + "coalesce(plan_date || ' 23:59:59', DATETIME('now', 'localtime')), due_date || ' 23:59:59', "
                                 + "notification DESC, random()"
+                                */
                 );
             } finally {
                 Binder.restoreCallingIdentity(token);
