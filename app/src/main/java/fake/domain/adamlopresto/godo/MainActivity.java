@@ -353,7 +353,7 @@ public class MainActivity extends ActionBarActivity {
                             )
                             .setNegativeButton(android.R.string.cancel, null)
                             .show();
-
+                    cursor.close();
                     return true;
                 }
                 /*
