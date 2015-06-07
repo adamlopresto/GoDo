@@ -325,7 +325,8 @@ public class NotificationService extends Service {
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         //stackBuilder.addParentStack(TaskActivity.class);
         stackBuilder.addNextIntentWithParentStack(
-                new Intent(this, TaskActivity.class).putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id));
+                new Intent(this, TaskActivity.class).putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id)
+                        .setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
         builder.setContentIntent(stackBuilder.getPendingIntent((int)id,
                 PendingIntent.FLAG_UPDATE_CURRENT));
     }
