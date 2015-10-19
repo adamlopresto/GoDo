@@ -85,7 +85,6 @@
             android:transitionName="taskName"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/check"
             android:layout_gravity="fill_horizontal"
             android:layout_toRightOf="@id/check"
             android:layout_toEndOf="@id/check"
@@ -94,7 +93,9 @@
             android:singleLine="false"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white"
-            android:textColorHint="#42FFFFFF">
+            android:textColorHint="#42FFFFFF"
+            android:layout_alignTop="@+id/check"
+            >
 
             <requestFocus/>
         </EditText>
