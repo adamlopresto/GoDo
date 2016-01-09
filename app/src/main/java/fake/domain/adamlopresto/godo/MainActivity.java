@@ -344,6 +344,7 @@ public class MainActivity extends ActionBarActivity {
                                             assert cursor != null;
                                             cursor.moveToPosition(which);
                                             long id = cursor.getLong(0);
+                                            cursor.close();
                                             Intent i = new Intent(getActivity(), TaskActivity.class);
                                             i.putExtra(InstanceHolderActivity.EXTRA_TASK, id);
                                             startActivity(i);
@@ -351,9 +352,16 @@ public class MainActivity extends ActionBarActivity {
 
                                     }
                             )
+                            .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    if (cursor != null && !cursor.isClosed())
+                                        cursor.close();
+                                }
+                            })
                             .setNegativeButton(android.R.string.cancel, null)
                             .show();
-                    cursor.close();
+                    //cursor.close();
                     return true;
                 }
                 /*
