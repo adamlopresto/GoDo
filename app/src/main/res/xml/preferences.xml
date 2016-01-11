@@ -12,5 +12,6 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="Miscellanea">
         <CheckBoxPreference android:key="pref_colorful_widget" android:summaryOn="Use the new, more colorful widget" android:title="Use colorful widget" android:summaryOff="Use the old, grayscale widget" android:defaultValue="true"/>
+        <CheckBoxPreference android:key="pref_led" android:summaryOn="Turn on the light when there's a notification" android:title="Notification lights" android:summaryOff="Leave the light off when there's a notification" android:defaultValue="true"/>
     </PreferenceCategory>
 </PreferenceScreen>

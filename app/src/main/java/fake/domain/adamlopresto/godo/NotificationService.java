@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.annotation.NonNull;
@@ -346,7 +347,9 @@ public class NotificationService extends Service {
         if (vibrate)
                 //noinspection MagicNumber
                 builder.setVibrate(new long[]{0L, 1000L, 300L, 1000L});
-        builder.setLights(Color.GREEN, 1000, 1000);
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsActivity.PREF_LED, true))
+            builder.setLights(Color.GREEN, 1000, 1000);
+
         builder.setAutoCancel(true);
         return builder;
     }

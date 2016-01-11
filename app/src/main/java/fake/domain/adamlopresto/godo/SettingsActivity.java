@@ -17,6 +17,7 @@ public class SettingsActivity extends ActionBarActivity {
     public static final String PREF_DEFAULT_NOTIFICATION = "pref_default_notification";
     public static final String PREF_DEFAULT_DUE_NOTIFICATION = "pref_default_due_notification";
     public static final String PREF_COLORFUL_WIDGET = "pref_colorful_widget";
+    public static final String PREF_LED = "pref_led";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
