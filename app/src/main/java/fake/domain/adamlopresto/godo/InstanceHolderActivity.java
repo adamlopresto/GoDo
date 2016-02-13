@@ -40,14 +40,14 @@ public abstract class InstanceHolderActivity extends ActionBarActivity {
             DatabaseHelper helper = DatabaseHelper.getInstance(this);
             String name = names.get(0);
             task = new Task(helper, this, Character.toTitleCase(name.charAt(0)) + name.substring(1));
-            instance = new Instance(helper, task);
+            instance = Instance.fromTaskByName(helper, task);
             return true;
         }
         String name = bundle.getString("task_name");
         if (name != null) {
             DatabaseHelper helper = DatabaseHelper.getInstance(this);
             task = new Task(helper, this, Character.toTitleCase(name.charAt(0)) + name.substring(1));
-            instance = new Instance(helper, task);
+            instance = Instance.fromTaskByName(helper, task);
             return true;
 
         }

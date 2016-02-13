@@ -364,6 +364,13 @@ public class MainActivity extends ActionBarActivity {
                     //cursor.close();
                     return true;
                 }
+                case R.id.action_new_task_voice:{
+                    Intent recognizerIntent = GoDoAppWidget.getSpeechRecognizerIntent(getActivity(),
+                            GoDoAppWidget.getStackBuilder(getActivity()));
+                    startActivity(recognizerIntent);
+                    return true;
+                }
+
                 /*
                 case R.id.action_notify:
                     getActivity().startService(new Intent(getActivity(), NotificationService.class));

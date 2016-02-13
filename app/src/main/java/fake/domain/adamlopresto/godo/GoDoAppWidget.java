@@ -33,25 +33,38 @@ public class GoDoAppWidget extends AppWidgetProvider {
                 PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class),
                         PendingIntent.FLAG_UPDATE_CURRENT)
         );
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        //stackBuilder.addParentStack(TaskActivity.class);
-        stackBuilder.addNextIntentWithParentStack(
-                new Intent(context, TaskActivity.class));
+        TaskStackBuilder stackBuilder = getStackBuilder(context);
         views.setPendingIntentTemplate(android.R.id.list, stackBuilder.getPendingIntent(-1, PendingIntent.FLAG_UPDATE_CURRENT));
         views.setOnClickPendingIntent(R.id.action_new_task,
                 stackBuilder.getPendingIntent(-1, PendingIntent.FLAG_UPDATE_CURRENT));
 
-        Intent recognizer = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        recognizer.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        recognizer.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
-        recognizer.putExtra(RecognizerIntent.EXTRA_PROMPT, context.getText(R.string.task_name_hint));
-        recognizer.putExtra(RecognizerIntent.EXTRA_RESULTS_PENDINGINTENT,
-                stackBuilder.getPendingIntent(3, PendingIntent.FLAG_UPDATE_CURRENT));
+        Intent recognizer = getSpeechRecognizerIntent(context, stackBuilder);
         views.setOnClickPendingIntent(R.id.action_new_task_voice,
                 PendingIntent.getActivity(context, 0, recognizer, PendingIntent.FLAG_UPDATE_CURRENT));
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
+    @NonNull
+    public static Intent getSpeechRecognizerIntent(@NonNull Context context, TaskStackBuilder stackBuilder) {
+        PendingIntent newFromVoicePendingIntent = stackBuilder.getPendingIntent(3, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent recognizer = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        recognizer.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        recognizer.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+        recognizer.putExtra(RecognizerIntent.EXTRA_PROMPT, context.getText(R.string.task_name_hint));
+        recognizer.putExtra(RecognizerIntent.EXTRA_RESULTS_PENDINGINTENT,
+                newFromVoicePendingIntent);
+        return recognizer;
+    }
+
+    @NonNull
+    public static TaskStackBuilder getStackBuilder(@NonNull Context context) {
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        //stackBuilder.addParentStack(TaskActivity.class);
+        stackBuilder.addNextIntentWithParentStack(
+                new Intent(context, TaskActivity.class));
+        return stackBuilder;
     }
 
     public static void updateAllAppWidgets(@NonNull Context context) {

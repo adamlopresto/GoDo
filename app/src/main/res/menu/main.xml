@@ -18,6 +18,12 @@
         android:icon="@drawable/ic_action_pick_from_list"
         app:showAsAction="never"
         android:title="@string/new_from_template" />
+
+    <item
+        android:id="@+id/action_new_task_voice"
+        android:icon="@drawable/ic_mic_white_24dp"
+        app:showAsAction="ifRoom"
+        android:title="New from voice" />
     <!--
     <item
         android:id="@+id/action_new_task"

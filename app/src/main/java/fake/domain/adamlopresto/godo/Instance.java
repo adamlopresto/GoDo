@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesTable;
@@ -59,6 +60,25 @@ public class Instance {
         this.hasDueTime = hasDueTime;
         this.doneDate = doneDate;
         //this.createDate = createDate;
+    }
+
+    //creates a new Instance from the given task, populating all information it can from the task's
+    //name
+    public static Instance fromTaskByName(DatabaseHelper helper, Task task){
+        Instance instance = new Instance(helper, task);
+        String name = task.getName().toString().toLowerCase();
+        GregorianCalendar cal = new GregorianCalendar();
+        if (name.contains("today"))
+            instance.setDueDate(cal.getTime());
+        else if (name.contains("tomorrow")){
+            cal.add(GregorianCalendar.DATE, 1);
+            instance.setDueDate(cal.getTime());
+        } else if (name.contains("Sunday")){
+            int today = cal.get(GregorianCalendar.DAY_OF_WEEK);
+            //TODO finish this
+        }
+
+        return instance;
     }
 
     @NonNull
