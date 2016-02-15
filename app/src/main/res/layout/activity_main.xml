@@ -1,7 +1,7 @@
 <android.support.v4.widget.DrawerLayout
     android:id="@+id/drawer_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -22,16 +22,49 @@
             android:layout_height="match_parent"
             />
 
-        <com.melnykov.fab.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_add_white_24dp"
-            fab:fab_colorNormal="@color/accent"
-            fab:fab_colorPressed="@color/accentDark"
-            fab:fab_colorRipple="@color/accentLight"/>
+        <com.novaapps.FloatingActionMenu
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:id="@+id/fab_menu">
+            <!-- main FAB shown -->
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_add_white_24dp"
+                />
+
+            <!-- Ones after that are the menu -->
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_add_white_24dp"
+                android:contentDescription="Create a new task"
+                app:fabSize="mini"
+                />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/action_new_task_voice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_mic_white_24dp"
+                android:contentDescription="Create from voice"
+                app:fabSize="mini"
+                />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/action_new_from_template"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_add_white_24dp"
+                android:contentDescription="New from template"
+                app:fabSize="mini"
+                />
+
+        </com.novaapps.FloatingActionMenu>
 
     </FrameLayout>
 

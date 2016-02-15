@@ -45,8 +45,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Checkable;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.support.design.widget.FloatingActionButton;
 
-import com.melnykov.fab.FloatingActionButton;
+import com.novaapps.FloatingActionMenu;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,6 +73,44 @@ public class MainActivity extends ActionBarActivity {
 
     public void checkBoxClick(View v) {
         fragment.checkBoxClick(v);
+    }
+
+    private static void createTemplateMenu(final Activity activity) {
+        final Cursor cursor = activity.getContentResolver().query(GoDoContentProvider.TASKS_URI,
+                new String[]{TasksTable.COLUMN_ID, TasksTable.COLUMN_NAME,
+                        TasksTable.COLUMN_NOTES},
+                TasksTable.COLUMN_REPEAT + "=2", null, TasksTable.COLUMN_NAME
+        );
+        new AlertDialog.Builder(activity)
+                .setAdapter(
+                        new SimpleCursorAdapter(activity, android.R.layout.simple_list_item_2,
+                                cursor, new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES},
+                                new int[]{android.R.id.text1, android.R.id.text2}, 0),
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                assert cursor != null;
+                                cursor.moveToPosition(which);
+                                long id = cursor.getLong(0);
+                                cursor.close();
+                                Intent i = new Intent(activity, TaskActivity.class);
+                                i.putExtra(InstanceHolderActivity.EXTRA_TASK, id);
+                                activity.startActivity(i);
+                            }
+
+                        }
+                )
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        if (cursor != null && !cursor.isClosed())
+                            cursor.close();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+        //cursor.close();
     }
 
     @Override
@@ -127,6 +166,8 @@ public class MainActivity extends ActionBarActivity {
 
             handleIntent(activity.getIntent());
 
+            FloatingActionMenu menu = (FloatingActionMenu)activity.findViewById(R.id.fab_menu);
+            menu.setmItemGap(48);
             final FloatingActionButton fab = (FloatingActionButton)activity.findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -135,7 +176,27 @@ public class MainActivity extends ActionBarActivity {
                 }
             });
 
-            fab.attachToListView(getListView());
+            activity.findViewById(R.id.action_new_task_voice).setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent recognizerIntent = GoDoAppWidget.getSpeechRecognizerIntent(getActivity(),
+                                    GoDoAppWidget.getStackBuilder(getActivity()));
+                            startActivity(recognizerIntent);
+                        }
+                    }
+            );
+
+            activity.findViewById(R.id.action_new_from_template).setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            createTemplateMenu(activity);
+                        }
+                    }
+            );
+
+            //fab.attachToListView(getListView());
 
             ListView drawerList = (ListView) activity.findViewById(R.id.left_drawer);
             drawerList.setAdapter(new ArrayAdapter<>(activity,
@@ -327,41 +388,7 @@ public class MainActivity extends ActionBarActivity {
                     return true;
                     */
                 case R.id.action_new_from_template: {
-                    final Cursor cursor = getActivity().getContentResolver().query(GoDoContentProvider.TASKS_URI,
-                            new String[]{TasksTable.COLUMN_ID, TasksTable.COLUMN_NAME,
-                                    TasksTable.COLUMN_NOTES},
-                            TasksTable.COLUMN_REPEAT + "=2", null, TasksTable.COLUMN_NAME
-                    );
-                    new AlertDialog.Builder(getActivity())
-                            .setAdapter(
-                                    new SimpleCursorAdapter(getActivity(), android.R.layout.simple_list_item_2,
-                                            cursor, new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES},
-                                            new int[]{android.R.id.text1, android.R.id.text2}, 0),
-                                    new DialogInterface.OnClickListener() {
-
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            assert cursor != null;
-                                            cursor.moveToPosition(which);
-                                            long id = cursor.getLong(0);
-                                            cursor.close();
-                                            Intent i = new Intent(getActivity(), TaskActivity.class);
-                                            i.putExtra(InstanceHolderActivity.EXTRA_TASK, id);
-                                            startActivity(i);
-                                        }
-
-                                    }
-                            )
-                            .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                                @Override
-                                public void onDismiss(DialogInterface dialog) {
-                                    if (cursor != null && !cursor.isClosed())
-                                        cursor.close();
-                                }
-                            })
-                            .setNegativeButton(android.R.string.cancel, null)
-                            .show();
-                    //cursor.close();
+                    createTemplateMenu(getActivity());
                     return true;
                 }
                 case R.id.action_new_task_voice:{
@@ -382,6 +409,7 @@ public class MainActivity extends ActionBarActivity {
 
             return super.onOptionsItemSelected(item);
         }
+
 
         @SuppressWarnings ("unchecked")
         @Override
