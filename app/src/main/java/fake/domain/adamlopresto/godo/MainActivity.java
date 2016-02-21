@@ -46,6 +46,7 @@ import android.widget.Checkable;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.support.design.widget.FloatingActionButton;
+import android.widget.TextView;
 
 import com.novaapps.FloatingActionMenu;
 
@@ -142,6 +143,7 @@ public class MainActivity extends ActionBarActivity {
         private TaskAdapter adapter;
         private boolean paused = false;
         public ActionBarDrawerToggle drawerToggle;
+        final ArrayList<Long> templateIds = new ArrayList<>(3);
 
         @Nullable
         private String query;
@@ -166,35 +168,31 @@ public class MainActivity extends ActionBarActivity {
 
             handleIntent(activity.getIntent());
 
-            FloatingActionMenu menu = (FloatingActionMenu)activity.findViewById(R.id.fab_menu);
+            final FloatingActionMenu menu = (FloatingActionMenu)activity.findViewById(R.id.fab_menu);
             menu.setmItemGap(48);
-            final FloatingActionButton fab = (FloatingActionButton)activity.findViewById(R.id.fab);
-            fab.setOnClickListener(new View.OnClickListener() {
+            menu.setOnMenuItemClickListener(new FloatingActionMenu.OnMenuItemClickListener() {
                 @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(getActivity(), TaskActivity.class));
+                public void onMenuItemClick(FloatingActionMenu fam, int index, FloatingActionButton item) {
+                    switch (index){
+                        case 0:
+                            startActivity(new Intent(getActivity(), TaskActivity.class));
+                            break;
+                        case 1:
+                            startActivity(GoDoAppWidget.getSpeechRecognizerIntent(getActivity(),
+                                    GoDoAppWidget.getStackBuilder(getActivity())));
+                            break;
+                        case 2:case 3:case 4:
+                            long id = templateIds.get(index-2);
+                            Intent i = new Intent(activity, TaskActivity.class);
+                            i.putExtra(InstanceHolderActivity.EXTRA_TASK, id);
+                            activity.startActivity(i);
+                            break;
+                        case 5:
+                            createTemplateMenu(activity);
+                            break;
+                    }
                 }
             });
-
-            activity.findViewById(R.id.action_new_task_voice).setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent recognizerIntent = GoDoAppWidget.getSpeechRecognizerIntent(getActivity(),
-                                    GoDoAppWidget.getStackBuilder(getActivity()));
-                            startActivity(recognizerIntent);
-                        }
-                    }
-            );
-
-            activity.findViewById(R.id.action_new_from_template).setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            createTemplateMenu(activity);
-                        }
-                    }
-            );
 
             //fab.attachToListView(getListView());
 
@@ -270,7 +268,6 @@ public class MainActivity extends ActionBarActivity {
                 public void onDrawerClosed(View view) {
                     super.onDrawerClosed(view);
                     //activity.invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-                    fab.show();
                 }
 
                 /** Called when a drawer has settled in a completely open state. */
@@ -278,13 +275,36 @@ public class MainActivity extends ActionBarActivity {
                 public void onDrawerOpened(View drawerView) {
                     super.onDrawerOpened(drawerView);
                     //activity.invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-                    fab.hide();
                 }
             };
 
             drawerLayout.setDrawerListener(drawerToggle);
 
             restartLoader();
+        }
+
+
+
+        private void populateFABFromCursor(Activity activity, Cursor cursor, int resource) {
+            FloatingActionButton nextFab = (FloatingActionButton) activity.findViewById(resource);
+            TextView textView = (TextView) nextFab.getTag();
+            if (cursor.isAfterLast()) {
+                nextFab.setEnabled(false);
+                nextFab.setVisibility(View.GONE);
+                textView.setVisibility(View.GONE);
+            } else {
+                String description = cursor.getString(1);
+                nextFab.setContentDescription(description);
+                nextFab.setEnabled(true);
+                /*
+                nextFab.setVisibility(View.VISIBLE);
+                textView.setVisibility(View.VISIBLE);
+                */
+                textView.setText(description);
+                templateIds.add(cursor.getLong(0));
+            }
+
+            cursor.moveToNext();
         }
 
         private void handleIntent(Intent intent) {
@@ -315,6 +335,32 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onResume() {
             super.onResume();
+            Activity activity = getActivity();
+            if (activity != null) {
+                final Cursor cursor = activity.getContentResolver().query(GoDoContentProvider.TASKS_URI,
+                        new String[]{TasksTable.COLUMN_ID, TasksTable.COLUMN_NAME},
+                        TasksTable.COLUMN_REPEAT + "=2", null, TasksTable.COLUMN_NAME
+                );
+                FloatingActionButton nextFab;
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                    templateIds.clear();
+                    populateFABFromCursor(activity, cursor, R.id.action_new_from_template1);
+                    populateFABFromCursor(activity, cursor, R.id.action_new_from_template2);
+                    populateFABFromCursor(activity, cursor, R.id.action_new_from_template3);
+                    nextFab = (FloatingActionButton) activity.findViewById(R.id.action_new_from_template_more); //TODO
+                    if (cursor.isAfterLast()) {
+                        nextFab.setEnabled(false);
+                        nextFab.setVisibility(View.GONE);
+
+                    } else {
+                        nextFab.setEnabled(true);
+                        nextFab.setVisibility(View.VISIBLE);
+                    }
+                    cursor.close();
+                }
+            }
+
             if (paused) {
                 restartLoader();
                 paused = false;

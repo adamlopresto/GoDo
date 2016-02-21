@@ -19,6 +19,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AnticipateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
@@ -34,7 +35,7 @@ import fake.domain.adamlopresto.godo.R;
 public class FloatingActionMenu extends ViewGroup {
 
     static final TimeInterpolator DEFAULT_OPEN_INTERPOLATOR = new OvershootInterpolator();
-    static final TimeInterpolator DEFAULT_CLOSE_INTERPOLATOR = new AnticipateInterpolator();
+    static final TimeInterpolator DEFAULT_CLOSE_INTERPOLATOR = new AccelerateDecelerateInterpolator();
 
     private FloatingActionButton mMenuButton;
     private ArrayList<FloatingActionButton> mMenuItems;
@@ -311,7 +312,7 @@ public class FloatingActionMenu extends ViewGroup {
                     item.layout(right - width - d, top, right - d, bottom);
                     d = (item.getMeasuredHeight() - label.getMeasuredHeight()) / 2;
 
-                    label.layout(item.getLeft() - label.getMeasuredWidth() - 50,
+                    label.layout(item.getLeft() - label.getMeasuredWidth() - 24,
                             item.getTop() + d, item.getLeft(),
                             item.getTop() + d + label.getMeasuredHeight());
                     if (!animating) {
@@ -527,7 +528,9 @@ public class FloatingActionMenu extends ViewGroup {
         @Override
         public void onAnimationStart(Animator animation) {
             if (playingOpenAnimator) {
-                mView.setVisibility(VISIBLE);
+                if (mView.isEnabled()) {
+                    mView.setVisibility(VISIBLE);
+                }
             } else {
                 ((TextView) mView.getTag()).setVisibility(GONE);
             }
@@ -535,10 +538,12 @@ public class FloatingActionMenu extends ViewGroup {
 
         @Override
         public void onAnimationEnd(Animator animation) {
-            if (!playingOpenAnimator) {
-                mView.setVisibility(GONE);
-            } else {
-                ((TextView) mView.getTag()).setVisibility(VISIBLE);
+            if (mView.isEnabled()) {
+                if (!playingOpenAnimator) {
+                    mView.setVisibility(GONE);
+                } else {
+                    ((TextView) mView.getTag()).setVisibility(VISIBLE);
+                }
             }
         }
 

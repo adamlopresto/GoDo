@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_add_white_24dp"
                 android:contentDescription="Create a new task"
-                app:fabSize="mini"
+                app:fabSize="normal"
                 />
 
             <android.support.design.widget.FloatingActionButton
@@ -52,16 +52,42 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_mic_white_24dp"
                 android:contentDescription="Create from voice"
-                app:fabSize="mini"
+                app:fabSize="normal"
                 />
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/action_new_from_template"
+                android:id="@+id/action_new_from_template1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_add_white_24dp"
-                android:contentDescription="New from template"
-                app:fabSize="mini"
+                android:contentDescription="Template 1"
+                app:fabSize="normal"
+                />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/action_new_from_template2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_add_white_24dp"
+                android:contentDescription="Template 2"
+                app:fabSize="normal"
+                />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/action_new_from_template3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_add_white_24dp"
+                android:contentDescription="Template 3"
+                app:fabSize="normal"
+                />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/action_new_from_template_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_more_horiz_white_24dp"
+                android:contentDescription="More templates"
+                app:fabSize="normal"
                 />
 
         </com.novaapps.FloatingActionMenu>
