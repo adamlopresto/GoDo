@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -252,11 +253,26 @@ public final class Utils {
             case 4:
                 full = to + subvalue + " year" + s + direction + from;
                 break;
+            case 5:
+
+                full = to + "at " + subvalue;
+                break;
             default:
                 full = "Error: unknown rule type";
                 break;
         }
         return full;
+    }
+
+    /**
+     * Takes a Calendar and adds enough days to wrap around to the given weekday.
+     * Never moves less than 2 days forward (if you want "today" or "tomorrow", use those).
+     * @param cal Calendar set to a date, usually today
+     * @param weekday Calendar.SUNDAY through Calendar.SATURDAY
+     */
+    public static void advanceCalendarToNextWeekday(Calendar cal, int weekday){
+        int start = cal.get(Calendar.DAY_OF_WEEK);
+        cal.add(Calendar.DAY_OF_WEEK, (weekday-start+5)%7+2);
     }
 
     public static String[] idToSelectionArgs(long id) {

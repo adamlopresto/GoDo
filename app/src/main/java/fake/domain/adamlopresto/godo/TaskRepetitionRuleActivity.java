@@ -1,16 +1,20 @@
 package fake.domain.adamlopresto.godo;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -19,7 +23,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
+
+import java.util.Locale;
 
 import fake.domain.adamlopresto.godo.db.RepetitionRulesTable;
 
@@ -33,6 +40,7 @@ public class TaskRepetitionRuleActivity extends ActionBarActivity {
     private TextView numberLabel;
     private EditText number;
     private LinearLayout weekdayLayout;
+    private TimePicker timePicker;
     private boolean template = false;
 
     private boolean weekdaysHidden = true;
@@ -62,23 +70,61 @@ public class TaskRepetitionRuleActivity extends ActionBarActivity {
         weekdays[4] = (CheckBox) findViewById(R.id.thursday);
         weekdays[5] = (CheckBox) findViewById(R.id.friday);
         weekdays[6] = (CheckBox) findViewById(R.id.saturday);
+        timePicker = (TimePicker) findViewById(R.id.timePicker);
 
         ruleType.setOnItemSelectedListener(new OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int position, long arg3) {
-                if (position < 2 && !weekdaysHidden) {
-                    weekdayLayout.setVisibility(View.GONE);
-                    numberLabel.setVisibility(View.VISIBLE);
-                    number.setVisibility(View.VISIBLE);
-                    weekdaysHidden = true;
-                } else if (position == 2 && weekdaysHidden) {
-                    weekdayLayout.setVisibility(View.VISIBLE);
-                    numberLabel.setVisibility(View.GONE);
-                    number.setVisibility(View.GONE);
-                    weekdaysHidden = false;
+                switch (RepetitionRuleTypes.values()[position]) {
+                    case ADD_DAY:
+                    case ADD_MONTH:
+                    case ADD_WEEK:
+                    case ADD_YEAR:
+                        weekdayLayout.setVisibility(View.GONE);
+                        numberLabel.setVisibility(View.VISIBLE);
+                        number.setVisibility(View.VISIBLE);
+                        timePicker.setVisibility(View.GONE);
+                        showKeyboard(number);
+                        weekdaysHidden = true;
+                        break;
+                    case WEEKDAY:
+                        weekdayLayout.setVisibility(View.VISIBLE);
+                        numberLabel.setVisibility(View.GONE);
+                        number.setVisibility(View.GONE);
+                        timePicker.setVisibility(View.GONE);
+                        weekdaysHidden = false;
+                        hideKeyboard(number);
+                        break;
+                    case SET_TIME:
+                        weekdayLayout.setVisibility(View.GONE);
+                        numberLabel.setVisibility(View.GONE);
+                        number.setVisibility(View.GONE);
+                        timePicker.setVisibility(View.VISIBLE);
+                        weekdaysHidden = true;
+                        hideKeyboard(number);
+                        break;
                 }
+            }
+
+            /**
+             * Hides the currently displayed keyboard. Needs any view in the window
+             * @param view some view in the current window
+             */
+            private void hideKeyboard(View view) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+
+            /**
+             * Shows the soft keyboard.
+             * @param view the view to focus and show input for
+             */
+            private void showKeyboard(View view) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                view.requestFocusFromTouch();
+                imm.showSoftInput(view, 0);
             }
 
             @Override
@@ -180,6 +226,18 @@ public class TaskRepetitionRuleActivity extends ActionBarActivity {
                         }
                     }
                     break;
+                case SET_TIME:
+                    try {
+                        String[] parts = subValue.split(":", 2);
+                        int hr = Integer.valueOf(parts[0]);
+                        int min = Integer.valueOf(parts[1]);
+                        timePicker.setCurrentHour(hr);
+                        timePicker.setCurrentMinute(min);
+                    } catch (NumberFormatException e) {
+                        Snackbar.make(null, "Error setting time: " + e, Snackbar.LENGTH_LONG)
+                                .show();
+                    }
+                    break;
                 default:
                     break;
             }
@@ -238,11 +296,12 @@ public class TaskRepetitionRuleActivity extends ActionBarActivity {
         values.put(RepetitionRulesTable.COLUMN_TO, to.getSelectedItemPosition());
         values.put(RepetitionRulesTable.COLUMN_FROM,
                 from.getSelectedItemPosition());
+        int ruleTypeSelectedItemPosition = ruleType.getSelectedItemPosition();
         values.put(RepetitionRulesTable.COLUMN_TYPE,
-                ruleType.getSelectedItemPosition());
+                ruleTypeSelectedItemPosition);
         String subValue = "";
-        switch (ruleType.getSelectedItemPosition()) {
-            case 2:
+        switch (RepetitionRuleTypes.values()[ruleTypeSelectedItemPosition]) {
+            case WEEKDAY:
                 StringBuilder b = new StringBuilder();
                 if (weekdays[0].isChecked())
                     b.append(",Su");
@@ -260,6 +319,9 @@ public class TaskRepetitionRuleActivity extends ActionBarActivity {
                     b.append(",Sa");
                 if (b.length() > 0)
                     subValue = b.substring(1);
+                break;
+            case SET_TIME:
+                subValue = String.format(Locale.US, "%02d:%02d", timePicker.getCurrentHour(), timePicker.getCurrentMinute());
                 break;
             default:
                 subValue = Utils.getString(number);

@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.util.LruCache;
 
 import java.util.Calendar;
@@ -81,6 +82,24 @@ public class Task {
                 NotificationLevels.values()[c.getInt(4)]);
         cache.put(id, task);
         return task;
+    }
+
+    public static Task getFromName(@NonNull DatabaseHelper helper, Context context, String name){
+        Task task;
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor c = db.query(TasksTable.TABLE,
+                new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES,
+                        TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT,
+                        TasksTable.COLUMN_DUE_NOTIFICATION, TasksTable.COLUMN_ID},
+                TasksTable.COLUMN_NAME + "=? AND "+TasksTable.COLUMN_REPEAT+"=2", new String[]{name}, null, null, null
+        );
+        if (!c.moveToFirst())
+            return new Task(helper, context, name);
+        task = new Task(helper, c.getLong(5), c.getString(0), c.getString(1),
+                NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)],
+                NotificationLevels.values()[c.getInt(4)]);
+        return task;
+
     }
 
     /**
@@ -275,6 +294,19 @@ public class Task {
                     //noinspection MagicNumber
                     cal.add(Calendar.MONTH, 12 * rules.getInt(3));
                     break;
+                case SET_TIME:
+                    try {
+                        String timeStr = rules.getString(3);
+                        String[] parts = timeStr.split(":", 2);
+                        int hr = Integer.valueOf(parts[0]);
+                        int min = Integer.valueOf(parts[1]);
+                        cal.set(Calendar.HOUR_OF_DAY, hr);
+                        cal.set(Calendar.MINUTE, min);
+                        hasTime = true;
+                    } catch (NumberFormatException e) {
+                        Snackbar.make(null, "Error setting time: " + e, Snackbar.LENGTH_LONG)
+                                .show();
+                    }
                 default:
                     break;
             }

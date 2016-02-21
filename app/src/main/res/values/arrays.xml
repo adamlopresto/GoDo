@@ -41,6 +41,8 @@
         <item>to day of week</item>
         <item>by weeks</item>
         <item>by years</item>
+        <item>to time</item>
+
     </array>
     <array name = "when_to_repeat">
         <item>Never repeat</item>

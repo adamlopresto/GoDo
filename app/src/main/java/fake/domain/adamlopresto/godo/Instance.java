@@ -6,8 +6,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.util.Log;
 
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -71,13 +74,30 @@ public class Instance {
         if (name.contains("today"))
             instance.setDueDate(cal.getTime());
         else if (name.contains("tomorrow")){
-            cal.add(GregorianCalendar.DATE, 1);
+            cal.add(Calendar.DATE, 1);
             instance.setDueDate(cal.getTime());
-        } else if (name.contains("Sunday")){
-            int today = cal.get(GregorianCalendar.DAY_OF_WEEK);
-            //TODO finish this
+        } else if (name.contains("sunday")){
+            Utils.advanceCalendarToNextWeekday(cal, Calendar.SUNDAY);
+            instance.setDueDate(cal.getTime());
+        } else if (name.contains("monday")){
+            Utils.advanceCalendarToNextWeekday(cal, Calendar.MONDAY);
+            instance.setDueDate(cal.getTime());
+        } else if (name.contains("tuesday")){
+            Utils.advanceCalendarToNextWeekday(cal, Calendar.TUESDAY);
+            instance.setDueDate(cal.getTime());
+        } else if (name.contains("wednesday")){
+            Utils.advanceCalendarToNextWeekday(cal, Calendar.WEDNESDAY);
+            instance.setDueDate(cal.getTime());
+        } else if (name.contains("thursday")){
+            Utils.advanceCalendarToNextWeekday(cal, Calendar.THURSDAY);
+            instance.setDueDate(cal.getTime());
+        } else if (name.contains("friday")){
+            Utils.advanceCalendarToNextWeekday(cal, Calendar.FRIDAY);
+            instance.setDueDate(cal.getTime());
+        } else if (name.contains("saturday")) {
+            Utils.advanceCalendarToNextWeekday(cal, Calendar.SATURDAY);
+            instance.setDueDate(cal.getTime());
         }
-
         return instance;
     }
 
