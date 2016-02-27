@@ -38,6 +38,7 @@ public class GoDoContentProvider extends ContentProvider {
     private static final int DEPENDENCY_ID = 11;
     private static final int INSTANCES_SEARCH = 12;
     private static final int DEPENDENT_INSTANCES = 14;
+    private static final int TEMPLATES = 16;
 
     private static final String INSTANCE_BASE_PATH = "instances";
     public static final Uri INSTANCES_URI = Uri.withAppendedPath(BASE, INSTANCE_BASE_PATH);
@@ -56,6 +57,8 @@ public class GoDoContentProvider extends ContentProvider {
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     private static final String DEPENDANT_INSTANCES_PATH = "dependent_instances";
     public static final Uri DEPENDANT_INSTANCES_URI = Uri.withAppendedPath(BASE, DEPENDANT_INSTANCES_PATH);
+    private static final String TEMPLATES_PATH = "templates";
+    public static final Uri TEMPLATES_URI = Uri.withAppendedPath(BASE, TEMPLATES_PATH);
 
     /*
     public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
@@ -76,6 +79,7 @@ public class GoDoContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, DEPENDENCY_BASE_PATH + "/#", DEPENDENCY_ID);
         sURIMatcher.addURI(AUTHORITY, INSTANCE_SEARCH_PATH, INSTANCES_SEARCH);
         sURIMatcher.addURI(AUTHORITY, DEPENDANT_INSTANCES_PATH+"/#", DEPENDENT_INSTANCES);
+        sURIMatcher.addURI(AUTHORITY, TEMPLATES_PATH, TEMPLATES);
     }
 
     @NonNull
@@ -189,6 +193,13 @@ public class GoDoContentProvider extends ContentProvider {
                         "ORDER BY item_type ASC",
                         new String[]{id, id});
             }
+            case TEMPLATES:
+                return helper.getReadableDatabase().rawQuery(
+                        "select task, task_name from instances_view " +
+                                "where repeat = 2 group by task " +
+                                "order by max(create_date) > max(done_date), max(create_date) desc",
+                        null
+                );
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri+" of type "+uriType);
         }

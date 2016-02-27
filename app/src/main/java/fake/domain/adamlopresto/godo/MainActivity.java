@@ -337,9 +337,9 @@ public class MainActivity extends ActionBarActivity {
             super.onResume();
             Activity activity = getActivity();
             if (activity != null) {
-                final Cursor cursor = activity.getContentResolver().query(GoDoContentProvider.TASKS_URI,
-                        new String[]{TasksTable.COLUMN_ID, TasksTable.COLUMN_NAME},
-                        TasksTable.COLUMN_REPEAT + "=2", null, TasksTable.COLUMN_NAME
+                final Cursor cursor = activity.getContentResolver().query(GoDoContentProvider.TEMPLATES_URI,
+                        new String[]{InstancesView.COLUMN_TASK, InstancesView.COLUMN_TASK_NAME},
+                        null, null, null
                 );
                 FloatingActionButton nextFab;
                 if (cursor != null) {
@@ -348,11 +348,10 @@ public class MainActivity extends ActionBarActivity {
                     populateFABFromCursor(activity, cursor, R.id.action_new_from_template1);
                     populateFABFromCursor(activity, cursor, R.id.action_new_from_template2);
                     populateFABFromCursor(activity, cursor, R.id.action_new_from_template3);
-                    nextFab = (FloatingActionButton) activity.findViewById(R.id.action_new_from_template_more); //TODO
+                    nextFab = (FloatingActionButton) activity.findViewById(R.id.action_new_from_template_more);
                     if (cursor.isAfterLast()) {
                         nextFab.setEnabled(false);
                         nextFab.setVisibility(View.GONE);
-
                     } else {
                         nextFab.setEnabled(true);
                         nextFab.setVisibility(View.VISIBLE);
