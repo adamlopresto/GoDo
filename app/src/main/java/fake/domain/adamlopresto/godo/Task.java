@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -51,7 +52,7 @@ public class Task {
         this.name = name;
     }
 
-    private Task(DatabaseHelper helper, long id, String name, String notes,
+    public Task(DatabaseHelper helper, long id, String name, String notes,
                  NotificationLevels notification, RepeatTypes repeat,
                  NotificationLevels dueNotification) {
         this.helper = helper;
@@ -82,24 +83,6 @@ public class Task {
                 NotificationLevels.values()[c.getInt(4)]);
         cache.put(id, task);
         return task;
-    }
-
-    public static Task getFromName(@NonNull DatabaseHelper helper, Context context, String name){
-        Task task;
-        SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor c = db.query(TasksTable.TABLE,
-                new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES,
-                        TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT,
-                        TasksTable.COLUMN_DUE_NOTIFICATION, TasksTable.COLUMN_ID},
-                TasksTable.COLUMN_NAME + "=? AND "+TasksTable.COLUMN_REPEAT+"=2", new String[]{name}, null, null, null
-        );
-        if (!c.moveToFirst())
-            return new Task(helper, context, name);
-        task = new Task(helper, c.getLong(5), c.getString(0), c.getString(1),
-                NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)],
-                NotificationLevels.values()[c.getInt(4)]);
-        return task;
-
     }
 
     /**

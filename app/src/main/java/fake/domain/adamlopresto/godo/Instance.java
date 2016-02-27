@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -16,6 +14,7 @@ import java.util.GregorianCalendar;
 
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesTable;
+import fake.domain.adamlopresto.godo.db.TasksTable;
 
 public class Instance {
 
@@ -65,38 +64,62 @@ public class Instance {
         //this.createDate = createDate;
     }
 
-    //creates a new Instance from the given task, populating all information it can from the task's
-    //name
-    public static Instance fromTaskByName(DatabaseHelper helper, Task task){
+
+    public static Instance createFromName(DatabaseHelper helper, Context context, String name){
+        name = Character.toTitleCase(name.charAt(0)) + name.substring(1);
+        Task task;
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor c = db.query(TasksTable.TABLE,
+                new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES,
+                        TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT,
+                        TasksTable.COLUMN_DUE_NOTIFICATION, TasksTable.COLUMN_ID},
+                "? like "+TasksTable.COLUMN_NAME+"||'%' AND "+TasksTable.COLUMN_REPEAT+"=2",
+                new String[]{name}, null, null, null
+        );
+        if (!c.moveToFirst()){
+            task = new Task(helper, context, name);
+        } else {
+            task = new Task(helper, c.getLong(5), c.getString(0), c.getString(1),
+                    NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)],
+                    NotificationLevels.values()[c.getInt(4)]);
+        }
+        c.close();
+
         Instance instance = new Instance(helper, task);
-        String name = task.getName().toString().toLowerCase();
+
+        String taskName = task.getName().toString();
+        String lowerCase = taskName.toLowerCase();
         GregorianCalendar cal = new GregorianCalendar();
-        if (name.contains("today"))
+        if (lowerCase.contains("today"))
             instance.setDueDate(cal.getTime());
-        else if (name.contains("tomorrow")){
+        else if (lowerCase.contains("tomorrow")){
             cal.add(Calendar.DATE, 1);
             instance.setDueDate(cal.getTime());
-        } else if (name.contains("sunday")){
+        } else if (lowerCase.contains("sunday")){
             Utils.advanceCalendarToNextWeekday(cal, Calendar.SUNDAY);
             instance.setDueDate(cal.getTime());
-        } else if (name.contains("monday")){
+        } else if (lowerCase.contains("monday")){
             Utils.advanceCalendarToNextWeekday(cal, Calendar.MONDAY);
             instance.setDueDate(cal.getTime());
-        } else if (name.contains("tuesday")){
+        } else if (lowerCase.contains("tuesday")){
             Utils.advanceCalendarToNextWeekday(cal, Calendar.TUESDAY);
             instance.setDueDate(cal.getTime());
-        } else if (name.contains("wednesday")){
+        } else if (lowerCase.contains("wednesday")){
             Utils.advanceCalendarToNextWeekday(cal, Calendar.WEDNESDAY);
             instance.setDueDate(cal.getTime());
-        } else if (name.contains("thursday")){
+        } else if (lowerCase.contains("thursday")){
             Utils.advanceCalendarToNextWeekday(cal, Calendar.THURSDAY);
             instance.setDueDate(cal.getTime());
-        } else if (name.contains("friday")){
+        } else if (lowerCase.contains("friday")){
             Utils.advanceCalendarToNextWeekday(cal, Calendar.FRIDAY);
             instance.setDueDate(cal.getTime());
-        } else if (name.contains("saturday")) {
+        } else if (lowerCase.contains("saturday")) {
             Utils.advanceCalendarToNextWeekday(cal, Calendar.SATURDAY);
             instance.setDueDate(cal.getTime());
+        }
+        if (taskName.length() < name.length()){
+            name = name.substring(taskName.length()).trim();
+            instance.setNotes(name);
         }
         return instance;
     }
