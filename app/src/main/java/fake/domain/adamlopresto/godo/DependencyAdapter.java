@@ -23,7 +23,7 @@ public class DependencyAdapter extends BaseAdapter{
         this.context = context;
         this.newDependency = newDependency;
         this.pickDependency = pickDependency;
-        taskAdapter = new TaskAdapter(context, null, false);
+        taskAdapter = new TaskAdapter(context, null, false, null); //TODO
         taskAdapter.registerDataSetObserver(new DataSetObserver() {
             /**
              * This method is called when the entire data set has changed,

@@ -16,20 +16,22 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.util.Pair;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.ActionMode;
@@ -42,10 +44,8 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Checkable;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.support.design.widget.FloatingActionButton;
 import android.widget.TextView;
 
 import com.novaapps.FloatingActionMenu;
@@ -53,11 +53,10 @@ import com.novaapps.FloatingActionMenu;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesView;
 import fake.domain.adamlopresto.godo.db.TasksTable;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     private MainListFragment fragment;
 
@@ -65,16 +64,20 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar ab = getSupportActionBar();
+        if (ab != null)
+            ab.setDisplayHomeAsUpEnabled(true);
 
         fragment = new MainListFragment();
 
         getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
     }
 
+    /*
     public void checkBoxClick(View v) {
         fragment.checkBoxClick(v);
     }
+    */
 
     private static void createTemplateMenu(final Activity activity) {
         final Cursor cursor = activity.getContentResolver().query(GoDoContentProvider.TASKS_URI,
@@ -138,7 +141,7 @@ public class MainActivity extends ActionBarActivity {
         fragment.drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    public static class MainListFragment extends ListFragment  implements LoaderManager.LoaderCallbacks<Cursor> {
+    public static class MainListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
         private TaskAdapter adapter;
         private boolean paused = false;
@@ -156,13 +159,53 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onActivityCreated(@Nullable Bundle savedInstanceState) {
             super.onActivityCreated(savedInstanceState);
-            getListView().setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
-            getListView().setMultiChoiceModeListener(mActionModeCallback);
+            RecyclerView recyclerView = (RecyclerView) getView().findViewById(android.R.id.list);
+            assert recyclerView != null;
+
+            /* TODO
+            recyclerView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
+            recyclerView.setMultiChoiceModeListener(mActionModeCallback);
+            */
 
             final Activity activity = getActivity();
 
-            adapter = new TaskAdapter(activity, null, true);
-            setListAdapter(adapter);
+            View.OnClickListener onClickListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TaskAdapter.TaskHolder holder = (TaskAdapter.TaskHolder) v.getTag();
+                    if (holder != null) {
+                        Intent intent = new Intent(getActivity(), TaskActivity.class);
+                        intent.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, holder.id);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            Collection<Pair<View, String>> list = new ArrayList<>(5);
+                            addViewIfFound(list, holder.name, "taskName");
+                            addViewIfFound(list, holder.taskNotes, "taskNotes");
+                            addViewIfFound(list, holder.instanceNotes, "instanceNotes");
+                            addViewIfFound(list, holder.planDate, "planDate");
+                            addViewIfFound(list, holder.dueDate, "dueDate");
+
+                            Pair[] array = new Pair[list.size()];
+                            list.toArray(array);
+
+                            ActivityCompat.startActivity(getActivity(), intent,
+                                    ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                                            array
+                                    ).toBundle());
+                        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                            ActivityCompat.startActivity(getActivity(), intent,
+                                    ActivityOptionsCompat.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight()).toBundle());
+                        } else {
+                            startActivity(intent);
+                        }
+                    }
+                }
+            };
+
+            adapter = new TaskAdapter(activity, null, true, onClickListener);
+            recyclerView.setAdapter(adapter);
+
+            adapter.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
+            adapter.setMultiChoiceModeListener(mActionModeCallback);
 
             setHasOptionsMenu(true);
 
@@ -456,6 +499,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
 
+        /*
         @SuppressWarnings ("unchecked")
         @Override
         public void onListItemClick(ListView listView, View v, int position, long id) {
@@ -483,14 +527,16 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         }
+        */
 
-        private void addViewIfFound(Collection<Pair<View, String>> list, View parent, @IdRes int id, String transitionName){
-            View view = parent.findViewById(id);
+
+        private static void addViewIfFound(Collection<Pair<View, String>> list, View view, String transitionName){
             if (view != null && view.getVisibility() == View.VISIBLE){
                 list.add(new Pair<>(view, transitionName));
             }
         }
 
+        /*
         public void checkBoxClick(View v) {
             ListView lv = getListView();
             Checkable cb = (Checkable) v;
@@ -499,6 +545,7 @@ public class MainActivity extends ActionBarActivity {
             inst.flush();
             getActivity().getContentResolver().notifyChange(GoDoContentProvider.INSTANCES_URI, null);
         }
+        */
 
 
         @Nullable
@@ -553,6 +600,87 @@ public class MainActivity extends ActionBarActivity {
             adapter.swapCursor(null);
         }
 
+        private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+            @NonNull
+            private MenuItem editItem;
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                // Inflate a menu resource providing context menu items
+                MenuInflater inflater = mode.getMenuInflater();
+                if (inflater == null)
+                    inflater = new MenuInflater(getActivity());
+                inflater.inflate(R.menu.main_cab, menu);
+                editItem = menu.findItem(R.id.edit);
+                mode.setTitle("Tasks");
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                MainActivity activity = (MainActivity)getActivity();
+                switch (item.getItemId()) {
+                    case R.id.edit: {
+                        final long id = adapter.getCheckedItemIds()[0];
+                        mode.finish(); // Action picked, so close the CAB
+                        Intent i = new Intent(getActivity(), TaskActivity.class);
+                        i.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id);
+                        activity.startActivityWithTransitions(i);
+                        return true;
+                    }
+                    case R.id.create_prereq:
+                        startActivity(new Intent(getActivity(), TaskActivity.class)
+                                .putExtra("next", adapter.getCheckedItemIds()));
+                        mode.finish();
+                        return true;
+
+                    case R.id.create_next_step:
+                        startActivity(new Intent(getActivity(), TaskActivity.class)
+                                .putExtra("prereq", adapter.getCheckedItemIds()));
+                        mode.finish();
+                        return true;
+
+                    case R.id.delete: {
+                        final long[] ids = adapter.getCheckedItemIds();
+                        new AlertDialog.Builder(getActivity())
+                                .setMessage("Delete these tasks?")
+                                .setNegativeButton(android.R.string.cancel, null)
+                                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ContentResolver res = getActivity().getContentResolver();
+                                        String where = TasksTable.COLUMN_ID + "=?";
+                                        String[] idArray = new String[1];
+
+                                        for (long id : ids) {
+                                            idArray[0] = String.valueOf(id);
+                                            res.delete(GoDoContentProvider.INSTANCES_URI, where, idArray);
+                                        }
+                                        restartLoader();
+                                    }
+
+                                }).show();
+
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
+                    }
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+
+            }
+        };
+
+        /*
         @Nullable
         private final AbsListView.MultiChoiceModeListener mActionModeCallback = new AbsListView.MultiChoiceModeListener() {
             @NonNull
@@ -656,5 +784,7 @@ public class MainActivity extends ActionBarActivity {
             public void onDestroyActionMode(ActionMode mode) {
             }
         };
+        */
     }
+
 }

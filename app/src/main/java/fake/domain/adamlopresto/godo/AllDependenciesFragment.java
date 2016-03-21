@@ -194,7 +194,7 @@ public class AllDependenciesFragment extends ListFragment
         final Cursor c = getActivity().getContentResolver()
                 .query(GoDoContentProvider.INSTANCES_URI, TaskAdapter.PROJECTION, "done_date is null", null, "task_name ASC");
         new AlertDialog.Builder(getActivity())
-                .setAdapter(new TaskAdapter(getActivity(), c, false),
+                .setAdapter(new TaskAdapter(getActivity(), c, false, null), //TODO
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
