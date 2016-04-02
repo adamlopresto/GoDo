@@ -631,18 +631,21 @@ public class MainActivity extends AppCompatActivity {
                         Intent i = new Intent(getActivity(), TaskActivity.class);
                         i.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id);
                         activity.startActivityWithTransitions(i);
+                        adapter.clearSelection();
                         return true;
                     }
                     case R.id.create_prereq:
                         startActivity(new Intent(getActivity(), TaskActivity.class)
                                 .putExtra("next", adapter.getCheckedItemIds()));
                         mode.finish();
+                        adapter.clearSelection();
                         return true;
 
                     case R.id.create_next_step:
                         startActivity(new Intent(getActivity(), TaskActivity.class)
                                 .putExtra("prereq", adapter.getCheckedItemIds()));
                         mode.finish();
+                        adapter.clearSelection();
                         return true;
 
                     case R.id.delete: {
@@ -667,6 +670,7 @@ public class MainActivity extends AppCompatActivity {
                                 }).show();
 
                         mode.finish(); // Action picked, so close the CAB
+                        adapter.clearSelection();
                         return true;
                     }
                     default:

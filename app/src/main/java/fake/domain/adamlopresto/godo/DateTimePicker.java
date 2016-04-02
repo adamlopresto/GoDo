@@ -343,8 +343,8 @@ public class DateTimePicker extends LinearLayout {
         this.listener = listener;
     }
 
-    public static interface OnDateChangeListener {
-        public void onDateChanged(Date newDate, boolean hasTime, RepetitionRuleColumns column);
+    public interface OnDateChangeListener {
+        void onDateChanged(Date newDate, boolean hasTime, RepetitionRuleColumns column);
     }
 
 

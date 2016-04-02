@@ -7,25 +7,23 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import java.util.Collection;
-
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 
-public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> implements ListAdapter{
+public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> implements ListAdapter {
 
     public static final String[] PROJECTION = {"_id", "task_name",
             "task_notes", "instance_notes", "due_date", "plan_date", "done_date"};
@@ -34,7 +32,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
             "coalesce(plan_date || ' 00:00:00', DATETIME('now', 'localtime')), " +
             "due_date || ' 23:59:59', notification DESC, next_steps DESC, random()";
 
-    @SuppressWarnings("UnusedDeclaration")
+    @SuppressWarnings ("UnusedDeclaration")
     private static final int ID = 0;
     private static final int TASK_NAME = 1;
     private static final int TASK_NOTES = 2;
@@ -43,8 +41,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
     private static final int PLAN_DATE = 5;
     private static final int DONE_DATE = 6;
     private final boolean showCheckBox;
+
+    @Nullable
     private View.OnClickListener onClickListener;
-    private View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
+    private final View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
             toggleSelected(v);
@@ -53,26 +53,48 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
     };
     private int choiceMode;
     private ActionMode.Callback multiChoiceModeListener;
+    @Nullable
     private ActionMode actionMode;
 
-    public void toggleSelected(View view){
-        TaskHolder holder = (TaskHolder)view.getTag();
-        Snackbar.make(view, "Selected an item", Snackbar.LENGTH_LONG).show();
+    private final Context context;
+    private Cursor cursor;
+
+    private final SparseBooleanArray selectedItems = new SparseBooleanArray();
+    private int numSelected = 0;
+
+    public TaskAdapter(@NonNull Context context, Cursor cursor, boolean showCheckBox, final View.OnClickListener onClickListener) {
+        this.context = context;
+        this.cursor = cursor;
+        this.showCheckBox = showCheckBox;
+        if (onClickListener != null) {
+            this.onClickListener = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (numSelected > 0)
+                        toggleSelected(v);
+                    else
+                        onClickListener.onClick(v);
+                }
+            };
+        }
+    }
+
+    public void toggleSelected(View view) {
+        TaskHolder holder = (TaskHolder) view.getTag();
         if (holder != null) {
             int pos = holder.getAdapterPosition();
             boolean wasSelected = selectedItems.get(pos);
             if (wasSelected) {
                 selectedItems.delete(pos);
-                if (0 == --numSelected && actionMode != null){
+                if (0 == --numSelected && actionMode != null) {
                     actionMode.finish();
                     actionMode = null;
                 }
-            }
-            else {
+            } else {
                 selectedItems.put(pos, true);
-                Log.e("GoDo", "putting true for "+pos);
-                Log.e("GoDo", "value is now "+selectedItems.get(pos));
-                if (1 == ++numSelected && multiChoiceModeListener != null){
+                Log.e("GoDo", "putting true for " + pos);
+                Log.e("GoDo", "value is now " + selectedItems.get(pos));
+                if (1 == ++numSelected && multiChoiceModeListener != null) {
                     actionMode = view.startActionMode(multiChoiceModeListener);
                 }
             }
@@ -80,40 +102,33 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
         }
     }
 
-    private final Context context;
-    private Cursor cursor;
-
-    private SparseBooleanArray selectedItems = new SparseBooleanArray();
-    private int numSelected = 0;
-
-    public TaskAdapter(@NonNull Context context, Cursor cursor, boolean showCheckBox, View.OnClickListener onClickListener) {
-        this.context = context;
-        this.cursor = cursor;
-        this.showCheckBox = showCheckBox;
-        this.onClickListener = onClickListener;
+    public void clearSelection() {
+        numSelected = 0;
+        selectedItems.clear();
+        notifyDataSetChanged();
     }
 
-    public void swapCursor(Cursor cursor){
+    public void swapCursor(Cursor cursor) {
         this.cursor = cursor;
         notifyDataSetChanged();
     }
 
     private static void setTextViewDate(@NonNull TextView v, String prefix, @Nullable String s, boolean done, boolean overdue,
-                                 boolean future) {
+                                        boolean future) {
         if (!hideView(v, s))
             //noinspection ConstantConditions
             setTextViewInner(v, prefix + Utils.formatShortRelativeDate(s), done, overdue, future);
     }
 
     private static void setTextView(@NonNull TextView v, CharSequence s, boolean done, boolean overdue,
-                             boolean future) {
+                                    boolean future) {
         if (!hideView(v, s))
             setTextViewInner(v, s, done, overdue, future);
 
     }
 
     private static void setTextViewInner(@NonNull TextView v, CharSequence s, boolean done, boolean overdue,
-                                  boolean future) {
+                                         boolean future) {
         v.setText(s);
         //noinspection IfMayBeConditional
         if (done)
@@ -121,9 +136,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
         else
             v.setPaintFlags(v.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
 
-        v.setTextColor(overdue ? Color.RED   :
-                       future  ? Color.GRAY  :
-                                 Color.BLACK);
+        v.setTextColor(overdue ? Color.RED :
+                       future ? Color.GRAY :
+                       Color.BLACK);
     }
 
     @SuppressWarnings ("BooleanMethodIsAlwaysInverted")
@@ -137,12 +152,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
         return false;
     }
 
-    private View createView(ViewGroup parent){
+    private View createView(ViewGroup parent) {
         View view = LayoutInflater.from(context).inflate(R.layout.main_list_item, parent, false);
         if (onClickListener != null) {
             view.setOnClickListener(onClickListener);
+            view.setOnLongClickListener(onLongClickListener);
         }
-        view.setOnLongClickListener(onLongClickListener);
         return view;
     }
 
@@ -177,7 +192,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
                     inst.updateDone(done);
                     inst.flush();
                     if (done)
-                        notifyItemMoved(position, getCount()-1);
+                        notifyItemMoved(position, getCount() - 1);
                     else
                         notifyItemMoved(position, 0);
                     //TODO update
@@ -289,14 +304,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
     public long[] getCheckedItemIds() {
         long[] ids = new long[numSelected];
         int arrayIndex = 0;
-        Log.e("GoDo", "getCheckItemIds: count: "+numSelected);
-        for (int item = 0 ; item < selectedItems.size() ; ++item){
+        Log.e("GoDo", "getCheckItemIds: count: " + numSelected);
+        for (int item = 0; item < selectedItems.size(); ++item) {
             int pos = selectedItems.keyAt(item);
-            Log.e("GoDo", "getCheckItemIds: arrayIndex="+arrayIndex+", pos="+pos);
-            if (selectedItems.valueAt(item)){
+            Log.e("GoDo", "getCheckItemIds: arrayIndex=" + arrayIndex + ", pos=" + pos);
+            if (selectedItems.valueAt(item)) {
                 Log.e("GoDo", "getCheckItemIds: item is selected");
                 ids[arrayIndex++] = getItemId(pos);
-                Log.e("GoDo", "getCheckItemIds: id="+getItemId(pos));
+                Log.e("GoDo", "getCheckItemIds: id=" + getItemId(pos));
             }
         }
         return ids;
@@ -308,7 +323,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
 
     @Override
     public long getItemId(int position) {
-        if (cursor != null && cursor.moveToPosition(position)){
+        if (cursor != null && cursor.moveToPosition(position)) {
             return cursor.getLong(ID);
         }
         return RecyclerView.NO_ID;
@@ -318,7 +333,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
         this.multiChoiceModeListener = multiChoiceModeListener;
     }
 
-    public static class TaskHolder extends RecyclerView.ViewHolder{
+    public static class TaskHolder extends RecyclerView.ViewHolder {
         public CheckBox done;
         public TextView name;
         public TextView taskNotes;
@@ -339,7 +354,5 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
             dueDate = (TextView) itemView.findViewById(R.id.due_date);
 
         }
-
-
     }
 }

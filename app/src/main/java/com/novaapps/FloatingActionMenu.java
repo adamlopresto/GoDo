@@ -38,16 +38,16 @@ public class FloatingActionMenu extends ViewGroup {
     static final TimeInterpolator DEFAULT_CLOSE_INTERPOLATOR = new AccelerateDecelerateInterpolator();
 
     private FloatingActionButton mMenuButton;
-    private ArrayList<FloatingActionButton> mMenuItems;
-    private ArrayList<TextView> mMenuItemLabels;
-    private ArrayList<ItemAnimator> mMenuItemAnimators;
-    private AnimatorSet mOpenAnimatorSet = new AnimatorSet();
-    private AnimatorSet mCloseAnimatorSet = new AnimatorSet();
-    private ImageView mIcon;
+    private final ArrayList<FloatingActionButton> mMenuItems;
+    private final ArrayList<TextView> mMenuItemLabels;
+    private final ArrayList<ItemAnimator> mMenuItemAnimators;
+    private final AnimatorSet mOpenAnimatorSet = new AnimatorSet();
+    private final AnimatorSet mCloseAnimatorSet = new AnimatorSet();
+    private final ImageView mIcon;
 
     private boolean mOpen;
     private boolean animating;
-    private boolean mIsSetClosedOnTouchOutside = true;
+    private final boolean mIsSetClosedOnTouchOutside = true;
     private long duration = 300;
     private boolean isCircle = false;
     private int mRadius = 256;
@@ -70,7 +70,7 @@ public class FloatingActionMenu extends ViewGroup {
                     return true;
                 }
             });
-    private OnClickListener mOnItemClickListener = new OnClickListener() {
+    private final OnClickListener mOnItemClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (v instanceof FloatingActionButton) {
@@ -377,7 +377,7 @@ public class FloatingActionMenu extends ViewGroup {
         if (getBackground() != null) {
 
 
-            ValueAnimator hideBackgroundAnimator = ObjectAnimator.ofInt(0xff, 0);
+            ValueAnimator hideBackgroundAnimator = ValueAnimator.ofInt(0xff, 0);
             hideBackgroundAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
@@ -386,7 +386,7 @@ public class FloatingActionMenu extends ViewGroup {
                     getBackground().setAlpha(alpha > 0xff ? 0xff : alpha);
                 }
             });
-            ValueAnimator showBackgroundAnimator = ObjectAnimator.ofInt(0, 0xff);
+            ValueAnimator showBackgroundAnimator = ValueAnimator.ofInt(0, 0xff);
             showBackgroundAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
@@ -489,7 +489,7 @@ public class FloatingActionMenu extends ViewGroup {
     }
 
     private class ItemAnimator implements Animator.AnimatorListener {
-        private View mView;
+        private final View mView;
         private boolean playingOpenAnimator;
 
         public ItemAnimator(View v) {
