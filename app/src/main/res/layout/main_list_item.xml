@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout style="@style/activatedBackgroundIndicator"
+              xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:baselineAligned="false"
-    style="@style/activatedBackgroundIndicator"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:baselineAligned="true"
+              android:orientation="horizontal"
     >
     <FrameLayout
         android:layout_width="wrap_content"
@@ -16,8 +16,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:focusable="false"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:transitionName="checkbox"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            />
         <View
             android:layout_width="8dp"
             android:layout_height="0dp" />
@@ -25,38 +26,37 @@
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="vertical"
         >
 
         <TextView
             android:id="@+id/task_name"
-            android:transitionName="taskName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="36dp"
             android:gravity="center_vertical"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textIsSelectable="false"
+            android:transitionName="taskName"
             tools:text="Task Name"
             />
 
             <TextView
                 android:id="@+id/task_notes"
-                android:transitionName="taskNotes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textIsSelectable="false"
+                android:transitionName="taskNotes"
                 tools:text="Task Notes go here. They can be pretty long, but shouldn't be insanely long"
                 />
 
             <TextView
                 android:id="@+id/instance_notes"
-                android:transitionName="instanceNotes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textIsSelectable="false"
+                android:transitionName="instanceNotes"
                 tools:text="Instance notes here"
                 />
     </LinearLayout>
@@ -64,28 +64,28 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="bottom">
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/plan_date"
-            android:transitionName="planDate"
             android:layout_width="wrap_content"
-            android:minEms="6"
-            android:maxEms="6"
             android:layout_height="wrap_content"
+            android:maxEms="6"
+            android:minEms="6"
             android:textIsSelectable="false"
+            android:transitionName="planDate"
             tools:text="P: Wednesday"
             />
 
         <TextView
             android:id="@+id/due_date"
-            android:transitionName="dueDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minEms="6"
             android:maxEms="6"
+            android:minEms="6"
             android:textIsSelectable="false"
+            android:transitionName="dueDate"
             tools:text="D: Due date"
             />
 

@@ -60,25 +60,6 @@ public class MainActivity extends AppCompatActivity {
 
     private MainListFragment fragment;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        ActionBar ab = getSupportActionBar();
-        if (ab != null)
-            ab.setDisplayHomeAsUpEnabled(true);
-
-        fragment = new MainListFragment();
-
-        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
-    }
-
-    /*
-    public void checkBoxClick(View v) {
-        fragment.checkBoxClick(v);
-    }
-    */
-
     private static void createTemplateMenu(final Activity activity) {
         final Cursor cursor = activity.getContentResolver().query(GoDoContentProvider.TASKS_URI,
                 new String[]{TasksTable.COLUMN_ID, TasksTable.COLUMN_NAME,
@@ -117,6 +98,25 @@ public class MainActivity extends AppCompatActivity {
         //cursor.close();
     }
 
+    /*
+    public void checkBoxClick(View v) {
+        fragment.checkBoxClick(v);
+    }
+    */
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        ActionBar ab = getSupportActionBar();
+        if (ab != null)
+            ab.setDisplayHomeAsUpEnabled(true);
+
+        fragment = new MainListFragment();
+
+        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, fragment).commit();
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
@@ -143,13 +143,101 @@ public class MainActivity extends AppCompatActivity {
 
     public static class MainListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-        private TaskAdapter adapter;
-        private boolean paused = false;
-        public ActionBarDrawerToggle drawerToggle;
         final ArrayList<Long> templateIds = new ArrayList<>(3);
+        public ActionBarDrawerToggle drawerToggle;
+        private TaskAdapter adapter;
+        private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+            @NonNull
+            private MenuItem editItem;
 
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                // Inflate a menu resource providing context menu items
+                MenuInflater inflater = mode.getMenuInflater();
+                if (inflater == null)
+                    inflater = new MenuInflater(getActivity());
+                inflater.inflate(R.menu.main_cab, menu);
+                editItem = menu.findItem(R.id.edit);
+                mode.setTitle("Tasks");
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                MainActivity activity = (MainActivity) getActivity();
+                switch (item.getItemId()) {
+                    case R.id.edit: {
+                        final long id = adapter.getCheckedItemIds()[0];
+                        mode.finish(); // Action picked, so close the CAB
+                        Intent i = new Intent(getActivity(), TaskActivity.class);
+                        i.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id);
+                        activity.startActivityWithTransitions(i);
+                        adapter.clearSelection();
+                        return true;
+                    }
+                    case R.id.create_prereq:
+                        startActivity(new Intent(getActivity(), TaskActivity.class)
+                                .putExtra("next", adapter.getCheckedItemIds()));
+                        mode.finish();
+                        adapter.clearSelection();
+                        return true;
+
+                    case R.id.create_next_step:
+                        startActivity(new Intent(getActivity(), TaskActivity.class)
+                                .putExtra("prereq", adapter.getCheckedItemIds()));
+                        mode.finish();
+                        adapter.clearSelection();
+                        return true;
+
+                    case R.id.delete: {
+                        final long[] ids = adapter.getCheckedItemIds();
+                        new AlertDialog.Builder(getActivity())
+                                .setMessage("Delete these tasks?")
+                                .setNegativeButton(android.R.string.cancel, null)
+                                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ContentResolver res = getActivity().getContentResolver();
+                                        String where = TasksTable.COLUMN_ID + "=?";
+                                        String[] idArray = new String[1];
+
+                                        for (long id : ids) {
+                                            idArray[0] = String.valueOf(id);
+                                            res.delete(GoDoContentProvider.INSTANCES_URI, where, idArray);
+                                        }
+                                        restartLoader();
+                                    }
+
+                                }).show();
+
+                        mode.finish(); // Action picked, so close the CAB
+                        adapter.clearSelection();
+                        return true;
+                    }
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+
+            }
+        };
+        private boolean paused = false;
         @Nullable
         private String query;
+
+        private static void addViewIfFound(Collection<Pair<View, String>> list, View view, String transitionName) {
+            if (view != null && view.getVisibility() == View.VISIBLE) {
+                list.add(new Pair<>(view, transitionName));
+            }
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -176,6 +264,7 @@ public class MainActivity extends AppCompatActivity {
                     if (holder != null) {
                         Intent intent = new Intent(getActivity(), TaskActivity.class);
                         intent.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, holder.id);
+                        /*
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             Collection<Pair<View, String>> list = new ArrayList<>(5);
                             addViewIfFound(list, holder.name, "taskName");
@@ -191,7 +280,9 @@ public class MainActivity extends AppCompatActivity {
                                     ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
                                             array
                                     ).toBundle());
-                        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        } else
+                        */
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                             ActivityCompat.startActivity(getActivity(), intent,
                                     ActivityOptionsCompat.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight()).toBundle());
                         } else {
@@ -326,8 +417,6 @@ public class MainActivity extends AppCompatActivity {
             restartLoader();
         }
 
-
-
         private void populateFABFromCursor(Activity activity, Cursor cursor, int resource) {
             FloatingActionButton nextFab = (FloatingActionButton) activity.findViewById(resource);
             TextView textView = (TextView) nextFab.getTag();
@@ -361,7 +450,6 @@ public class MainActivity extends AppCompatActivity {
             getLoaderManager().restartLoader(0, null, this);
         }
 
-
         @Override
         public void onStart() {
             super.onStart();
@@ -373,7 +461,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }).start();
         }
-
 
         @Override
         public void onResume() {
@@ -414,6 +501,37 @@ public class MainActivity extends AppCompatActivity {
             super.onPause();
             paused = true;
         }
+
+
+        /*
+        @SuppressWarnings ("unchecked")
+        @Override
+        public void onListItemClick(ListView listView, View v, int position, long id) {
+            Intent intent = new Intent(getActivity(), TaskActivity.class);
+            intent.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Collection<Pair<View, String>> list = new ArrayList<>(5);
+                addViewIfFound(list, v, R.id.task_name, "taskName");
+                addViewIfFound(list, v, R.id.task_notes, "taskNotes");
+                addViewIfFound(list, v, R.id.instance_notes, "instanceNotes");
+                addViewIfFound(list, v, R.id.plan_date, "planDate");
+                addViewIfFound(list, v, R.id.due_date, "dueDate");
+
+                Pair[] array = new Pair[list.size()];
+                list.toArray(array);
+
+                ActivityCompat.startActivity(getActivity(), intent,
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                                array
+                        ).toBundle());
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                ActivityCompat.startActivity(getActivity(), intent,
+                        ActivityOptionsCompat.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight()).toBundle());
+            } else {
+                startActivity(intent);
+            }
+        }
+        */
 
         @Override
         public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -458,6 +576,17 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        /*
+        public void checkBoxClick(View v) {
+            ListView lv = getListView();
+            Checkable cb = (Checkable) v;
+            Instance inst = Instance.get(DatabaseHelper.getInstance(getActivity()), lv.getItemIdAtPosition(lv.getPositionForView(v)));
+            inst.updateDone(cb.isChecked());
+            inst.flush();
+            getActivity().getContentResolver().notifyChange(GoDoContentProvider.INSTANCES_URI, null);
+        }
+        */
+
         @Override
         public boolean onOptionsItemSelected(@NonNull MenuItem item) {
             if (drawerToggle.onOptionsItemSelected(item))
@@ -497,56 +626,6 @@ public class MainActivity extends AppCompatActivity {
 
             return super.onOptionsItemSelected(item);
         }
-
-
-        /*
-        @SuppressWarnings ("unchecked")
-        @Override
-        public void onListItemClick(ListView listView, View v, int position, long id) {
-            Intent intent = new Intent(getActivity(), TaskActivity.class);
-            intent.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Collection<Pair<View, String>> list = new ArrayList<>(5);
-                addViewIfFound(list, v, R.id.task_name, "taskName");
-                addViewIfFound(list, v, R.id.task_notes, "taskNotes");
-                addViewIfFound(list, v, R.id.instance_notes, "instanceNotes");
-                addViewIfFound(list, v, R.id.plan_date, "planDate");
-                addViewIfFound(list, v, R.id.due_date, "dueDate");
-
-                Pair[] array = new Pair[list.size()];
-                list.toArray(array);
-
-                ActivityCompat.startActivity(getActivity(), intent,
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-                                array
-                        ).toBundle());
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                ActivityCompat.startActivity(getActivity(), intent,
-                        ActivityOptionsCompat.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight()).toBundle());
-            } else {
-                startActivity(intent);
-            }
-        }
-        */
-
-
-        private static void addViewIfFound(Collection<Pair<View, String>> list, View view, String transitionName){
-            if (view != null && view.getVisibility() == View.VISIBLE){
-                list.add(new Pair<>(view, transitionName));
-            }
-        }
-
-        /*
-        public void checkBoxClick(View v) {
-            ListView lv = getListView();
-            Checkable cb = (Checkable) v;
-            Instance inst = Instance.get(DatabaseHelper.getInstance(getActivity()), lv.getItemIdAtPosition(lv.getPositionForView(v)));
-            inst.updateDone(cb.isChecked());
-            inst.flush();
-            getActivity().getContentResolver().notifyChange(GoDoContentProvider.INSTANCES_URI, null);
-        }
-        */
-
 
         @Nullable
         @Override
@@ -599,90 +678,6 @@ public class MainActivity extends AppCompatActivity {
         public void onLoaderReset(Loader<Cursor> loader) {
             adapter.swapCursor(null);
         }
-
-        private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
-            @NonNull
-            private MenuItem editItem;
-
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                // Inflate a menu resource providing context menu items
-                MenuInflater inflater = mode.getMenuInflater();
-                if (inflater == null)
-                    inflater = new MenuInflater(getActivity());
-                inflater.inflate(R.menu.main_cab, menu);
-                editItem = menu.findItem(R.id.edit);
-                mode.setTitle("Tasks");
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                MainActivity activity = (MainActivity)getActivity();
-                switch (item.getItemId()) {
-                    case R.id.edit: {
-                        final long id = adapter.getCheckedItemIds()[0];
-                        mode.finish(); // Action picked, so close the CAB
-                        Intent i = new Intent(getActivity(), TaskActivity.class);
-                        i.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, id);
-                        activity.startActivityWithTransitions(i);
-                        adapter.clearSelection();
-                        return true;
-                    }
-                    case R.id.create_prereq:
-                        startActivity(new Intent(getActivity(), TaskActivity.class)
-                                .putExtra("next", adapter.getCheckedItemIds()));
-                        mode.finish();
-                        adapter.clearSelection();
-                        return true;
-
-                    case R.id.create_next_step:
-                        startActivity(new Intent(getActivity(), TaskActivity.class)
-                                .putExtra("prereq", adapter.getCheckedItemIds()));
-                        mode.finish();
-                        adapter.clearSelection();
-                        return true;
-
-                    case R.id.delete: {
-                        final long[] ids = adapter.getCheckedItemIds();
-                        new AlertDialog.Builder(getActivity())
-                                .setMessage("Delete these tasks?")
-                                .setNegativeButton(android.R.string.cancel, null)
-                                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        ContentResolver res = getActivity().getContentResolver();
-                                        String where = TasksTable.COLUMN_ID + "=?";
-                                        String[] idArray = new String[1];
-
-                                        for (long id : ids) {
-                                            idArray[0] = String.valueOf(id);
-                                            res.delete(GoDoContentProvider.INSTANCES_URI, where, idArray);
-                                        }
-                                        restartLoader();
-                                    }
-
-                                }).show();
-
-                        mode.finish(); // Action picked, so close the CAB
-                        adapter.clearSelection();
-                        return true;
-                    }
-                    default:
-                        return false;
-                }
-            }
-
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
-
-            }
-        };
 
         /*
         @Nullable
