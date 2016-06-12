@@ -271,6 +271,9 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                                 RepetitionRulesTable.COLUMN_FROM, RepetitionRulesTable.COLUMN_TO},
                         RepetitionRulesTable.COLUMN_TASK + "=?", Utils.idToSelectionArgs(params[0]),null);
 
+                if (cursor == null)
+                    return null;
+
                 if (!cursor.moveToFirst()) {
                     cursor.close();
                     return null;
