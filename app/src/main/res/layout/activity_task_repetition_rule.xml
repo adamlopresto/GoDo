@@ -64,9 +64,11 @@
         android:id="@+id/number_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/repetition_number" />
+        android:text="@string/repetition_number"
+        android:labelFor="@+id/number"
+        />
     <EditText
-        android:id="@+id/number"
+        android:id="@id/number"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_columnSpan="2"

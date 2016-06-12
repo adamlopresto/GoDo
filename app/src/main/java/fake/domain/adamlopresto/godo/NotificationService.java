@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesView;
@@ -168,7 +169,7 @@ public class NotificationService extends Service {
                                 instanceNotes);
                         if (total != 1) {
                             builder.setGroup(GROUP_KEY);
-                            builder.setSortKey(String.format("%03d", numToNotify));
+                            builder.setSortKey(String.format(Locale.US, "%03d", numToNotify));
                         }
                         builder.setPriority(priorityFromLevel(notificationLevel));
                         nm.notify((int) id, builder.build());

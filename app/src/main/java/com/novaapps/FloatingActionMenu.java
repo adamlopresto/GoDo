@@ -32,6 +32,7 @@ import fake.domain.adamlopresto.godo.R;
 /**
  * Created by charry on 2015/6/11. https://gist.github.com/douo/dfde289778a9b3b6918f and modified by Tristan Wiley
  */
+@SuppressWarnings ("ALL")
 public class FloatingActionMenu extends ViewGroup {
 
     static final TimeInterpolator DEFAULT_OPEN_INTERPOLATOR = new OvershootInterpolator();
