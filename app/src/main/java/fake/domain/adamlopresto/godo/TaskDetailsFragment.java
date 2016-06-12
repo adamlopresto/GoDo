@@ -1,6 +1,7 @@
 package fake.domain.adamlopresto.godo;
 
 import android.animation.LayoutTransition;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,15 +15,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -224,7 +229,25 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
 
     private void extractTaskDetails() {
         Task task = getTask();
-        taskName.setText(task.getName());
+        CharSequence name = task.getName();
+        taskName.setText(name);
+        if (TextUtils.isEmpty(name)){
+            taskName.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    if (oldLeft != 0)
+                        taskName.removeOnLayoutChangeListener(this);
+                    InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null) {
+                        imm.showSoftInput(taskName, InputMethodManager.SHOW_IMPLICIT);
+                        /*
+                        Log.e("GoDo", "Showing soft input 12 "+left+", "+top+", "+right+", "+bottom+", "
+                                +oldLeft+", "+oldTop+", "+oldRight+", "+oldBottom);
+                        */
+                    }
+                }
+            });
+        }
         taskNotes.setText(task.getNotes());
         notification.setSelection(task.getNotification().ordinal());
         dueNotification.setSelection(task.getDueNotification().ordinal());
