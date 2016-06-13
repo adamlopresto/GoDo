@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -81,6 +80,7 @@ public class Task {
         task = new Task(helper, id, c.getString(0), c.getString(1),
                 NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)],
                 NotificationLevels.values()[c.getInt(4)]);
+        c.close();
         cache.put(id, task);
         return task;
     }

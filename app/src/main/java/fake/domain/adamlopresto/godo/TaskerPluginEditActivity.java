@@ -166,6 +166,7 @@ public class TaskerPluginEditActivity extends Activity {
                 checkedItems[i] = temp.contains(items[i]);
                 cursor.moveToNext();
             }
+            cursor.close();
 
             new AlertDialog.Builder(TaskerPluginEditActivity.this)
                     .setMultiChoiceItems(items, checkedItems,

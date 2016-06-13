@@ -107,9 +107,12 @@ public class ContextsActivity extends ActionBarActivity {
                                 new String[]{ContextsTable.COLUMN_NAME, ContextsTable.COLUMN_DESC},
                                 ContextsTable.COLUMN_ID + "=?",
                                 new String[]{String.valueOf(id)}, null);
-                        if (c != null && c.moveToFirst()) {
-                            name.setText(c.getString(0));
-                            desc.setText(c.getString(1));
+                        if (c != null) {
+                            if (c.moveToFirst()) {
+                                name.setText(c.getString(0));
+                                desc.setText(c.getString(1));
+                            }
+                            c.close();
                         }
 
                         b.setView(inner).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {

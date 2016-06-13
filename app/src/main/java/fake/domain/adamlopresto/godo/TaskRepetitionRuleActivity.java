@@ -184,6 +184,7 @@ public class TaskRepetitionRuleActivity extends ActionBarActivity {
             String subValue = c
                     .getString(c
                             .getColumnIndexOrThrow(RepetitionRulesTable.COLUMN_SUBVALUE));
+            c.close();
             if (subValue == null)
                 subValue = "";
             if (subValue.startsWith("-")) {

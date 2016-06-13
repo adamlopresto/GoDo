@@ -151,9 +151,12 @@ public class Instance {
         s = c.getString(5);
         Date doneDate = getDate(s);
 
-        return new Instance(helper, id, Task.get(helper, c.getLong(0)), c.getString(1),
-                startDate, hasStartTime, planDate, hasPlanTime, dueDate, hasDueTime,
-                doneDate);
+        long taskId = c.getLong(0);
+        String notes = c.getString(1);
+        c.close();
+
+        return new Instance(helper, id, Task.get(helper, taskId), notes, startDate, hasStartTime,
+                planDate, hasPlanTime, dueDate, hasDueTime, doneDate);
     }
 
     @Nullable

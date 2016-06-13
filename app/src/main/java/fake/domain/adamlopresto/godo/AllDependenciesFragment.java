@@ -210,10 +210,18 @@ public class AllDependenciesFragment extends ListFragment
                                 }
                                 getActivity().getContentResolver().insert(GoDoContentProvider.DEPENDENCY_URI, cv);
                                 getLoaderManager().restartLoader(0, null, AllDependenciesFragment.this);
+                                c.close();
                             }
                         }
                 )
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (c != null) {
+                            c.close();
+                        }
+                    }
+                })
                 .show();
     }
 
