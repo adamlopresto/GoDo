@@ -26,7 +26,6 @@
         <com.novaapps.FloatingActionMenu
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginRight="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:id="@+id/fab_menu">
@@ -43,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_add_white_24dp"
-                android:contentDescription="Create a new task"
+                android:contentDescription="@string/new_task"
                 app:fabSize="normal"
                 />
 
@@ -52,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_mic_white_24dp"
-                android:contentDescription="Create from voice"
+                android:contentDescription="@string/new_task_voice"
                 app:fabSize="normal"
                 />
 
@@ -61,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_add_white_24dp"
-                android:contentDescription="Template 1"
+                android:contentDescription=""
                 app:fabSize="normal"
                 />
 
@@ -70,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_add_white_24dp"
-                android:contentDescription="Template 2"
+                android:contentDescription=""
                 app:fabSize="normal"
                 />
             <android.support.design.widget.FloatingActionButton
@@ -78,7 +77,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_add_white_24dp"
-                android:contentDescription="Template 3"
+                android:contentDescription=""
                 app:fabSize="normal"
                 />
 
@@ -87,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_more_horiz_white_24dp"
-                android:contentDescription="More templates"
+                android:contentDescription="@string/more_templates"
                 app:fabSize="normal"
                 />
 

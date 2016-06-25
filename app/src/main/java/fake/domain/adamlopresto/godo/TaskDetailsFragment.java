@@ -14,7 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -194,11 +194,13 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         });
 
         Toolbar toolbar = (Toolbar) v.findViewById(R.id.header);
-        ActionBarActivity activity = (ActionBarActivity) getActivity();
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         ActionBar actionBar =  activity.getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle(R.string.title_activity_task);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.title_activity_task);
+        }
 
         return v;
     }
@@ -252,16 +254,16 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         boolean templateRW = false;
         switch (task.getRepeat()) {
             case AUTOMATIC:
-                repetitionSummary.setText("Repeats automatically");
+                repetitionSummary.setText(R.string.repeats_automatically);
                 repetitionSummary.setOnClickListener(expandContractRepetitionsListener);
                 break;
             case TEMPLATE:
-                repetitionSummary.setText("Repeats manually");
+                repetitionSummary.setText(R.string.repeats_manually);
                 repetitionSummary.setOnClickListener(expandContractRepetitionsListener);
                 templateRW = true;
                 break;
             case NONE:
-                repetitionSummary.setText("Does not repeat");
+                repetitionSummary.setText(R.string.no_repetition);
                 repetitionSummary.setOnClickListener(showRepetitionsActivityListener);
         }
 
@@ -385,17 +387,20 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         hideUnless(startAfterDue, isAfter(startDate, dueDate));
         hideUnless(planAfterDue, isAfter(planDate, dueDate));
 
-        new AsyncTask<Void, Void, CharSequence>(){
+        new AsyncTask<Void, Void, CharSequence>() {
             @Override
             protected CharSequence doInBackground(Void... ignored) {
-                Cursor cursor = getActivity().getContentResolver().query(
+                Context context = getActivity();
+                Cursor cursor = context.getContentResolver().query(
                         Uri.withAppendedPath(GoDoContentProvider.DEPENDANT_INSTANCES_URI,
                                 String.valueOf(instance.forceId())),
                         null, null, null, null);
 
+                if (cursor == null)
+                    return context.getString(R.string.no_dependencies);
                 if (cursor.getCount() == 1) {
                     cursor.close();
-                    return "No dependencies";
+                    return context.getString(R.string.no_dependencies);
                 }
 
                 cursor.moveToFirst();

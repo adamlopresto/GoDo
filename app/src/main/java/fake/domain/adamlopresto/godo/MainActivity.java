@@ -303,6 +303,8 @@ public class MainActivity extends AppCompatActivity {
             handleIntent(activity.getIntent());
 
             final FloatingActionMenu menu = (FloatingActionMenu)activity.findViewById(R.id.fab_menu);
+            //48dp looks right
+            //noinspection MagicNumber
             menu.setmItemGap(48);
             menu.setOnMenuItemClickListener(new FloatingActionMenu.OnMenuItemClickListener() {
                 @Override

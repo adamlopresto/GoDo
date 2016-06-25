@@ -94,7 +94,7 @@ public class DateTimePicker extends LinearLayout {
         timeButton = (TextView) getChildAt(1);
 
         assert timeButton != null;
-        timeButton.setText("No time");
+        timeButton.setText(R.string.no_time);
 
         if (isInEditMode()) {
             return;
@@ -117,7 +117,6 @@ public class DateTimePicker extends LinearLayout {
                     DatePickerDialog dlg = new DatePickerDialog(context, null,
                             cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
                     final DatePicker dp = dlg.getDatePicker();
-                    assert dp != null;
                     dp.setSpinnersShown(false);
                     dp.setCalendarViewShown(true);
                     dlg.setTitle(null);

@@ -75,5 +75,11 @@
     <string name="relationships">Relationships</string>
     <string name="drawer_opened">Opened drawer</string>
     <string name="drawer_closed">Closed drawer</string>
+    <string name="repeats_automatically">Repeats automatically</string>
+    <string name="repeats_manually">Repeats manually</string>
+    <string name="no_repetition">Does not repeat</string>
+    <string name="no_dependencies">No dependencies</string>
+    <string name="more_templates">More templates</string>
+    <string name="no_time">No time</string>
 
 </resources>

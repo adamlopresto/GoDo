@@ -4,17 +4,22 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 
 import java.util.List;
 
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 
-public abstract class InstanceHolderActivity extends ActionBarActivity {
+public abstract class InstanceHolderActivity extends AppCompatActivity {
     public static final String EXTRA_INSTANCE = "instance";
     public static final String EXTRA_TASK = "task";
+
+    //These are initialized in subclasses, but not in the constructors because of silly lifecycle
+    //issues.
+    @SuppressWarnings ("NullableProblems")
     @NonNull
     public Task task;
+    @SuppressWarnings ("NullableProblems")
     @NonNull
     public Instance instance;
 

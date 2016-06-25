@@ -63,7 +63,6 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:animateLayoutChanges="true"
@@ -74,7 +73,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:button="@drawable/checkbox"
             android:textAppearance="?android:attr/textAppearanceLarge"
@@ -86,7 +84,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="fill_horizontal"
-            android:layout_toRightOf="@id/check"
             android:layout_toEndOf="@id/check"
             android:hint="@string/task_name_hint"
             android:inputType="textCapSentences|textMultiLine"
@@ -177,7 +174,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         tools:text="No repetitions"
-                        />
+                        android:textIsSelectable="true"/>
 
                     <TextView
                         android:id="@+id/repetition_list"
