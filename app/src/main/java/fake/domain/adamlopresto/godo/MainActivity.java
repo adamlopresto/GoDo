@@ -34,6 +34,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -442,9 +443,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void handleIntent(Intent intent) {
-            if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-                query = intent.getStringExtra(SearchManager.QUERY);
-                restartLoader();
+            String action = intent.getAction();
+            if (action != null) {
+                switch (intent.getAction()) {
+                    case Intent.ACTION_SEARCH:
+                        query = intent.getStringExtra(SearchManager.QUERY);
+                        restartLoader();
+                        return;
+                    case "com.google.android.gm.action.AUTO_SEND":
+                        Intent i = new Intent(getActivity(), TaskActivity.class);
+                        i.putExtra("task_name",
+                                intent.getStringExtra("android.intent.extra.TEXT"));
+                        getActivity().startActivity(i);
+                        return;
+                    default:
+                        Log.e("GoDo", "Unexpected intent: " + intent);
+                }
             }
         }
 
