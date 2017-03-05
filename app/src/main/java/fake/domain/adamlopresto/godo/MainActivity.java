@@ -451,10 +451,13 @@ public class MainActivity extends AppCompatActivity {
                         restartLoader();
                         return;
                     case "com.google.android.gm.action.AUTO_SEND":
+                    case Intent.ACTION_SEND:
                         Intent i = new Intent(getActivity(), TaskActivity.class);
                         i.putExtra("task_name",
-                                intent.getStringExtra("android.intent.extra.TEXT"));
+                                intent.getStringExtra(Intent.EXTRA_TEXT));
                         getActivity().startActivity(i);
+                        return;
+                    case Intent.ACTION_MAIN:
                         return;
                     default:
                         Log.e("GoDo", "Unexpected intent: " + intent);

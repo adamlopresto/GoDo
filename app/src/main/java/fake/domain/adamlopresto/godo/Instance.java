@@ -3,7 +3,9 @@ package fake.domain.adamlopresto.godo;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -73,55 +75,66 @@ public class Instance {
                 new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES,
                         TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT,
                         TasksTable.COLUMN_DUE_NOTIFICATION, TasksTable.COLUMN_ID},
-                "? like "+TasksTable.COLUMN_NAME+"||'%' AND "+TasksTable.COLUMN_REPEAT+"=2",
-                new String[]{name}, null, null, null
+                "? like "+TasksTable.COLUMN_NAME+"||'%'",
+                new String[]{name}, null, null, TasksTable.COLUMN_ID+" DESC", "1"
         );
-        if (!c.moveToFirst()){
-            task = new Task(helper, context, name);
-        } else {
+        if (c.moveToFirst()) {
             task = new Task(helper, c.getLong(5), c.getString(0), c.getString(1),
                     NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)],
                     NotificationLevels.values()[c.getInt(4)]);
+        } else {
+            task = new Task(helper, context, name);
         }
         c.close();
 
-        Instance instance = new Instance(helper, task);
+        c = db.query(InstancesTable.TABLE, new String[]{InstancesTable.COLUMN_ID},
+                InstancesTable.COLUMN_TASK + "=? AND "+InstancesTable.COLUMN_DONE_DATE+" IS NULL",
+                new String[]{String.valueOf(task.getId())}, null, null,
+                InstancesTable.COLUMN_CREATE_DATE + " ASC");
+        if (c.moveToFirst()){
+            long id = c.getLong(0);
+            c.close();
+            return get(helper, id);
+        } else {
+            c.close();
+            Instance instance = new Instance(helper, task);
 
-        String taskName = task.getName().toString();
-        String lowerCase = taskName.toLowerCase();
-        GregorianCalendar cal = new GregorianCalendar();
-        if (lowerCase.contains("today"))
-            instance.setDueDate(cal.getTime());
-        else if (lowerCase.contains("tomorrow")){
-            cal.add(Calendar.DATE, 1);
-            instance.setDueDate(cal.getTime());
-        } else if (lowerCase.contains("sunday")){
-            Utils.advanceCalendarToNextWeekday(cal, Calendar.SUNDAY);
-            instance.setDueDate(cal.getTime());
-        } else if (lowerCase.contains("monday")){
-            Utils.advanceCalendarToNextWeekday(cal, Calendar.MONDAY);
-            instance.setDueDate(cal.getTime());
-        } else if (lowerCase.contains("tuesday")){
-            Utils.advanceCalendarToNextWeekday(cal, Calendar.TUESDAY);
-            instance.setDueDate(cal.getTime());
-        } else if (lowerCase.contains("wednesday")){
-            Utils.advanceCalendarToNextWeekday(cal, Calendar.WEDNESDAY);
-            instance.setDueDate(cal.getTime());
-        } else if (lowerCase.contains("thursday")){
-            Utils.advanceCalendarToNextWeekday(cal, Calendar.THURSDAY);
-            instance.setDueDate(cal.getTime());
-        } else if (lowerCase.contains("friday")){
-            Utils.advanceCalendarToNextWeekday(cal, Calendar.FRIDAY);
-            instance.setDueDate(cal.getTime());
-        } else if (lowerCase.contains("saturday")) {
-            Utils.advanceCalendarToNextWeekday(cal, Calendar.SATURDAY);
-            instance.setDueDate(cal.getTime());
+            String taskName = task.getName().toString();
+            String lowerCase = taskName.toLowerCase();
+            GregorianCalendar cal = new GregorianCalendar();
+            if (lowerCase.contains("today"))
+                instance.setDueDate(cal.getTime());
+            else if (lowerCase.contains("tomorrow")) {
+                cal.add(Calendar.DATE, 1);
+                instance.setDueDate(cal.getTime());
+            } else if (lowerCase.contains("sunday")) {
+                Utils.advanceCalendarToNextWeekday(cal, Calendar.SUNDAY);
+                instance.setDueDate(cal.getTime());
+            } else if (lowerCase.contains("monday")) {
+                Utils.advanceCalendarToNextWeekday(cal, Calendar.MONDAY);
+                instance.setDueDate(cal.getTime());
+            } else if (lowerCase.contains("tuesday")) {
+                Utils.advanceCalendarToNextWeekday(cal, Calendar.TUESDAY);
+                instance.setDueDate(cal.getTime());
+            } else if (lowerCase.contains("wednesday")) {
+                Utils.advanceCalendarToNextWeekday(cal, Calendar.WEDNESDAY);
+                instance.setDueDate(cal.getTime());
+            } else if (lowerCase.contains("thursday")) {
+                Utils.advanceCalendarToNextWeekday(cal, Calendar.THURSDAY);
+                instance.setDueDate(cal.getTime());
+            } else if (lowerCase.contains("friday")) {
+                Utils.advanceCalendarToNextWeekday(cal, Calendar.FRIDAY);
+                instance.setDueDate(cal.getTime());
+            } else if (lowerCase.contains("saturday")) {
+                Utils.advanceCalendarToNextWeekday(cal, Calendar.SATURDAY);
+                instance.setDueDate(cal.getTime());
+            }
+            if (taskName.length() < name.length()) {
+                name = name.substring(taskName.length()).trim();
+                instance.setNotes(name);
+            }
+            return instance;
         }
-        if (taskName.length() < name.length()){
-            name = name.substring(taskName.length()).trim();
-            instance.setNotes(name);
-        }
-        return instance;
     }
 
     @NonNull
