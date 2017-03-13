@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="newTask"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher"
+        android:shortcutShortLabel="@string/new_task"
+        android:shortcutLongLabel="@string/new_task"
+        >
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="fake.domain.adamlopresto.godo"
+            android:targetClass="fake.domain.adamlopresto.godo.MainActivity"
+            />
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="fake.domain.adamlopresto.godo"
+            android:targetClass="fake.domain.adamlopresto.godo.TaskActivity"
+            />
+    </shortcut>
+</shortcuts>
