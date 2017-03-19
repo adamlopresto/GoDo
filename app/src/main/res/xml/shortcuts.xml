@@ -18,4 +18,17 @@
             android:targetClass="fake.domain.adamlopresto.godo.TaskActivity"
             />
     </shortcut>
+    <shortcut
+        android:shortcutId="newVoice"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher"
+        android:shortcutShortLabel="@string/new_task_voice"
+        android:shortcutLongLabel="@string/new_task_voice"
+        >
+        <intent
+            android:action="fake.domain.adamlopresto.godo.CREATE_FROM_VOICE"
+            android:targetPackage="fake.domain.adamlopresto.godo"
+            android:targetClass="fake.domain.adamlopresto.godo.MainActivity"
+            />
+    </shortcut>
 </shortcuts>

@@ -459,6 +459,11 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     case Intent.ACTION_MAIN:
                         return;
+                    case "fake.domain.adamlopresto.godo.CREATE_FROM_VOICE":
+                        Intent recognizerIntent = GoDoAppWidget.getSpeechRecognizerIntent(getActivity(),
+                                GoDoAppWidget.getStackBuilder(getActivity()));
+                        startActivity(recognizerIntent);
+                        return;
                     default:
                         Log.e("GoDo", "Unexpected intent: " + intent);
                 }
