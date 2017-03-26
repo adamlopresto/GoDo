@@ -1,18 +1,20 @@
 package fake.domain.adamlopresto.godo;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesTable;
@@ -67,6 +69,7 @@ public class Instance {
     }
 
 
+    @SuppressLint ("WrongConstant")
     public static Instance createFromName(DatabaseHelper helper, Context context, String name){
         name = Character.toTitleCase(name.charAt(0)) + name.substring(1);
         Task task;
@@ -75,7 +78,7 @@ public class Instance {
                 new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES,
                         TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT,
                         TasksTable.COLUMN_DUE_NOTIFICATION, TasksTable.COLUMN_ID},
-                "? like "+TasksTable.COLUMN_NAME+"||'%'",
+                "? like REPLACE("+TasksTable.COLUMN_NAME+", 'things', '%')",
                 new String[]{name}, null, null, TasksTable.COLUMN_ID+" DESC", "1"
         );
         if (c.moveToFirst()) {
@@ -91,13 +94,14 @@ public class Instance {
                 InstancesTable.COLUMN_TASK + "=? AND "+InstancesTable.COLUMN_DONE_DATE+" IS NULL",
                 new String[]{String.valueOf(task.getId())}, null, null,
                 InstancesTable.COLUMN_CREATE_DATE + " ASC");
+        Instance instance;
         if (c.moveToFirst()){
             long id = c.getLong(0);
             c.close();
-            return get(helper, id);
+            instance=get(helper, id);
         } else {
             c.close();
-            Instance instance = new Instance(helper, task);
+            instance = new Instance(helper, task);
 
             String taskName = task.getName().toString();
             String lowerCase = taskName.toLowerCase();
@@ -129,12 +133,27 @@ public class Instance {
                 Utils.advanceCalendarToNextWeekday(cal, Calendar.SATURDAY);
                 instance.setDueDate(cal.getTime());
             }
-            if (taskName.length() < name.length()) {
-                name = name.substring(taskName.length()).trim();
-                instance.setNotes(name);
-            }
-            return instance;
         }
+
+        String taskName = task.getName().toString();
+        if (taskName.contains("things")) {
+            String stringPattern = taskName.replace("things", "(.*)");
+            Pattern pattern = Pattern.compile(stringPattern, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(name);
+            if (matcher.matches()) {
+                String newNotes = matcher.group(1);
+                CharSequence instanceNotesCharSeq = instance.getNotes();
+                if (TextUtils.isEmpty(instanceNotesCharSeq))
+                    instance.setNotes(newNotes);
+                else {
+                    String instanceNotes = instanceNotesCharSeq.toString();
+                    if (!instanceNotes.contains(newNotes))
+                        instance.setNotes(instanceNotes + "\n"+newNotes);
+                }
+
+            }
+        }
+        return instance;
     }
 
     @NonNull
