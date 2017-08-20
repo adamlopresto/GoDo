@@ -217,6 +217,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
             actionBar.setTitle(R.string.title_activity_task);
         }
 
+        /*
         button = (Button) v.findViewById(R.id.shortcut);
         button.setOnClickListener(
                 new View.OnClickListener() {
@@ -235,6 +236,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                     }
                 }
         );
+        */
 
         return v;
     }
