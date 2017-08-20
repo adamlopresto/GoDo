@@ -145,15 +145,15 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
 
         start = (DateTimePicker) v.findViewById(R.id.start);
         start.setColumn(RepetitionRuleColumns.NEW_START);
-        start.setOnDateDateChangeListener(this);
+        start.setOnDateChangeListener(this);
 
         plan = (DateTimePicker) v.findViewById(R.id.plan);
         plan.setColumn(RepetitionRuleColumns.NEW_PLAN);
-        plan.setOnDateDateChangeListener(this);
+        plan.setOnDateChangeListener(this);
 
         due = (DateTimePicker) v.findViewById(R.id.due);
         due.setColumn(RepetitionRuleColumns.NEW_DUE);
-        due.setOnDateDateChangeListener(this);
+        due.setOnDateChangeListener(this);
 
         startAfterPlan = v.findViewById(R.id.startAfterPlan);
         startAfterDue = v.findViewById(R.id.startAfterDue);
@@ -617,12 +617,16 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                 instance.setHasStartTime(hasTime);
                 hideUnless(startAfterPlan, isAfter(newDate, instance.getPlanDate()));
                 hideUnless(startAfterDue, isAfter(newDate, instance.getDueDate()));
+                plan.update();
+                due.update();
                 break;
             case NEW_PLAN:
                 instance.setPlanDate(newDate);
                 instance.setHasPlanTime(hasTime);
                 hideUnless(startAfterPlan, isAfter(instance.getStartDate(), newDate));
                 hideUnless(planAfterDue, isAfter(newDate, instance.getDueDate()));
+                start.update();
+                due.update();
                 break;
             case NEW_DUE:
                 instance.setDueDate(newDate);
@@ -632,9 +636,26 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                 boolean hasDueDate = newDate != null && !Utils.SOMEDAY.equals(newDate);
                 hideUnless(dueNotification, hasDueDate);
                 hideUnless(dueNotificationLabel, hasDueDate);
+                start.update();
+                plan.update();
                 break;
             default:
                 //no-op
         }
+    }
+
+    @Override
+    public DateTimePicker getStart() {
+        return start;
+    }
+
+    @Override
+    public DateTimePicker getPlan() {
+        return plan;
+    }
+
+    @Override
+    public DateTimePicker getDue() {
+        return due;
     }
 }

@@ -25,6 +25,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import static fake.domain.adamlopresto.godo.RepetitionRuleColumns.*;
+
 
 public class DateTimePicker extends LinearLayout {
 
@@ -77,9 +79,13 @@ public class DateTimePicker extends LinearLayout {
         init(context);
     }
 
-    private static void addIfNotFound(Collection<DateHolder> collection, DateHolder newItem) {
+    private static void addIfNotFound(Collection<DateHolder> collection, DateHolder newItem,
+                                      Date min, Date max) {
         if (!collection.contains(newItem))
-            collection.add(newItem);
+            if (newItem.date == null ||
+                    ((max == null || newItem.date.compareTo(max) <= 0)
+                            && (min == null || newItem.date.compareTo(min) >= 0)))
+                collection.add(newItem);
     }
 
     private void init(final Context context) {
@@ -263,27 +269,72 @@ public class DateTimePicker extends LinearLayout {
         update();
     }
 
-    private void update() {
+    private Date minFromPickers(DateTimePicker p1, DateTimePicker p2){
+        if (p1 == null)
+            return (p2 == null) ? null : p2.date;
+        if (p2 == null)
+            return p1.date;
+        Date d1 = p1.date;
+        if (d1 == null)
+            return p2.date;
+        Date d2 = p2.date;
+        if (d2 == null) return null;
+        return d1.compareTo(d2) < 0 ? d1 : d2;
+    }
+
+    private Date maxFromPickers(DateTimePicker p1, DateTimePicker p2){
+        if (p1 == null)
+            return (p2 == null) ? null : p2.date;
+        if (p2 == null)
+            return p1.date;
+        Date d1 = p1.date;
+        if (d1 == null)
+            return p2.date;
+        Date d2 = p2.date;
+        if (d2 == null) return null;
+        return d1.compareTo(d2) > 0 ? d1 : d2;
+    }
+
+    public void update() {
+        Date min = null;
+        Date max = null;
+
+        if (listener != null) {
+            switch (column) {
+                case NEW_START:
+                    max = minFromPickers(listener.getPlan(), listener.getDue());
+                    break;
+                case NEW_PLAN:
+                    min = maxFromPickers(listener.getStart(), null);
+                    max = minFromPickers(listener.getDue(), null);
+                    break;
+                case NEW_DUE:
+                    min = maxFromPickers(listener.getStart(), listener.getPlan());
+                    break;
+                default:
+                    break;
+            }
+        }
         Collection<DateHolder> list = new ArrayList<>(8);
 
         Calendar cal = new GregorianCalendar();
         //today
-        if (column != RepetitionRuleColumns.NEW_START)
-            addIfNotFound(list, new DateHolder(cal));
+        if (column != NEW_START)
+            addIfNotFound(list, new DateHolder(cal), min, max);
 
         //tomorrow
         cal.add(Calendar.DATE, 1);
-        addIfNotFound(list, new DateHolder(cal));
+        addIfNotFound(list, new DateHolder(cal), min, max);
 
         //Next week
         cal.add(Calendar.DATE, 6);
-        addIfNotFound(list, new DateHolder(cal));
+        addIfNotFound(list, new DateHolder(cal), min, max);
 
         //Saturday
         Date now = new Date();
         cal.setTime(now);
         cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-        addIfNotFound(list, new DateHolder(cal));
+        addIfNotFound(list, new DateHolder(cal), min, max);
 
         //Monday
         cal.setTime(now);
@@ -300,25 +351,30 @@ public class DateTimePicker extends LinearLayout {
         int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         if (dayOfWeek >= Calendar.TUESDAY) {
             cal.add(Calendar.DATE, 7 - dayOfWeek + Calendar.MONDAY);
-            addIfNotFound(list, new DateHolder(cal));
+            addIfNotFound(list, new DateHolder(cal), min, max);
         }
 
         //Someday
-        if (column != RepetitionRuleColumns.NEW_START)
-            addIfNotFound(list, new DateHolder(Utils.SOMEDAY));
+        if (column != NEW_START)
+            addIfNotFound(list, new DateHolder(Utils.SOMEDAY), null, max);
 
         //Other
-        addIfNotFound(list, new DateHolder(true));
+        addIfNotFound(list, new DateHolder(true), null, null);
 
         //None
-        addIfNotFound(list, new DateHolder(false));
+        addIfNotFound(list, new DateHolder(false), null, null);
 
         DateHolder selectedDate = new DateHolder(date);
 
         //current value
         //noinspection VariableNotUsedInsideIf
         if (date != null)
-            addIfNotFound(list, selectedDate);
+            addIfNotFound(list, selectedDate, null, null);
+
+        if (min != null)
+            addIfNotFound(list, new DateHolder(min), null, null);
+        if (max != null)
+            addIfNotFound(list, new DateHolder(max), null, null);
 
         adapter.clear();
         adapter.addAll(list);
@@ -338,12 +394,15 @@ public class DateTimePicker extends LinearLayout {
         }
     }
 
-    public void setOnDateDateChangeListener(OnDateChangeListener listener) {
+    public void setOnDateChangeListener(OnDateChangeListener listener) {
         this.listener = listener;
     }
 
     public interface OnDateChangeListener {
         void onDateChanged(Date newDate, boolean hasTime, RepetitionRuleColumns column);
+        DateTimePicker getStart();
+        DateTimePicker getPlan();
+        DateTimePicker getDue();
     }
 
 
