@@ -1,15 +1,22 @@
 package fake.domain.adamlopresto.godo;
 
 import android.animation.LayoutTransition;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,14 +28,17 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.net.URISyntaxException;
 import java.util.Date;
 
 import fake.domain.adamlopresto.godo.db.ContextsTable;
@@ -40,6 +50,8 @@ import fake.domain.adamlopresto.godo.db.TaskContextTable;
 @SuppressWarnings ("InstanceVariableMayNotBeInitialized")
 public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDateChangeListener {
 
+    public static final int REQUEST_PICK_SHORTCUT = 10;
+    private static final int REQUEST_FINISH_SHORTCUT = 20;
     private CheckBox done;
     private TextView taskName;
     private TextView taskNotes;
@@ -55,6 +67,9 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
     private View startAfterPlan;
     private View startAfterDue;
     private View planAfterDue;
+
+    private Button button;
+    private Intent buttonIntent;
 
     private boolean showRepetitionCollapsed = true;
     private View repetitionHeader;
@@ -202,7 +217,98 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
             actionBar.setTitle(R.string.title_activity_task);
         }
 
+        button = (Button) v.findViewById(R.id.shortcut);
+        button.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (buttonIntent != null) {
+                            startActivity(buttonIntent);
+                        }
+                        else {
+                            Intent intent = new Intent(Intent.ACTION_PICK_ACTIVITY);
+                            intent.putExtra(Intent.EXTRA_INTENT, new Intent(Intent.ACTION_CREATE_SHORTCUT));
+                            intent.putExtra(Intent.EXTRA_TITLE, "Pick an action");
+
+                            startActivityForResult(intent, REQUEST_PICK_SHORTCUT);
+                        }
+                    }
+                }
+        );
+
         return v;
+    }
+
+    /**
+     * Receive the result from a previous call to
+     * {@link #startActivityForResult(Intent, int)}.  This follows the
+     * related Activity API as described there in
+     * {@link Activity#onActivityResult(int, int, Intent)}.
+     *
+     * @param requestCode The integer request code originally supplied to
+     *                    startActivityForResult(), allowing you to identify who this
+     *                    result came from.
+     * @param resultCode  The integer result code returned by the child activity
+     *                    through its setResult().
+     * @param data        An Intent, which can return result data to the caller
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_PICK_SHORTCUT:
+                    startActivityForResult(data, REQUEST_FINISH_SHORTCUT);
+                    return;
+                case REQUEST_FINISH_SHORTCUT:
+                    button.setText(data.getStringExtra(Intent.EXTRA_SHORTCUT_NAME));
+
+                    /*
+                    button.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                            new BitmapDrawable(getResources(),
+                                    (Bitmap) data.getParcelableExtra(Intent.EXTRA_SHORTCUT_ICON)),
+                    null, null, null);
+
+                    */
+                    Bitmap bmp = null;
+                    Parcelable extra = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_ICON);
+                    if (extra != null && extra instanceof Bitmap)
+                        bmp = (Bitmap) extra;
+                    if (bmp == null) {
+                        extra = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE);
+                        if (extra != null && extra instanceof Intent.ShortcutIconResource) {
+                            try {
+                                Intent.ShortcutIconResource iconResource = (Intent.ShortcutIconResource) extra;
+                                final PackageManager packageManager = getContext().getPackageManager();
+                                Resources resources = packageManager.getResourcesForApplication(iconResource.packageName);
+                                final int id = resources.getIdentifier(iconResource.resourceName, null, null);
+                                bmp = BitmapFactory.decodeResource(resources, id);
+                            } catch (Exception e) {
+                                Log.w("GoDo", "Could not load shortcut icon: " + extra);
+                            }
+                        }
+                    }
+
+                    if (bmp != null)
+                        button.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                                new BitmapDrawable(getResources(), bmp),
+                                null, null, null);
+
+                    buttonIntent = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT);
+                    try {
+                        String uri = buttonIntent.toUri(Intent.URI_INTENT_SCHEME);
+                        Log.e("GoDo", uri);
+                        buttonIntent = Intent.parseUri(uri,
+                                Intent.URI_INTENT_SCHEME);
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+
+                    //TODO
+                    return;
+            }
+        }
     }
 
     @Override

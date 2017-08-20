@@ -361,6 +361,12 @@
                     android:layout_margin="8dp"
                     android:text="@string/relationships"/>
             </android.support.v7.widget.CardView>
+
+            <Button
+                android:id="@+id/shortcut"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create shortcut"/>
         </LinearLayout>
     </ScrollView>
 
