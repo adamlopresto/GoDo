@@ -1,22 +1,14 @@
 package fake.domain.adamlopresto.godo;
 
 import android.animation.LayoutTransition;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,18 +20,15 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
-import java.net.URISyntaxException;
 import java.util.Date;
 
 import fake.domain.adamlopresto.godo.db.ContextsTable;
@@ -51,8 +40,8 @@ import fake.domain.adamlopresto.godo.db.TaskContextTable;
 @SuppressWarnings ("InstanceVariableMayNotBeInitialized")
 public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDateChangeListener {
 
-    public static final int REQUEST_PICK_SHORTCUT = 10;
-    private static final int REQUEST_FINISH_SHORTCUT = 20;
+//    public static final int REQUEST_PICK_SHORTCUT = 10;
+//    private static final int REQUEST_FINISH_SHORTCUT = 20;
     private CheckBox done;
     private TextView taskName;
     private TextView taskNotes;
@@ -162,9 +151,8 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         startAfterDue = v.findViewById(R.id.startAfterDue);
         planAfterDue = v.findViewById(R.id.planAfterDue);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-            ((ViewGroup)v.findViewById(R.id.layout)).getLayoutTransition()
-                    .enableTransitionType(LayoutTransition.CHANGING);
+        ((ViewGroup)v.findViewById(R.id.layout)).getLayoutTransition()
+                .enableTransitionType(LayoutTransition.CHANGING);
 
         repetitionHeader   =           v.findViewById(R.id.repetition_header);
         repetitionHeader.setOnClickListener(expandContractRepetitionsListener);
@@ -525,6 +513,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                             RepetitionRulesTable.COLUMN_TYPE, RepetitionRulesTable.COLUMN_SUBVALUE,
                             RepetitionRulesTable.COLUMN_FROM, RepetitionRulesTable.COLUMN_TO},
                     RepetitionRulesTable.COLUMN_TASK + "=?", Utils.idToSelectionArgs(params[0]), null);
+            //noinspection UnusedAssignment,AssignmentToNull
             fragment = null;
 
             if (cursor == null)
@@ -557,6 +546,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                                              ? View.GONE
                                              : View.VISIBLE);
             fragment.repetitionRuleList.setText(s);
+            //noinspection UnusedAssignment,AssignmentToNull
             fragment = null;
             fragmentWeakReference.clear();
         }
@@ -578,6 +568,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
             }
             long task_id = fragment.getTask().getId();
             SQLiteDatabase db = DatabaseHelper.getInstance(fragment.getActivity()).getReadableDatabase();
+            //noinspection UnusedAssignment,AssignmentToNull
             fragment=null;
             Cursor cursor = db.query(ContextsTable.TABLE, new String[]{ContextsTable.COLUMN_NAME,
                             ContextsTable.COLUMN_ACTIVE},
@@ -635,6 +626,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                     Uri.withAppendedPath(GoDoContentProvider.DEPENDANT_INSTANCES_URI,
                             String.valueOf(fragment.getInstance().forceId())),
                     null, null, null, null);
+            //noinspection UnusedAssignment,AssignmentToNull
             fragment = null;
 
             if (cursor == null)
@@ -643,6 +635,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
                 cursor.close();
                 return context.getString(R.string.no_dependencies);
             }
+            //noinspection UnusedAssignment,AssignmentToNull
             context = null;
 
             cursor.moveToFirst();
