@@ -38,6 +38,7 @@ import android.widget.CheckBox;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.net.URISyntaxException;
 import java.util.Date;
 
@@ -365,100 +366,13 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         }
 
         final boolean template = templateRW;
-        new AsyncTask<Long, Void, String>(){
-
-            /**
-             * Override this method to perform a computation on a background thread. The
-             * specified parameters are the parameters passed to {@link #execute}
-             * by the caller of this task.
-             * <p/>
-             * This method can call {@link #publishProgress} to publish updates
-             * on the UI thread.
-             *
-             * @param params The parameters of the task.
-             * @return A result, defined by the subclass of this task.
-             * @see #onPreExecute()
-             * @see #onPostExecute
-             * @see #publishProgress
-             */
-            @Override
-            protected String doInBackground(Long... params) {
-                StringBuilder b = new StringBuilder();
-                Cursor cursor = getActivity().getContentResolver().query(GoDoContentProvider.REPETITION_RULES_URI,
-                        new String[]{RepetitionRulesTable.COLUMN_ID, RepetitionRulesTable.COLUMN_TASK,
-                                RepetitionRulesTable.COLUMN_TYPE, RepetitionRulesTable.COLUMN_SUBVALUE,
-                                RepetitionRulesTable.COLUMN_FROM, RepetitionRulesTable.COLUMN_TO},
-                        RepetitionRulesTable.COLUMN_TASK + "=?", Utils.idToSelectionArgs(params[0]),null);
-
-                if (cursor == null)
-                    return null;
-
-                if (!cursor.moveToFirst()) {
-                    cursor.close();
-                    return null;
-                }
-
-                while (!cursor.isAfterLast()){
-                    b.append(Utils.repetitionRuleTextFromCursor(cursor, template));
-                    cursor.moveToNext();
-                    if (!cursor.isAfterLast())
-                        b.append('\n');
-                }
-
-                cursor.close();
-                return b.toString();
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                repetitionRuleList.setVisibility(s == null || showRepetitionCollapsed
-                                                 ? View.GONE
-                                                 : View.VISIBLE);
-                repetitionRuleList.setText(s);
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, task.getId());
+        new RepetitionRuleListAsyncTask(template, this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, task.getId());
 
         loadContexts();
     }
 
     public void loadContexts(){
-        new AsyncTask<Void, Void, CharSequence>(){
-            @Override
-            protected CharSequence doInBackground(Void... ignored) {
-                long task_id = getTask().getId();
-                SQLiteDatabase db = DatabaseHelper.getInstance(getActivity()).getReadableDatabase();
-                Cursor cursor = db.query(ContextsTable.TABLE, new String[]{ContextsTable.COLUMN_NAME,
-                                ContextsTable.COLUMN_ACTIVE},
-                        "exists (select * from " + TaskContextTable.TABLE + " where "
-                                + TaskContextTable.COLUMN_TASK + "=" + task_id
-                                + " and context=contexts._id)",
-                        null, null, null, ContextsTable.COLUMN_NAME);
-                cursor.moveToFirst();
-                if (cursor.isAfterLast()) {
-                    cursor.close();
-                    return "No contexts";
-                }
-                SpannableStringBuilder b = new SpannableStringBuilder();
-                int start = 0;
-                while (!cursor.isAfterLast()){
-                    b.append(cursor.getString(0));
-                    boolean active = cursor.getInt(1) != 0;
-                    cursor.moveToNext();
-                    if (!cursor.isAfterLast())
-                        b.append(", ");
-                    b.setSpan(new ForegroundColorSpan(active ? Color.BLACK : Color.GRAY),
-                            start, b.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    start = b.length();
-                }
-                cursor.close();
-                return b;
-            }
-
-            @Override
-            protected void onPostExecute(CharSequence s) {
-                contexts.setText(s);
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new ContextsAsyncTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void extractInstanceDetails() {
@@ -484,80 +398,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         hideUnless(startAfterDue, isAfter(startDate, dueDate));
         hideUnless(planAfterDue, isAfter(planDate, dueDate));
 
-        new AsyncTask<Void, Void, CharSequence>() {
-            @Override
-            protected CharSequence doInBackground(Void... ignored) {
-                Context context = getActivity();
-                Cursor cursor = context.getContentResolver().query(
-                        Uri.withAppendedPath(GoDoContentProvider.DEPENDANT_INSTANCES_URI,
-                                String.valueOf(instance.forceId())),
-                        null, null, null, null);
-
-                if (cursor == null)
-                    return context.getString(R.string.no_dependencies);
-                if (cursor.getCount() == 1) {
-                    cursor.close();
-                    return context.getString(R.string.no_dependencies);
-                }
-
-                cursor.moveToFirst();
-                SpannableStringBuilder builder = new SpannableStringBuilder();
-                int itemColumn = cursor.getColumnIndexOrThrow("item_type");
-                if (cursor.getInt(itemColumn) == 0) {
-                    //At least one prereq.
-                    builder.append("Requires ");
-                    int start = builder.length();
-                    builder.append(cursor.getString(cursor.getColumnIndexOrThrow(InstancesView.COLUMN_TASK_NAME)));
-                    if (!cursor.isNull(cursor.getColumnIndexOrThrow(InstancesView.COLUMN_DONE_DATE)))
-                        builder.setSpan(new StrikethroughSpan(),
-                                start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                    do {
-                        cursor.moveToNext();
-                    } while (cursor.getInt(itemColumn) != 1);
-
-                    if (cursor.getPosition() != 1) {
-                        //More than one prereq
-                        builder.clear();
-                        builder.append("Requires ");
-                        builder.append(String.valueOf(cursor.getPosition()));
-                        builder.append(" tasks");
-                    }
-                }
-
-                //Now at divider. Do it all again to find out about next steps.
-
-                if (!cursor.moveToNext()) {
-                    //At end, so no next steps.
-                    cursor.close();
-                    return builder;
-                }
-
-                if (builder.length() != 0)
-                    builder.append('\n');
-                builder.append("Blocks ");
-
-                int numberOfNextSteps = cursor.getCount() - cursor.getPosition();
-                if (numberOfNextSteps == 1) {
-                    int start = builder.length();
-                    builder.append(cursor.getString(cursor.getColumnIndexOrThrow(InstancesView.COLUMN_TASK_NAME)));
-                    if (!cursor.isNull(cursor.getColumnIndexOrThrow(InstancesView.COLUMN_DONE_DATE)))
-                        builder.setSpan(new StrikethroughSpan(),
-                                start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                } else {
-                    builder.append(String.valueOf(numberOfNextSteps));
-                    builder.append(" tasks");
-
-                }
-                cursor.close();
-                return builder;
-            }
-
-            @Override
-            protected void onPostExecute(CharSequence s) {
-                relationships.setText(s);
-            }
-        }.execute();
+        new RelationshipsAsyncTask(this).execute();
     }
 
     @Override
@@ -646,5 +487,225 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
     @Override
     public DateTimePicker getDue() {
         return due;
+    }
+
+    private static class RepetitionRuleListAsyncTask extends AsyncTask<Long, Void, String> {
+
+        private final boolean template;
+        private final WeakReference<TaskDetailsFragment> fragmentWeakReference;
+
+        public RepetitionRuleListAsyncTask(boolean template, TaskDetailsFragment fragment) {
+            this.template = template;
+            fragmentWeakReference = new WeakReference<>(fragment);
+        }
+
+        /**
+         * Override this method to perform a computation on a background thread. The
+         * specified parameters are the parameters passed to {@link #execute}
+         * by the caller of this task.
+         * <p/>
+         * This method can call {@link #publishProgress} to publish updates
+         * on the UI thread.
+         *
+         * @param params The parameters of the task.
+         * @return A result, defined by the subclass of this task.
+         * @see #onPreExecute()
+         * @see #onPostExecute
+         * @see #publishProgress
+         */
+        @Override
+        protected String doInBackground(Long... params) {
+            StringBuilder b = new StringBuilder();
+            TaskDetailsFragment fragment = fragmentWeakReference.get();
+            if (fragment == null) {
+                return null;
+            }
+            Cursor cursor = fragment.getActivity().getContentResolver().query(GoDoContentProvider.REPETITION_RULES_URI,
+                    new String[]{RepetitionRulesTable.COLUMN_ID, RepetitionRulesTable.COLUMN_TASK,
+                            RepetitionRulesTable.COLUMN_TYPE, RepetitionRulesTable.COLUMN_SUBVALUE,
+                            RepetitionRulesTable.COLUMN_FROM, RepetitionRulesTable.COLUMN_TO},
+                    RepetitionRulesTable.COLUMN_TASK + "=?", Utils.idToSelectionArgs(params[0]), null);
+            fragment = null;
+
+            if (cursor == null)
+                return null;
+
+            if (!cursor.moveToFirst()) {
+                cursor.close();
+                return null;
+            }
+
+            while (!cursor.isAfterLast()) {
+                b.append(Utils.repetitionRuleTextFromCursor(cursor, template));
+                cursor.moveToNext();
+                if (!cursor.isAfterLast())
+                    b.append('\n');
+            }
+
+            cursor.close();
+            return b.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            TaskDetailsFragment fragment = fragmentWeakReference.get();
+            if (fragment == null) {
+                return;
+            }
+
+            fragment.repetitionRuleList.setVisibility(s == null || fragment.showRepetitionCollapsed
+                                             ? View.GONE
+                                             : View.VISIBLE);
+            fragment.repetitionRuleList.setText(s);
+            fragment = null;
+            fragmentWeakReference.clear();
+        }
+    }
+
+    private static class ContextsAsyncTask extends AsyncTask<Void, Void, CharSequence> {
+        private final WeakReference<TaskDetailsFragment> fragmentWeakReference;
+
+        private ContextsAsyncTask(TaskDetailsFragment fragment) {
+            fragmentWeakReference = new WeakReference<>(fragment);
+        }
+
+
+        @Override
+        protected CharSequence doInBackground(Void... ignored) {
+            TaskDetailsFragment fragment = fragmentWeakReference.get();
+            if (fragment == null) {
+                return null;
+            }
+            long task_id = fragment.getTask().getId();
+            SQLiteDatabase db = DatabaseHelper.getInstance(fragment.getActivity()).getReadableDatabase();
+            fragment=null;
+            Cursor cursor = db.query(ContextsTable.TABLE, new String[]{ContextsTable.COLUMN_NAME,
+                            ContextsTable.COLUMN_ACTIVE},
+                    "exists (select * from " + TaskContextTable.TABLE + " where "
+                            + TaskContextTable.COLUMN_TASK + "=" + task_id
+                            + " and context=contexts._id)",
+                    null, null, null, ContextsTable.COLUMN_NAME);
+            cursor.moveToFirst();
+            if (cursor.isAfterLast()) {
+                cursor.close();
+                return "No contexts";
+            }
+            SpannableStringBuilder b = new SpannableStringBuilder();
+            int start = 0;
+            while (!cursor.isAfterLast()){
+                b.append(cursor.getString(0));
+                boolean active = cursor.getInt(1) != 0;
+                cursor.moveToNext();
+                if (!cursor.isAfterLast())
+                    b.append(", ");
+                b.setSpan(new ForegroundColorSpan(active ? Color.BLACK : Color.GRAY),
+                        start, b.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                start = b.length();
+            }
+            cursor.close();
+            return b;
+        }
+
+        @Override
+        protected void onPostExecute(CharSequence s) {
+            TaskDetailsFragment fragment = fragmentWeakReference.get();
+            if (fragment == null) {
+                return;
+            }
+            fragment.contexts.setText(s);
+            fragmentWeakReference.clear();
+        }
+    }
+
+    private static class RelationshipsAsyncTask extends AsyncTask<Void, Void, CharSequence> {
+        private final WeakReference<TaskDetailsFragment> fragmentWeakReference;
+
+        public RelationshipsAsyncTask(TaskDetailsFragment fragment) {
+            fragmentWeakReference = new WeakReference<>(fragment);
+        }
+
+        @Override
+        protected CharSequence doInBackground(Void... ignored) {
+            TaskDetailsFragment fragment = fragmentWeakReference.get();
+            if (fragment == null) {
+                return null;
+            }
+            Context context = fragment.getActivity();
+            Cursor cursor = context.getContentResolver().query(
+                    Uri.withAppendedPath(GoDoContentProvider.DEPENDANT_INSTANCES_URI,
+                            String.valueOf(fragment.getInstance().forceId())),
+                    null, null, null, null);
+            fragment = null;
+
+            if (cursor == null)
+                return context.getString(R.string.no_dependencies);
+            if (cursor.getCount() == 1) {
+                cursor.close();
+                return context.getString(R.string.no_dependencies);
+            }
+            context = null;
+
+            cursor.moveToFirst();
+            SpannableStringBuilder builder = new SpannableStringBuilder();
+            int itemColumn = cursor.getColumnIndexOrThrow("item_type");
+            if (cursor.getInt(itemColumn) == 0) {
+                //At least one prereq.
+                builder.append("Requires ");
+                int start = builder.length();
+                builder.append(cursor.getString(cursor.getColumnIndexOrThrow(InstancesView.COLUMN_TASK_NAME)));
+                if (!cursor.isNull(cursor.getColumnIndexOrThrow(InstancesView.COLUMN_DONE_DATE)))
+                    builder.setSpan(new StrikethroughSpan(),
+                            start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                do {
+                    cursor.moveToNext();
+                } while (cursor.getInt(itemColumn) != 1);
+
+                if (cursor.getPosition() != 1) {
+                    //More than one prereq
+                    builder.clear();
+                    builder.append("Requires ");
+                    builder.append(String.valueOf(cursor.getPosition()));
+                    builder.append(" tasks");
+                }
+            }
+
+            //Now at divider. Do it all again to find out about next steps.
+
+            if (!cursor.moveToNext()) {
+                //At end, so no next steps.
+                cursor.close();
+                return builder;
+            }
+
+            if (builder.length() != 0)
+                builder.append('\n');
+            builder.append("Blocks ");
+
+            int numberOfNextSteps = cursor.getCount() - cursor.getPosition();
+            if (numberOfNextSteps == 1) {
+                int start = builder.length();
+                builder.append(cursor.getString(cursor.getColumnIndexOrThrow(InstancesView.COLUMN_TASK_NAME)));
+                if (!cursor.isNull(cursor.getColumnIndexOrThrow(InstancesView.COLUMN_DONE_DATE)))
+                    builder.setSpan(new StrikethroughSpan(),
+                            start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            } else {
+                builder.append(String.valueOf(numberOfNextSteps));
+                builder.append(" tasks");
+
+            }
+            cursor.close();
+            return builder;
+        }
+
+        @Override
+        protected void onPostExecute(CharSequence s) {
+            TaskDetailsFragment fragment = fragmentWeakReference.get();
+            if (fragment == null) {
+                return;
+            }
+
+            fragment.relationships.setText(s);
+        }
     }
 }
