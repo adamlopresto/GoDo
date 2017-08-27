@@ -68,8 +68,10 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
     private View startAfterDue;
     private View planAfterDue;
 
+    /*
     private Button button;
     private Intent buttonIntent;
+    */
 
     private boolean showRepetitionCollapsed = true;
     private View repetitionHeader;
@@ -241,77 +243,64 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         return v;
     }
 
-    /**
-     * Receive the result from a previous call to
-     * {@link #startActivityForResult(Intent, int)}.  This follows the
-     * related Activity API as described there in
-     * {@link Activity#onActivityResult(int, int, Intent)}.
-     *
-     * @param requestCode The integer request code originally supplied to
-     *                    startActivityForResult(), allowing you to identify who this
-     *                    result came from.
-     * @param resultCode  The integer result code returned by the child activity
-     *                    through its setResult().
-     * @param data        An Intent, which can return result data to the caller
-     */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == Activity.RESULT_OK) {
-            switch (requestCode) {
-                case REQUEST_PICK_SHORTCUT:
-                    startActivityForResult(data, REQUEST_FINISH_SHORTCUT);
-                    return;
-                case REQUEST_FINISH_SHORTCUT:
-                    button.setText(data.getStringExtra(Intent.EXTRA_SHORTCUT_NAME));
-
-                    /*
-                    button.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                            new BitmapDrawable(getResources(),
-                                    (Bitmap) data.getParcelableExtra(Intent.EXTRA_SHORTCUT_ICON)),
-                    null, null, null);
-
-                    */
-                    Bitmap bmp = null;
-                    Parcelable extra = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_ICON);
-                    if (extra != null && extra instanceof Bitmap)
-                        bmp = (Bitmap) extra;
-                    if (bmp == null) {
-                        extra = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE);
-                        if (extra != null && extra instanceof Intent.ShortcutIconResource) {
-                            try {
-                                Intent.ShortcutIconResource iconResource = (Intent.ShortcutIconResource) extra;
-                                final PackageManager packageManager = getContext().getPackageManager();
-                                Resources resources = packageManager.getResourcesForApplication(iconResource.packageName);
-                                final int id = resources.getIdentifier(iconResource.resourceName, null, null);
-                                bmp = BitmapFactory.decodeResource(resources, id);
-                            } catch (Exception e) {
-                                Log.w("GoDo", "Could not load shortcut icon: " + extra);
-                            }
-                        }
-                    }
-
-                    if (bmp != null)
-                        button.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                                new BitmapDrawable(getResources(), bmp),
-                                null, null, null);
-
-                    buttonIntent = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT);
-                    try {
-                        String uri = buttonIntent.toUri(Intent.URI_INTENT_SCHEME);
-                        Log.e("GoDo", uri);
-                        buttonIntent = Intent.parseUri(uri,
-                                Intent.URI_INTENT_SCHEME);
-                    } catch (URISyntaxException e) {
-                        e.printStackTrace();
-                    }
-
-                    //TODO
-                    return;
-            }
-        }
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (resultCode == Activity.RESULT_OK) {
+//            switch (requestCode) {
+//                case REQUEST_PICK_SHORTCUT:
+//                    startActivityForResult(data, REQUEST_FINISH_SHORTCUT);
+//                    return;
+//                case REQUEST_FINISH_SHORTCUT:
+//                    button.setText(data.getStringExtra(Intent.EXTRA_SHORTCUT_NAME));
+//
+//                    /*
+//                    button.setCompoundDrawablesRelativeWithIntrinsicBounds(
+//                            new BitmapDrawable(getResources(),
+//                                    (Bitmap) data.getParcelableExtra(Intent.EXTRA_SHORTCUT_ICON)),
+//                    null, null, null);
+//
+//                    */
+//                    Bitmap bmp = null;
+//                    Parcelable extra = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_ICON);
+//                    if (extra != null && extra instanceof Bitmap)
+//                        bmp = (Bitmap) extra;
+//                    if (bmp == null) {
+//                        extra = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE);
+//                        if (extra != null && extra instanceof Intent.ShortcutIconResource) {
+//                            try {
+//                                Intent.ShortcutIconResource iconResource = (Intent.ShortcutIconResource) extra;
+//                                final PackageManager packageManager = getContext().getPackageManager();
+//                                Resources resources = packageManager.getResourcesForApplication(iconResource.packageName);
+//                                final int id = resources.getIdentifier(iconResource.resourceName, null, null);
+//                                bmp = BitmapFactory.decodeResource(resources, id);
+//                            } catch (Exception e) {
+//                                Log.w("GoDo", "Could not load shortcut icon: " + extra);
+//                            }
+//                        }
+//                    }
+//
+//                    if (bmp != null)
+//                        button.setCompoundDrawablesRelativeWithIntrinsicBounds(
+//                                new BitmapDrawable(getResources(), bmp),
+//                                null, null, null);
+//
+//                    buttonIntent = data.getParcelableExtra(Intent.EXTRA_SHORTCUT_INTENT);
+//                    try {
+//                        String uri = buttonIntent.toUri(Intent.URI_INTENT_SCHEME);
+//                        Log.e("GoDo", uri);
+//                        buttonIntent = Intent.parseUri(uri,
+//                                Intent.URI_INTENT_SCHEME);
+//                    } catch (URISyntaxException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    //TODO
+//                    return;
+//            }
+//        }
+//    }
 
     @Override
     public void onResume() {
