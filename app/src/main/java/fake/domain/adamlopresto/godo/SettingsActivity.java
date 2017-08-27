@@ -5,10 +5,10 @@ import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-public class SettingsActivity extends ActionBarActivity {
+public class SettingsActivity extends AppCompatActivity {
 
     public static final String PREF_SHOW_BLOCKED_BY_TASK = "pref_show_blocked_by_task";
     public static final String PREF_SHOW_BLOCKED_BY_CONTEXT = "pref_show_blocked_by_context";

@@ -15,7 +15,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,7 +32,7 @@ import android.widget.SimpleCursorAdapter.ViewBinder;
 
 import fake.domain.adamlopresto.godo.db.ContextsTable;
 
-public class ContextsActivity extends ActionBarActivity {
+public class ContextsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
