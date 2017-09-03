@@ -678,7 +678,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_FUTURE, false))
                     where = DatabaseUtils.concatenateWhere(where, "coalesce(start_date,0) < DATETIME('now', 'localtime')");
 
-                String overdue = "(length(due_date) > 10 and due_date <= DATETIME('now', 'localtime'))";
+                String overdue = "(due_date || ' 23:59:59' <= DATETIME('now', 'localtime'))";
                 where = (where == null) ? "" : "(" + where + ") or "+overdue;
 
                 if (!prefs.getBoolean(SettingsActivity.PREF_SHOW_DONE, false))
