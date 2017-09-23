@@ -51,7 +51,7 @@ public class GoDoAppWidget extends AppWidgetProvider {
         PendingIntent newFromVoicePendingIntent = stackBuilder.getPendingIntent(3, PendingIntent.FLAG_UPDATE_CURRENT);
         Intent recognizer = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         recognizer.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        recognizer.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+        recognizer.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 10);
         recognizer.putExtra(RecognizerIntent.EXTRA_PROMPT, context.getText(R.string.task_name_hint));
         recognizer.putExtra(RecognizerIntent.EXTRA_RESULTS_PENDINGINTENT,
                 newFromVoicePendingIntent);

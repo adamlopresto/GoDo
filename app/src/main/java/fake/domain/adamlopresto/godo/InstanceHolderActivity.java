@@ -43,8 +43,7 @@ public abstract class InstanceHolderActivity extends AppCompatActivity {
         List<String> names = bundle.getStringArrayList(RecognizerIntent.EXTRA_RESULTS);
         if (names != null) {
             DatabaseHelper helper = DatabaseHelper.getInstance(this);
-            String name = names.get(0);
-            instance = Instance.createFromName(helper, this, name);
+            instance = Instance.createFromNames(helper, this, names);
             task = instance.getTask();
             return true;
         }

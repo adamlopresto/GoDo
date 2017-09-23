@@ -277,4 +277,14 @@ public final class Utils {
     public static String[] idToSelectionArgs(long id) {
         return new String[]{String.valueOf(id)};
     }
+
+    /**
+     * This isn't proper sentence case. It's only "captalize the first letter".
+     *
+     * @param in
+     * @return
+     */
+    public static String sentenceCase(String in){
+        return Character.toTitleCase(in.charAt(0)) + in.substring(1);
+    }
 }

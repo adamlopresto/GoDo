@@ -10,9 +10,12 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,27 +71,39 @@ public class Instance {
         //this.createDate = createDate;
     }
 
+    public static Instance createFromName(DatabaseHelper helper, Context context, String name) {
+        return createFromNames(helper, context, Collections.singletonList(name));
+    }
 
     @SuppressLint ("WrongConstant")
-    public static Instance createFromName(DatabaseHelper helper, Context context, String name){
-        name = Character.toTitleCase(name.charAt(0)) + name.substring(1);
-        Task task;
+    public static Instance createFromNames(DatabaseHelper helper, Context context, List<String> names){
+        Cursor c;
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor c = db.query(TasksTable.TABLE,
-                new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES,
-                        TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT,
-                        TasksTable.COLUMN_DUE_NOTIFICATION, TasksTable.COLUMN_ID},
-                "? like REPLACE("+TasksTable.COLUMN_NAME+", 'things', '%')",
-                new String[]{name}, null, null, TasksTable.COLUMN_ID+" DESC", "1"
-        );
-        if (c.moveToFirst()) {
-            task = new Task(helper, c.getLong(5), c.getString(0), c.getString(1),
-                    NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)],
-                    NotificationLevels.values()[c.getInt(4)]);
-        } else {
+        Task task=null;
+        String name=null;
+
+        for (String n : names) {
+            name = Utils.sentenceCase(n);
+            c = db.query(TasksTable.TABLE,
+                    new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES,
+                            TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT,
+                            TasksTable.COLUMN_DUE_NOTIFICATION, TasksTable.COLUMN_ID},
+                    "? like REPLACE(" + TasksTable.COLUMN_NAME + ", 'things', '%')",
+                    new String[]{name}, null, null, TasksTable.COLUMN_ID + " DESC", "1"
+            );
+            if (c.moveToFirst()) {
+                task = new Task(helper, c.getLong(5), c.getString(0), c.getString(1),
+                        NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)],
+                        NotificationLevels.values()[c.getInt(4)]);
+                break;
+            }
+            c.close();
+        }
+        if (task == null) {
+            name = Utils.sentenceCase(names.get(0));
             task = new Task(helper, context, name);
         }
-        c.close();
+
 
         c = db.query(InstancesTable.TABLE, new String[]{InstancesTable.COLUMN_ID},
                 InstancesTable.COLUMN_TASK + "=? AND "+InstancesTable.COLUMN_DONE_DATE+" IS NULL",
@@ -141,7 +156,7 @@ public class Instance {
             Pattern pattern = Pattern.compile(stringPattern, Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(name);
             if (matcher.matches()) {
-                String newNotes = matcher.group(1);
+                String newNotes = Utils.sentenceCase(matcher.group(1));
                 CharSequence instanceNotesCharSeq = instance.getNotes();
                 if (TextUtils.isEmpty(instanceNotesCharSeq))
                     instance.setNotes(newNotes);
