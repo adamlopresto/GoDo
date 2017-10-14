@@ -317,21 +317,15 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         CharSequence name = task.getName();
         taskName.setText(name);
         if (TextUtils.isEmpty(name)){
-            taskName.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            taskName.postDelayed(new Runnable() {
                 @Override
-                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                    if (oldLeft != 0)
-                        taskName.removeOnLayoutChangeListener(this);
+                public void run() {
                     InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                     if (imm != null) {
-                        imm.showSoftInput(taskName, InputMethodManager.SHOW_IMPLICIT);
-                        /*
-                        Log.e("GoDo", "Showing soft input 12 "+left+", "+top+", "+right+", "+bottom+", "
-                                +oldLeft+", "+oldTop+", "+oldRight+", "+oldBottom);
-                        */
+                        imm.toggleSoftInputFromWindow(taskName.getApplicationWindowToken(), InputMethodManager.SHOW_IMPLICIT, 0);
                     }
                 }
-            });
+            }, 500L);
         }
         taskNotes.setText(task.getNotes());
         notification.setSelection(task.getNotification().ordinal());
