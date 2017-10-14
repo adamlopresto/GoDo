@@ -127,23 +127,23 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup group, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_task_details, group, false);
         assert v != null;
-        done = (CheckBox) v.findViewById(R.id.check);
-        taskName = (TextView) v.findViewById(R.id.task_name);
-        taskNotes = (TextView) v.findViewById(R.id.task_notes);
-        instanceNotes = (TextView) v.findViewById(R.id.instance_notes);
-        notification = (Spinner) v.findViewById(R.id.notification);
-        dueNotification = (Spinner) v.findViewById(R.id.due_notification);
+        done = v.findViewById(R.id.check);
+        taskName = v.findViewById(R.id.task_name);
+        taskNotes = v.findViewById(R.id.task_notes);
+        instanceNotes = v.findViewById(R.id.instance_notes);
+        notification = v.findViewById(R.id.notification);
+        dueNotification = v.findViewById(R.id.due_notification);
         dueNotificationLabel = v.findViewById(R.id.due_label);
 
-        start = (DateTimePicker) v.findViewById(R.id.start);
+        start = v.findViewById(R.id.start);
         start.setColumn(RepetitionRuleColumns.NEW_START);
         start.setOnDateChangeListener(this);
 
-        plan = (DateTimePicker) v.findViewById(R.id.plan);
+        plan = v.findViewById(R.id.plan);
         plan.setColumn(RepetitionRuleColumns.NEW_PLAN);
         plan.setOnDateChangeListener(this);
 
-        due = (DateTimePicker) v.findViewById(R.id.due);
+        due = v.findViewById(R.id.due);
         due.setColumn(RepetitionRuleColumns.NEW_DUE);
         due.setOnDateChangeListener(this);
 
@@ -154,11 +154,11 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         ((ViewGroup)v.findViewById(R.id.layout)).getLayoutTransition()
                 .enableTransitionType(LayoutTransition.CHANGING);
 
-        repetitionHeader   =           v.findViewById(R.id.repetition_header);
+        repetitionHeader   = v.findViewById(R.id.repetition_header);
         repetitionHeader.setOnClickListener(expandContractRepetitionsListener);
-        repetitionSummary  = (TextView)v.findViewById(R.id.repetition_summary);
-        repetitionRuleList = (TextView)v.findViewById(R.id.repetition_list);
-        repetitionDivider  =           v.findViewById(R.id.repetition_divider);
+        repetitionSummary  = v.findViewById(R.id.repetition_summary);
+        repetitionRuleList = v.findViewById(R.id.repetition_list);
+        repetitionDivider  = v.findViewById(R.id.repetition_divider);
 
 
         repetitionRuleList.setOnClickListener(showRepetitionsActivityListener);
@@ -189,9 +189,9 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
             }
         });
 
-        relationships = (TextView)v.findViewById(R.id.relationships_label);
+        relationships = v.findViewById(R.id.relationships_label);
 
-        contexts = (TextView) v.findViewById(R.id.contexts);
+        contexts = v.findViewById(R.id.contexts);
         contexts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -199,7 +199,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
             }
         });
 
-        Toolbar toolbar = (Toolbar) v.findViewById(R.id.header);
+        Toolbar toolbar = v.findViewById(R.id.header);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         ActionBar actionBar =  activity.getSupportActionBar();
@@ -317,6 +317,7 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         CharSequence name = task.getName();
         taskName.setText(name);
         if (TextUtils.isEmpty(name)){
+            //noinspection MagicNumber
             taskName.postDelayed(new Runnable() {
                 @Override
                 public void run() {
