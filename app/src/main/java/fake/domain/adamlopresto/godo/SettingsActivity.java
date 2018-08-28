@@ -18,6 +18,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static final String PREF_DEFAULT_DUE_NOTIFICATION = "pref_default_due_notification";
     public static final String PREF_COLORFUL_WIDGET = "pref_colorful_widget";
     public static final String PREF_LED = "pref_led";
+    public static final String PREF_SHOWOFF = "pref_showoff";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

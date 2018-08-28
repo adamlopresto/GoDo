@@ -5,12 +5,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+
+import fake.domain.adamlopresto.godo.SettingsActivity;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -39,9 +42,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @NonNull
     private static String getDatabaseName(@NonNull Context context) {
         File path = context.getExternalFilesDir(null);
+        String suffix = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(SettingsActivity.PREF_SHOWOFF, false)
+                ? "-showoff" : "";
         if (path == null)
-            return DATABASE_NAME;
-        return path + "/" + DATABASE_NAME;
+            return DATABASE_NAME + suffix;
+        return path + "/" + DATABASE_NAME + suffix;
     }
 
     @NonNull
