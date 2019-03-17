@@ -1,7 +1,7 @@
 package fake.domain.adamlopresto.godo.db;
 
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class InstanceDependencyTable {
 

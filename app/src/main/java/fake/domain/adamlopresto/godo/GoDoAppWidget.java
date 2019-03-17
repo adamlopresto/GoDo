@@ -9,8 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.speech.RecognizerIntent;
-import android.support.annotation.NonNull;
-import android.support.v4.app.TaskStackBuilder;
+import androidx.annotation.NonNull;
+import androidx.core.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.RemoteViews;
 
