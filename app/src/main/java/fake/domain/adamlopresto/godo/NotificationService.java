@@ -2,6 +2,8 @@ package fake.domain.adamlopresto.godo;
 
 import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentResolver;
@@ -9,6 +11,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.AudioAttributes;
 import android.os.Build;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -111,8 +114,6 @@ public class NotificationService extends Service {
 
         int numToNotify = 0;
         int total = 0;
-        boolean audible = false;
-        boolean vibrate = false;
         NotificationCompat.InboxStyle inbox = new NotificationCompat.InboxStyle();
         String name;
         String taskNotes;
@@ -123,6 +124,10 @@ public class NotificationService extends Service {
         if (c != null) {
             c.moveToFirst();
             total = c.getCount();
+
+            if (total > 0){
+                createNotificationChannels();
+            }
 
             while (!c.isAfterLast()) {
                 SpannableStringBuilder sb = new SpannableStringBuilder();
@@ -148,16 +153,10 @@ public class NotificationService extends Service {
                     }
                     inbox.addLine(sb);
 
-                    int notificationLevel = c.getInt(3);
-                    switch (NotificationLevels.values()[Math.min(notificationLevel, max)]) {
+                    int notificationLevel = Math.min(c.getInt(3), max);
+                    switch (NotificationLevels.values()[notificationLevel]) {
                         case SPOKEN:
                             spoken.add(name);
-                            break;
-                        case NOISY:
-                            audible = true;
-                            //fall through
-                        case VIBRATE:
-                            vibrate = true;
                             break;
                         default:
                             break;
@@ -165,19 +164,15 @@ public class NotificationService extends Service {
                     if (notificationLevel > maxNotificationLevel)
                         maxNotificationLevel = notificationLevel;
 
-                    if (total == 1 || Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                        id = c.getLong(4);
-                        NotificationCompat.Builder builder = makeBuilder(audible, vibrate);
-                        populateBuilder(builder, id, name, taskNotes,
-                                instanceNotes);
-                        if (total != 1) {
-                            builder.setGroup(GROUP_KEY);
-                            builder.setSortKey(String.format(Locale.US, "%03d", numToNotify));
-                        }
-                        builder.setPriority(priorityFromLevel(notificationLevel));
-                        nm.notify((int) id, builder.build());
+                    id = c.getLong(4);
+                    NotificationCompat.Builder builder = makeBuilder(notificationLevel);
+                    populateBuilder(builder, id, name, taskNotes,
+                            instanceNotes);
+                    if (total != 1) {
+                        builder.setGroup(GROUP_KEY);
+                        builder.setSortKey(String.format(Locale.US, "%03d", numToNotify));
                     }
-
+                    nm.notify((int) id, builder.build());
 
                 }
                 c.moveToNext();
@@ -187,7 +182,7 @@ public class NotificationService extends Service {
 
         if (total > 1) {
 
-            NotificationCompat.Builder builder = makeBuilder(audible, vibrate);
+            NotificationCompat.Builder builder = makeBuilder(maxNotificationLevel);
 
             builder.setContentTitle(total + " tasks")
                     .setContentText("GoDo")
@@ -202,7 +197,6 @@ public class NotificationService extends Service {
                                     PendingIntent.FLAG_UPDATE_CURRENT)
                     )
                     .setStyle(inbox)
-                    .setPriority(priorityFromLevel(maxNotificationLevel))
                     .setGroup(GROUP_KEY)
                     .setGroupSummary(true);
 
@@ -336,8 +330,33 @@ public class NotificationService extends Service {
                 PendingIntent.FLAG_UPDATE_CURRENT));
     }
 
-    private NotificationCompat.Builder makeBuilder(boolean audible, boolean vibrate) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+    private NotificationCompat.Builder makeBuilder(int notificationLevel) {
+        String channel;
+        boolean audible = false;
+        boolean vibrate = false;
+
+        switch (NotificationLevels.values()[notificationLevel]) {
+            case SPOKEN:
+                channel = "SPOKEN";
+                break;
+            case NOISY:
+                channel = "NOISY";
+                audible = true;
+                vibrate = true;
+                break;
+            case VIBRATE:
+                channel = "VIBRATE";
+                vibrate = true;
+                break;
+            case SILENT:
+                channel = "SILENT";
+                break;
+            default:
+                channel = "SILENT";
+                break;
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channel)
 
                 // Set required fields, including the small icon, the
                 // notification title, and text.
@@ -355,7 +374,45 @@ public class NotificationService extends Service {
             builder.setLights(Color.GREEN, 1000, 1000);
 
         builder.setAutoCancel(true);
+        builder.setPriority(priorityFromLevel(notificationLevel));
         return builder;
+    }
+
+    private void createNotificationChannels(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (manager.getNotificationChannel("SPOKEN") == null) {
+                NotificationChannel channel = new NotificationChannel("SPOKEN", "Spoken", NotificationManager.IMPORTANCE_HIGH);
+                channel.setDescription("Spoken notifications");
+                channel.setLightColor(Color.GREEN);
+                channel.enableLights(true);
+                channel.enableVibration(false);
+                channel.setSound(null, (new AudioAttributes.Builder()).build());
+                manager.createNotificationChannel(channel);
+
+                channel = new NotificationChannel("NOISY", "Noisy", NotificationManager.IMPORTANCE_HIGH);
+                channel.setDescription("Notifications set to be noisy by default");
+                channel.setLightColor(Color.GREEN);
+                channel.enableLights(true);
+                channel.setVibrationPattern(new long[]{0L, 1000L, 300L, 1000L});
+                manager.createNotificationChannel(channel);
+
+
+                channel = new NotificationChannel("VIBRATE", "Vibrate", NotificationManager.IMPORTANCE_DEFAULT);
+                channel.setDescription("Notifications set to vibrate by default");
+                channel.setLightColor(Color.GREEN);
+                channel.setVibrationPattern(new long[]{0L, 1000L, 300L, 1000L});
+                channel.setSound(null, (new AudioAttributes.Builder()).build());
+                channel.enableLights(true);
+                manager.createNotificationChannel(channel);
+
+                channel = new NotificationChannel("SILENT", "Silent", NotificationManager.IMPORTANCE_LOW);
+                channel.setDescription("Notifications set to silent by default");
+                channel.setLightColor(Color.GREEN);
+                channel.enableLights(true);
+                manager.createNotificationChannel(channel);
+            }
+        }
     }
 
     @Override
