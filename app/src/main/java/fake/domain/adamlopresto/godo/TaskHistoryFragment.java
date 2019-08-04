@@ -89,7 +89,7 @@ public class TaskHistoryFragment extends ListFragment
         @Override
         public void bindView(@NonNull View view, Context context, @NonNull Cursor cursor) {
             String notes = cursor.getString(NOTES);
-            TextView noteView = (TextView) view.findViewById(android.R.id.text1);
+            TextView noteView = view.findViewById(android.R.id.text1);
             if (TextUtils.isEmpty(notes))
                 noteView.setVisibility(View.GONE);
             else {

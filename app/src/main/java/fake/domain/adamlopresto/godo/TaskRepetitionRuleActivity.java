@@ -55,21 +55,21 @@ public class TaskRepetitionRuleActivity extends AppCompatActivity {
         if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
 
-        to = (Spinner) findViewById(R.id.to);
-        from = (Spinner) findViewById(R.id.from);
-        direction = (Spinner) findViewById(R.id.direction);
-        ruleType = (Spinner) findViewById(R.id.rule_type);
-        numberLabel = (TextView) findViewById(R.id.number_label);
-        number = (EditText) findViewById(R.id.number);
-        weekdayLayout = (LinearLayout) findViewById(R.id.weekdays);
-        weekdays[0] = (CheckBox) findViewById(R.id.sunday);
-        weekdays[1] = (CheckBox) findViewById(R.id.monday);
-        weekdays[2] = (CheckBox) findViewById(R.id.tuesday);
-        weekdays[3] = (CheckBox) findViewById(R.id.wednesday);
-        weekdays[4] = (CheckBox) findViewById(R.id.thursday);
-        weekdays[5] = (CheckBox) findViewById(R.id.friday);
-        weekdays[6] = (CheckBox) findViewById(R.id.saturday);
-        timePicker = (TimePicker) findViewById(R.id.timePicker);
+        to = findViewById(R.id.to);
+        from = findViewById(R.id.from);
+        direction = findViewById(R.id.direction);
+        ruleType = findViewById(R.id.rule_type);
+        numberLabel = findViewById(R.id.number_label);
+        number = findViewById(R.id.number);
+        weekdayLayout = findViewById(R.id.weekdays);
+        weekdays[0] = findViewById(R.id.sunday);
+        weekdays[1] = findViewById(R.id.monday);
+        weekdays[2] = findViewById(R.id.tuesday);
+        weekdays[3] = findViewById(R.id.wednesday);
+        weekdays[4] = findViewById(R.id.thursday);
+        weekdays[5] = findViewById(R.id.friday);
+        weekdays[6] = findViewById(R.id.saturday);
+        timePicker = findViewById(R.id.timePicker);
 
         ruleType.setOnItemSelectedListener(new OnItemSelectedListener() {
 

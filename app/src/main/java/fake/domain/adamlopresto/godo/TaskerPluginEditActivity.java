@@ -47,9 +47,9 @@ public class TaskerPluginEditActivity extends Activity {
         findViewById(R.id.activate_button).setOnClickListener(new EditButtonClickListener(activate));
         findViewById(R.id.deactivate_button).setOnClickListener(new EditButtonClickListener(deactivate));
 
-        activate_view = (TextView) findViewById(R.id.activate);
-        deactivate_view = (TextView) findViewById(R.id.deactivate);
-        maxNotify = (Spinner) findViewById(R.id.max_notify);
+        activate_view = findViewById(R.id.activate);
+        deactivate_view = findViewById(R.id.deactivate);
+        maxNotify = findViewById(R.id.max_notify);
 
         maxNotify.setOnItemSelectedListener(new OnItemSelectedListener() {
 

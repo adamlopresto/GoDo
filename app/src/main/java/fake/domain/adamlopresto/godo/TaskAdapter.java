@@ -343,13 +343,13 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
         public TaskHolder(View itemView, boolean showCheckBox) {
             super(itemView);
             itemView.setTag(this);
-            done = (CheckBox) itemView.findViewById(R.id.check);
+            done = itemView.findViewById(R.id.check);
             done.setVisibility(showCheckBox ? View.VISIBLE : View.GONE);
-            name = (TextView) itemView.findViewById(R.id.task_name);
-            taskNotes = (TextView) itemView.findViewById(R.id.task_notes);
-            instanceNotes = (TextView) itemView.findViewById(R.id.instance_notes);
-            planDate = (TextView) itemView.findViewById(R.id.plan_date);
-            dueDate = (TextView) itemView.findViewById(R.id.due_date);
+            name = itemView.findViewById(R.id.task_name);
+            taskNotes = itemView.findViewById(R.id.task_notes);
+            instanceNotes = itemView.findViewById(R.id.instance_notes);
+            planDate = itemView.findViewById(R.id.plan_date);
+            dueDate = itemView.findViewById(R.id.due_date);
 
         }
     }

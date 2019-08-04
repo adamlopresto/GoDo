@@ -115,7 +115,7 @@ public class Instance {
             instance=get(helper, id);
         } else {
             c.close();
-            instance = new Instance(helper, task);
+            instance = task.createRepetition(null);
 
             String taskName = task.getName().toString();
             String lowerCase = taskName.toLowerCase();

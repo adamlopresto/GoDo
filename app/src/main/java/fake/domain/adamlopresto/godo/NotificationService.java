@@ -27,6 +27,8 @@ import android.text.TextUtils;
 import android.text.style.StyleSpan;
 import android.util.Log;
 
+import org.jetbrains.annotations.Contract;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -281,6 +283,7 @@ public class NotificationService extends Service {
      * @param s2 second string to compare
      * @return whichever string is first alphabetically
      */
+    @Contract("null, _ -> param2; !null, null -> param1")
     @Nullable
     private String stringMin(@Nullable String s1, @Nullable String s2) {
         if (s1 == null)

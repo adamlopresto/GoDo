@@ -149,7 +149,7 @@ public class AllDependenciesFragment extends ListFragment
         Context context = getActivity();
         LayoutInflater inflater = LayoutInflater.from(context);
         View headerFull = inflater.inflate(R.layout.dependency_header, lv, false);
-        header = (Toolbar)headerFull.findViewById(R.id.header);
+        header = headerFull.findViewById(R.id.header);
         lv.addHeaderView(headerFull, null, false);
         ViewGroup footer = (ViewGroup) inflater.inflate(R.layout.dependency_footer, lv, false);
         footer.findViewById(R.id.create_next_step).setOnClickListener(new View.OnClickListener() {

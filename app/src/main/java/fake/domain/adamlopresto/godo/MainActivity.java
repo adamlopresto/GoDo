@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onActivityCreated(@Nullable Bundle savedInstanceState) {
             super.onActivityCreated(savedInstanceState);
-            RecyclerView recyclerView = (RecyclerView) getView().findViewById(android.R.id.list);
+            RecyclerView recyclerView = getView().findViewById(android.R.id.list);
             assert recyclerView != null;
 
             /* TODO
@@ -303,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
 
             handleIntent(activity.getIntent());
 
-            final FloatingActionMenu menu = (FloatingActionMenu)activity.findViewById(R.id.fab_menu);
+            final FloatingActionMenu menu = activity.findViewById(R.id.fab_menu);
             //48dp looks right
             //noinspection MagicNumber
             menu.setmItemGap(48);
@@ -333,13 +333,13 @@ public class MainActivity extends AppCompatActivity {
 
             //fab.attachToListView(getListView());
 
-            ListView drawerList = (ListView) activity.findViewById(R.id.left_drawer);
+            ListView drawerList = activity.findViewById(R.id.left_drawer);
             drawerList.setAdapter(new ArrayAdapter<>(activity,
                     android.R.layout.simple_list_item_1, new String[]{
                     "Active", "Plan", "Archive", "Contexts", "Settings"
             }));
 
-            final DrawerLayout drawerLayout = (DrawerLayout)activity.findViewById(R.id.drawer_layout);
+            final DrawerLayout drawerLayout = activity.findViewById(R.id.drawer_layout);
 
             drawerList.setOnItemClickListener(
                     new AdapterView.OnItemClickListener() {
@@ -421,7 +421,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void populateFABFromCursor(Activity activity, Cursor cursor, int resource) {
-            FloatingActionButton nextFab = (FloatingActionButton) activity.findViewById(resource);
+            FloatingActionButton nextFab = activity.findViewById(resource);
             TextView textView = (TextView) nextFab.getTag();
             if (cursor.isAfterLast()) {
                 nextFab.setEnabled(false);
@@ -502,7 +502,7 @@ public class MainActivity extends AppCompatActivity {
                     populateFABFromCursor(activity, cursor, R.id.action_new_from_template1);
                     populateFABFromCursor(activity, cursor, R.id.action_new_from_template2);
                     populateFABFromCursor(activity, cursor, R.id.action_new_from_template3);
-                    nextFab = (FloatingActionButton) activity.findViewById(R.id.action_new_from_template_more);
+                    nextFab = activity.findViewById(R.id.action_new_from_template_more);
                     if (cursor.isAfterLast()) {
                         nextFab.setEnabled(false);
                         nextFab.setVisibility(View.GONE);

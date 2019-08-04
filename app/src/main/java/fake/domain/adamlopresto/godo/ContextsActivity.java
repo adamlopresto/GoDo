@@ -103,8 +103,8 @@ public class ContextsActivity extends AppCompatActivity {
                         AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
                         @SuppressLint ("InflateParams") View inner = LayoutInflater.from(b.getContext()).inflate(R.layout.context_details, null);
                         assert inner != null;
-                        final EditText name = (EditText) inner.findViewById(R.id.context_name);
-                        final EditText desc = (EditText) inner.findViewById(R.id.context_description);
+                        final EditText name = inner.findViewById(R.id.context_name);
+                        final EditText desc = inner.findViewById(R.id.context_description);
 
                         final long id = getListView().getCheckedItemIds()[0];
                         Cursor c = getActivity().getContentResolver().query(GoDoContentProvider.CONTEXTS_URI,
@@ -230,8 +230,8 @@ public class ContextsActivity extends AppCompatActivity {
                     AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
                     @SuppressLint ("InflateParams") View inner = LayoutInflater.from(b.getContext()).inflate(R.layout.context_details, null);
                     assert inner != null;
-                    final EditText name = (EditText) inner.findViewById(R.id.context_name);
-                    final EditText desc = (EditText) inner.findViewById(R.id.context_description);
+                    final EditText name = inner.findViewById(R.id.context_name);
+                    final EditText desc = inner.findViewById(R.id.context_description);
 
                     b.setView(inner).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
