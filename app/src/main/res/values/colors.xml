@@ -7,6 +7,7 @@
     <color name="accent">#7c4dff</color>
     <color name="accentLight">#B388FF</color>
     <color name="accentDark">#651FFF</color>
-
+    <color name="backdrop">#FFFFFF</color>
+    <color name="backdropFaded">#e5e5e5</color>
 
 </resources>

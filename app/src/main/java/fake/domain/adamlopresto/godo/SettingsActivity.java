@@ -19,6 +19,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static final String PREF_COLORFUL_WIDGET = "pref_colorful_widget";
     public static final String PREF_LED = "pref_led";
     public static final String PREF_SHOWOFF = "pref_showoff";
+    public static final String PREF_THEME = "pref_theme";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

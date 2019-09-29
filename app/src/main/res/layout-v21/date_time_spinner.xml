@@ -13,8 +13,10 @@
         android:layout_gravity="fill_horizontal"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:textAppearance="@android:style/TextAppearance.Widget.TextView.SpinnerItem"
-        style="@android:style/Widget.Material.Light.Spinner"
+        android:textSize="@dimen/abc_text_size_menu_material"
+        style="?android:attr/spinnerStyle"
         android:visibility="gone" />
 
+    <!--style="@android:style/Widget.Material.Spinner" -->
+    <!--android:textAppearance="@android:style/TextAppearance.Widget.TextView.SpinnerItem"-->
 </merge>

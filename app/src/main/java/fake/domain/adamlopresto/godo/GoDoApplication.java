@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+
+import androidx.appcompat.app.AppCompatDelegate;
 
 /**
  * Used to determine when the app loses focus, so we can put up a notification.
@@ -22,6 +25,11 @@ public class GoDoApplication extends Application implements Application.Activity
         // with just a few lines of code. Now *that's* nice.
         super.onCreate();
         registerActivityLifecycleCallbacks(this);
+        /*
+        AppCompatDelegate.setDefaultNightMode(
+                PreferenceManager.getDefaultSharedPreferences(this)
+                        .getInt(SettingsActivity.PREF_THEME, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM));
+         */
     }
 
     @Override

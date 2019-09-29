@@ -1,6 +1,8 @@
 package fake.domain.adamlopresto.godo;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.graphics.Color;
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +42,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
     private static final int PLAN_DATE = 5;
     private static final int DONE_DATE = 6;
     private final boolean showCheckBox;
+
+    private static int defaultTextColor;
 
     @Nullable
     private View.OnClickListener onClickListener;
@@ -75,6 +80,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
                 }
             };
         }
+
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
+        TypedArray arr =
+                context.obtainStyledAttributes(typedValue.data, new int[]{
+                        android.R.attr.textColorPrimary});
+        defaultTextColor = arr.getColor(0, -1);
+        arr.recycle();
     }
 
     public void toggleSelected(View view) {
@@ -134,9 +148,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
         else
             v.setPaintFlags(v.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
 
-        v.setTextColor(overdue ? Color.RED :
-                       future ? Color.GRAY :
-                       Color.BLACK);
+        v.setTextColor(
+                overdue ? Color.RED  :
+                future  ? Color.GRAY :
+                          defaultTextColor);
     }
 
     @SuppressWarnings ("BooleanMethodIsAlwaysInverted")
