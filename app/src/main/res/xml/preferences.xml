@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
-    <PreferenceCategory android:title="@string/pref_filtering_header">
-        <CheckBoxPreference android:key="pref_show_blocked_by_task" android:summaryOn="@string/pref_show_blocked_by_task_on" android:title="@string/pref_show_blocked_by_task_title" android:summaryOff="@string/pref_show_blocked_by_task_off"/>
-        <CheckBoxPreference android:key="pref_show_blocked_by_context" android:summaryOn="@string/pref_show_blocked_by_context_on" android:title="@string/pref_show_blocked_by_context_title" android:summaryOff="@string/pref_show_blocked_by_context_off"/>
-        <CheckBoxPreference android:key="pref_show_done" android:summaryOn="@string/pref_show_done_on" android:title="@string/pref_show_done_title" android:summaryOff="@string/pref_show_done_off"/>
-        <CheckBoxPreference android:key="pref_show_future" android:summaryOn="@string/pref_show_future_on" android:title="@string/pref_show_future_title" android:summaryOff="@string/pref_show_future_off"/>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory app:title="@string/pref_filtering_header">
+        <SwitchPreferenceCompat app:key="pref_show_blocked_by_task" app:summaryOn="@string/pref_show_blocked_by_task_on" app:title="@string/pref_show_blocked_by_task_title" app:summaryOff="@string/pref_show_blocked_by_task_off"/>
+        <SwitchPreferenceCompat app:key="pref_show_blocked_by_context" app:summaryOn="@string/pref_show_blocked_by_context_on" app:title="@string/pref_show_blocked_by_context_title" app:summaryOff="@string/pref_show_blocked_by_context_off"/>
+        <SwitchPreferenceCompat app:key="pref_show_done" app:summaryOn="@string/pref_show_done_on" app:title="@string/pref_show_done_title" app:summaryOff="@string/pref_show_done_off"/>
+        <SwitchPreferenceCompat app:key="pref_show_future" app:summaryOn="@string/pref_show_future_on" app:title="@string/pref_show_future_title" app:summaryOff="@string/pref_show_future_off"/>
     </PreferenceCategory>
-    <PreferenceCategory android:title="Defaults">
-        <ListPreference android:entries="@array/notification_levels" android:key="pref_default_notification" android:title="@string/pref_default_notification_title" android:entryValues="@array/notification_levels_backend" android:defaultValue="NONE"/>
-        <ListPreference android:entries="@array/notification_levels" android:key="pref_default_due_notification" android:title="@string/pref_default_due_notification_title" android:entryValues="@array/notification_levels_backend" android:defaultValue="NONE"/>
+    <PreferenceCategory app:title="Defaults">
+        <ListPreference app:entries="@array/notification_levels" app:key="pref_default_notification" app:title="@string/pref_default_notification_title" app:entryValues="@array/notification_levels_backend" app:defaultValue="NONE"/>
+        <ListPreference app:entries="@array/notification_levels" app:key="pref_default_due_notification" app:title="@string/pref_default_due_notification_title" app:entryValues="@array/notification_levels_backend" app:defaultValue="NONE"/>
     </PreferenceCategory>
-    <PreferenceCategory android:title="Miscellanea">
-        <ListPreference android:entries="@array/themes" android:key="pref_theme" android:title="Theme" android:entryValues="@array/themes_backend" android:defaultValue="-1"/>
-        <CheckBoxPreference android:key="pref_colorful_widget" android:summaryOn="Use the new, more colorful widget" android:title="Use colorful widget" android:summaryOff="Use the old, grayscale widget" android:defaultValue="true"/>
-        <CheckBoxPreference android:key="pref_led" android:summaryOn="Turn on the light when there's a notification" android:title="Notification lights" android:summaryOff="Leave the light off when there's a notification" android:defaultValue="true"/>
-        <CheckBoxPreference android:key="pref_showoff" android:summaryOn="Use a special version of the database to show off" android:title="Demo mode" android:summaryOff="Use the normal database" android:defaultValue="false"/>
+    <PreferenceCategory app:title="Miscellanea">
+        <ListPreference app:entries="@array/themes" app:key="pref_theme" app:title="Theme" app:entryValues="@array/themes_backend" app:defaultValue="-1"/>
+        <SwitchPreferenceCompat app:key="pref_colorful_widget" app:summaryOn="Use the new, more colorful widget" app:title="Use colorful widget" app:summaryOff="Use the old, grayscale widget" app:defaultValue="true"/>
+        <SwitchPreferenceCompat app:key="pref_led" app:summaryOn="Turn on the light when there's a notification" app:title="Notification lights" app:summaryOff="Leave the light off when there's a notification" app:defaultValue="true"/>
+        <SwitchPreferenceCompat app:key="pref_showoff" app:summaryOn="Use a special version of the database to show off" app:title="Demo mode" app:summaryOff="Use the normal database" app:defaultValue="false"/>
     </PreferenceCategory>
 </PreferenceScreen>

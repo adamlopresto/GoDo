@@ -6,6 +6,11 @@ import android.preference.PreferenceFragment;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+
 import android.view.MenuItem;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -26,7 +31,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
     }
 
     @Override
@@ -49,11 +54,19 @@ public class SettingsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static class SettingsFragment extends PreferenceFragment {
+    public static class SettingsFragment extends PreferenceFragmentCompat {
         @Override
-        public void onCreate(final Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.preferences);
+        public void onCreatePreferences(final Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.preferences, rootKey);
+            ListPreference theme = findPreference(PREF_THEME);
+            theme.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    //TODO
+                    AppCompatDelegate.setDefaultNightMode(Integer.parseInt(newValue.toString()));
+                    return true;
+                }
+            });
         }
     }
 

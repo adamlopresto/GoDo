@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -25,11 +25,9 @@ public class GoDoApplication extends Application implements Application.Activity
         // with just a few lines of code. Now *that's* nice.
         super.onCreate();
         registerActivityLifecycleCallbacks(this);
-        /*
-        AppCompatDelegate.setDefaultNightMode(
+        AppCompatDelegate.setDefaultNightMode(Integer.parseInt(
                 PreferenceManager.getDefaultSharedPreferences(this)
-                        .getInt(SettingsActivity.PREF_THEME, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM));
-         */
+                        .getString(SettingsActivity.PREF_THEME, "-1")));
     }
 
     @Override
