@@ -18,6 +18,7 @@ public class GoDoReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(@NonNull Context context, @NonNull Intent intent) {
 
+        Log.e("GoDo", "Got intent "+intent);
         String action = intent.getAction();
         if (action == null ||
                 "com.twofortyfouram.locale.intent.action.FIRE_SETTING".equals(action) ||

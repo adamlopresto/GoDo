@@ -31,6 +31,8 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
+                JobIntentServicm.enqueueWork(this, NotificationService.class, 0,
+                new Intent(this, NotificationService.class).putExtra("max_notify", 0));
             </intent-filter>
 
             <intent-filter>
@@ -123,7 +125,9 @@
         <service
             android:name=".NotificationService"
             android:enabled="true"
-            android:exported="false" >
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            >
         </service>
 
         <receiver android:name=".GoDoAppWidget" >

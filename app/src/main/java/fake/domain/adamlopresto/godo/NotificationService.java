@@ -5,7 +5,6 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,19 +12,20 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioAttributes;
 import android.os.Build;
-import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.app.TaskStackBuilder;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.JobIntentService;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.TaskStackBuilder;
+import androidx.preference.PreferenceManager;
 
 import org.jetbrains.annotations.Contract;
 
@@ -38,13 +38,14 @@ import java.util.Locale;
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 import fake.domain.adamlopresto.godo.db.InstancesView;
 
-public class NotificationService extends Service {
+public class NotificationService extends JobIntentService {
     private static final String GROUP_KEY = "GoDoGroup";
     @Nullable
     private TextToSpeech tts;
 
     @Override
-    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+    public void onHandleWork(@Nullable Intent intent) {
+        Log.e("GoDo", "Started notification service, got intent "+intent);
 
         int max = 4;
         if (intent != null)
@@ -72,6 +73,7 @@ public class NotificationService extends Service {
                 Intent alarmIntent = new Intent(this, GoDoReceiver.class);
                 alarmIntent.putExtra("max_notify", quiet ? 1 : 4);
                 PendingIntent contentIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                Log.e("GoDo", "Scheduling wakeup for "+date);
 
                 manager.set(AlarmManager.RTC_WAKEUP, date.getTime(), contentIntent);
             }
@@ -85,7 +87,6 @@ public class NotificationService extends Service {
 
         if (max == 0) {
             stopSelf();
-            return START_NOT_STICKY;
         }
 
         Cursor c = res.query(GoDoContentProvider.INSTANCES_URI,
@@ -209,7 +210,7 @@ public class NotificationService extends Service {
                 stopSelf();
             } else {
                 tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-                    @SuppressWarnings ({"ConstantConditions", "deprecation"})
+                    @SuppressWarnings ({"ConstantConditions"})
                     @Override
                     public void onInit(int status) {
                         if (status == TextToSpeech.SUCCESS) {
@@ -254,7 +255,6 @@ public class NotificationService extends Service {
         } else {
             stopSelf();
         }
-        return START_NOT_STICKY;
     }
 
     @Nullable
@@ -416,11 +416,6 @@ public class NotificationService extends Service {
                 manager.createNotificationChannel(channel);
             }
         }
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 
     private static int priorityFromLevel(int level){

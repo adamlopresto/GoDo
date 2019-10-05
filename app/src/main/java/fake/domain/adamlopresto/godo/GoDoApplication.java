@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.core.app.JobIntentService;
 import androidx.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatDelegate;
@@ -41,7 +43,9 @@ public class GoDoApplication extends Application implements Application.Activity
     @Override
     public void onActivityResumed(Activity activity) {
         ++current;
-        startService(new Intent(this, NotificationService.class).putExtra("max_notify", 0));
+        JobIntentService.enqueueWork(this, NotificationService.class, 0,
+                new Intent(this, NotificationService.class).putExtra("max_notify", 0));
+        //startService(new Intent(this, NotificationService.class).putExtra("max_notify", 0));
     }
 
     @Override
@@ -59,6 +63,8 @@ public class GoDoApplication extends Application implements Application.Activity
     @Override
     public void onActivityStopped(Activity activity) {
         if (--current == 0)
-            startService(new Intent(this, NotificationService.class).putExtra("max_notify", 1));
+            JobIntentService.enqueueWork(this, NotificationService.class, 0,
+                    new Intent(this, NotificationService.class).putExtra("max_notify", 1));
+            //startService(new Intent(this, NotificationService.class).putExtra("max_notify", 1));
     }
 }
