@@ -43,9 +43,12 @@ public class GoDoApplication extends Application implements Application.Activity
     @Override
     public void onActivityResumed(Activity activity) {
         ++current;
+        /*
         JobIntentService.enqueueWork(this, NotificationService.class, 0,
                 new Intent(this, NotificationService.class).putExtra("max_notify", 0));
         //startService(new Intent(this, NotificationService.class).putExtra("max_notify", 0));
+         */
+        NotificationService.notify(this, NotificationLevels.SILENT);
     }
 
     @Override
@@ -63,8 +66,11 @@ public class GoDoApplication extends Application implements Application.Activity
     @Override
     public void onActivityStopped(Activity activity) {
         if (--current == 0)
+            NotificationService.notify(this, NotificationLevels.SILENT);
+        /*
             JobIntentService.enqueueWork(this, NotificationService.class, 0,
                     new Intent(this, NotificationService.class).putExtra("max_notify", 1));
             //startService(new Intent(this, NotificationService.class).putExtra("max_notify", 1));
+         */
     }
 }

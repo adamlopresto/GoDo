@@ -6,6 +6,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -42,6 +43,15 @@ public class NotificationService extends JobIntentService {
     private static final String GROUP_KEY = "GoDoGroup";
     @Nullable
     private TextToSpeech tts;
+
+    public static void notify(Context context, int maxLevel){
+        JobIntentService.enqueueWork(context, NotificationService.class, 0,
+                new Intent(context, NotificationService.class).putExtra("max_notify", maxLevel));
+    }
+
+    public static void notify(Context context, NotificationLevels maxLevel){
+        notify(context, maxLevel.ordinal());
+    }
 
     @Override
     public void onHandleWork(@Nullable Intent intent) {

@@ -52,7 +52,7 @@ public class GoDoReceiver extends BroadcastReceiver {
                 max = extras.getInt("max_notify", 4);
             }
             if (max > 0)
-                context.startService(new Intent(context, NotificationService.class).putExtra("max_notify", max));
+                NotificationService.notify(context, max);
         } else if (action.equals(MARK_COMPLETE_INTENT)) {
             long id = intent.getLongExtra(InstanceHolderActivity.EXTRA_INSTANCE, -1L);
             if (id != -1L) {
@@ -60,7 +60,7 @@ public class GoDoReceiver extends BroadcastReceiver {
                 instance.updateDone(true);
                 instance.flush();
             }
-            context.startService(new Intent(context, NotificationService.class).putExtra("max_notify", 1));
+            NotificationService.notify(context, NotificationLevels.SILENT);
         } else {
             Log.e("GoDo", "Unknown intent action " + action + ", " + intent);
         }
