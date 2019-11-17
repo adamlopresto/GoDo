@@ -11,6 +11,7 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="18" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:allowBackup="true"
@@ -31,8 +32,6 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
-                JobIntentServicm.enqueueWork(this, NotificationService.class, 0,
-                new Intent(this, NotificationService.class).putExtra("max_notify", 0));
             </intent-filter>
 
             <intent-filter>
