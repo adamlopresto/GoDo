@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -44,6 +45,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
     private final boolean showCheckBox;
 
     private static int defaultTextColor;
+    private static int overdueTextColor;
+    private static int inactiveTextColor;
+
 
     @Nullable
     private View.OnClickListener onClickListener;
@@ -89,6 +93,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
                         android.R.attr.textColorPrimary});
         defaultTextColor = arr.getColor(0, -1);
         arr.recycle();
+
+        overdueTextColor = ContextCompat.getColor(context, R.color.overdue);
+
+        inactiveTextColor = Color.GRAY;
     }
 
     public void toggleSelected(View view) {
@@ -149,8 +157,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
             v.setPaintFlags(v.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
 
         v.setTextColor(
-                overdue ? Color.RED  :
-                future  ? Color.GRAY :
+                overdue ? overdueTextColor  :
+                future  ? inactiveTextColor :
                           defaultTextColor);
     }
 

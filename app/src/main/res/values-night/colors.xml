@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <color name="appMain">#a6080e</color>
+    <color name="appMainLight">#e51c23</color>
+    <color name="appMainDark">#82080c</color>
     <color name="backdrop">#000000</color>
     <color name="backdropFaded">#000000</color>
+    <color name="overdue">#e51c23</color>
 </resources>
