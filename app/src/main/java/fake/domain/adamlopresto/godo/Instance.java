@@ -86,14 +86,16 @@ public class Instance {
             c = db.query(TasksTable.TABLE,
                     new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES,
                             TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT,
-                            TasksTable.COLUMN_DUE_NOTIFICATION, TasksTable.COLUMN_ID},
+                            TasksTable.COLUMN_DUE_NOTIFICATION, TasksTable.COLUMN_ID,
+                            TasksTable.COLUMN_TASKER_LABEL, TasksTable.COLUMN_TASKER_COMMAND},
                     "? like REPLACE(" + TasksTable.COLUMN_NAME + ", 'things', '%')",
                     new String[]{name}, null, null, TasksTable.COLUMN_ID + " DESC", "1"
             );
             if (c.moveToFirst()) {
                 task = new Task(helper, c.getLong(5), c.getString(0), c.getString(1),
                         NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)],
-                        NotificationLevels.values()[c.getInt(4)]);
+                        NotificationLevels.values()[c.getInt(4)], c.getString(6),
+                        c.getString(7));
                 break;
             }
             c.close();

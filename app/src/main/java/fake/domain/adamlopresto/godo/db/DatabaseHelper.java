@@ -27,8 +27,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * 3: add due notification
      * 4: all times are stored as local
      * 5: sort by dependencies
+     * 6: Tasker integration
      */
-    private static final int CURRENT_VERSION = 5;
+    private static final int CURRENT_VERSION = 6;
     @Nullable
     private static DatabaseHelper mInstance;
     @NonNull

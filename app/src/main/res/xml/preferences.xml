@@ -15,5 +15,6 @@
         <SwitchPreferenceCompat app:key="pref_colorful_widget" app:summaryOn="Use the new, more colorful widget" app:title="Use colorful widget" app:summaryOff="Use the old, grayscale widget" app:defaultValue="true"/>
         <SwitchPreferenceCompat app:key="pref_led" app:summaryOn="Turn on the light when there's a notification" app:title="Notification lights" app:summaryOff="Leave the light off when there's a notification" app:defaultValue="true"/>
         <SwitchPreferenceCompat app:key="pref_showoff" app:summaryOn="Use a special version of the database to show off" app:title="Demo mode" app:summaryOff="Use the normal database" app:defaultValue="false"/>
+        <SwitchPreferenceCompat app:key="pref_tasker" app:summaryOn="Show Tasker commands" app:title="Use Tasker" app:summaryOff="Don't show configuration for Tasker commands" app:defaultValue="false"/>
     </PreferenceCategory>
 </PreferenceScreen>

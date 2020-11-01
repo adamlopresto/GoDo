@@ -67,6 +67,14 @@
         android:layout_gravity="bottom"
         android:orientation="vertical">
 
+        <Button
+            android:id="@+id/tasker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Call"
+            android:transitionName="taskerLabel"
+            />
+
         <TextView
             android:id="@+id/plan_date"
             android:layout_width="wrap_content"

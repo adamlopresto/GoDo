@@ -22,13 +22,15 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import fake.domain.adamlopresto.godo.db.DatabaseHelper;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> implements ListAdapter {
 
     public static final String[] PROJECTION = {"_id", "task_name",
-            "task_notes", "instance_notes", "due_date", "plan_date", "done_date"};
+            "task_notes", "instance_notes", "due_date", "plan_date", "done_date",
+            "tasker_label", "tasker_command"};
     public static final String SORT = "done_date is not null, " +
             "case when DATE(due_date) <= DATE('now', 'localtime') then due_date || ' 23:59:59' else '9999-99-99' end, " +
             "coalesce(plan_date || ' 23:59:58', DATE('now', 'localtime') || ' 23:59:59'), " +
@@ -42,6 +44,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
     private static final int DUE_DATE = 4;
     private static final int PLAN_DATE = 5;
     private static final int DONE_DATE = 6;
+    public static final int TASKER_LABEL = 7;
+    public static final int TASKER_COMMAND = 8;
     private final boolean showCheckBox;
 
     private static int defaultTextColor;
@@ -203,6 +207,27 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
         setTextViewDate(holder.dueDate, "D: ", cursor.getString(DUE_DATE), done, overdue, future);
         setTextViewDate(holder.planDate, "P: ", cursor.getString(PLAN_DATE), done, overdue, future);
 
+        final String taskerCommand = cursor.getString(TASKER_COMMAND);
+        if (TextUtils.isEmpty(taskerCommand)) {
+            holder.tasker.setVisibility(View.GONE);
+        } else {
+            String taskerLabel = cursor.getString(TASKER_LABEL);
+            if (TextUtils.isEmpty(taskerLabel))
+                taskerLabel = "Execute";
+
+            //The button is never reformatted
+            holder.tasker.setVisibility(View.VISIBLE);
+            holder.tasker.setText(taskerLabel);
+            holder.tasker.setOnClickListener(new View.OnClickListener() {
+                                                 @Override
+                                                 public void onClick(View v) {
+                                                     Toast.makeText(v.getContext(), taskerCommand, Toast.LENGTH_LONG).show();
+                                                     TaskerCommandKt.sendTaskerCommandNoExceptions(v.getContext(), taskerCommand);
+                                                 }
+                                             }
+            );
+        }
+
         holder.done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -361,6 +386,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
         public TextView instanceNotes;
         public TextView planDate;
         public TextView dueDate;
+        public TextView tasker;
         public long id = RecyclerView.NO_ID;
 
         public TaskHolder(View itemView, boolean showCheckBox) {
@@ -373,6 +399,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
             instanceNotes = itemView.findViewById(R.id.instance_notes);
             planDate = itemView.findViewById(R.id.plan_date);
             dueDate = itemView.findViewById(R.id.due_date);
+            tasker = itemView.findViewById(R.id.tasker);
 
         }
     }

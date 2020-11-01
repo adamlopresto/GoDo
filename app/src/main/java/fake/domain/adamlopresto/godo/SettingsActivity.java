@@ -25,6 +25,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static final String PREF_LED = "pref_led";
     public static final String PREF_SHOWOFF = "pref_showoff";
     public static final String PREF_THEME = "pref_theme";
+    public static final String PREF_TASKER = "pref_tasker";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

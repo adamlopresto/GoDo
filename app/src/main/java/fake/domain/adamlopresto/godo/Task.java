@@ -35,6 +35,8 @@ public class Task {
     private NotificationLevels notification;
     private NotificationLevels dueNotification;
     private RepeatTypes repeat = RepeatTypes.NONE;
+    private String taskerLabel;
+    private String taskerCommand;
 
     /*
      * Constructor to create a new, empty task
@@ -52,8 +54,8 @@ public class Task {
     }
 
     public Task(DatabaseHelper helper, long id, String name, String notes,
-                 NotificationLevels notification, RepeatTypes repeat,
-                 NotificationLevels dueNotification) {
+                NotificationLevels notification, RepeatTypes repeat,
+                NotificationLevels dueNotification, String taskerLabel, String taskerCommand) {
         this.helper = helper;
         this.id = id;
         this.name = name;
@@ -61,6 +63,8 @@ public class Task {
         this.notification = notification;
         this.repeat = repeat;
         this.dueNotification = dueNotification;
+        this.taskerLabel = taskerLabel;
+        this.taskerCommand = taskerCommand;
     }
 
     @NonNull
@@ -72,14 +76,15 @@ public class Task {
         Cursor c = db.query(TasksTable.TABLE,
                 new String[]{TasksTable.COLUMN_NAME, TasksTable.COLUMN_NOTES,
                         TasksTable.COLUMN_NOTIFICATION, TasksTable.COLUMN_REPEAT,
-                        TasksTable.COLUMN_DUE_NOTIFICATION},
+                        TasksTable.COLUMN_DUE_NOTIFICATION, TasksTable.COLUMN_TASKER_LABEL,
+                        TasksTable.COLUMN_TASKER_COMMAND},
                 TasksTable.COLUMN_ID + "=?", Utils.idToSelectionArgs(id), null, null, null
         );
         if (!c.moveToFirst())
             throw new IllegalArgumentException("No task with id " + id);
         task = new Task(helper, id, c.getString(0), c.getString(1),
                 NotificationLevels.values()[c.getInt(2)], RepeatTypes.values()[c.getInt(3)],
-                NotificationLevels.values()[c.getInt(4)]);
+                NotificationLevels.values()[c.getInt(4)], c.getString(5), c.getString(6));
         c.close();
         cache.put(id, task);
         return task;
@@ -281,8 +286,8 @@ public class Task {
                     try {
                         String timeStr = rules.getString(3);
                         String[] parts = timeStr.split(":", 2);
-                        int hr = Integer.valueOf(parts[0]);
-                        int min = Integer.valueOf(parts[1]);
+                        int hr = Integer.parseInt(parts[0]);
+                        int min = Integer.parseInt(parts[1]);
                         cal.set(Calendar.HOUR_OF_DAY, hr);
                         cal.set(Calendar.MINUTE, min);
                         hasTime = true;
@@ -356,6 +361,8 @@ public class Task {
         values.put(TasksTable.COLUMN_NOTIFICATION, notification.ordinal());
         values.put(TasksTable.COLUMN_REPEAT, repeat.ordinal());
         values.put(TasksTable.COLUMN_DUE_NOTIFICATION, dueNotification.ordinal());
+        values.put(TasksTable.COLUMN_TASKER_LABEL, taskerLabel);
+        values.put(TasksTable.COLUMN_TASKER_COMMAND, taskerCommand);
 
         if (id == -1L) {
             id = db.insert(TasksTable.TABLE, null, values);
@@ -367,4 +374,19 @@ public class Task {
         dirty = false;
     }
 
+    public String getTaskerLabel() {
+        return taskerLabel;
+    }
+
+    public void setTaskerLabel(String taskerLabel) {
+        this.taskerLabel = taskerLabel;
+    }
+
+    public String getTaskerCommand() {
+        return taskerCommand;
+    }
+
+    public void setTaskerCommand(String taskerCommand) {
+        this.taskerCommand = taskerCommand;
+    }
 }

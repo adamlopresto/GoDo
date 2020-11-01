@@ -3,6 +3,7 @@ package fake.domain.adamlopresto.godo;
 import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -15,6 +16,8 @@ import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import android.preference.PreferenceManager;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -40,8 +43,6 @@ import fake.domain.adamlopresto.godo.db.TaskContextTable;
 @SuppressWarnings ("InstanceVariableMayNotBeInitialized")
 public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDateChangeListener {
 
-//    public static final int REQUEST_PICK_SHORTCUT = 10;
-//    private static final int REQUEST_FINISH_SHORTCUT = 20;
     private CheckBox done;
     private TextView taskName;
     private TextView taskNotes;
@@ -58,11 +59,6 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
     private View startAfterDue;
     private View planAfterDue;
 
-    /*
-    private Button button;
-    private Intent buttonIntent;
-    */
-
     private boolean showRepetitionCollapsed = true;
     private View repetitionHeader;
     private View repetitionDivider;
@@ -70,6 +66,10 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
 
     private TextView contexts;
     private TextView relationships;
+
+    private View taskerCard;
+    private TextView taskerLabel;
+    private TextView taskerCommand;
 
     private final View.OnClickListener showRepetitionsActivityListener = new View.OnClickListener() {
         @Override
@@ -160,7 +160,6 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         repetitionRuleList = v.findViewById(R.id.repetition_list);
         repetitionDivider  = v.findViewById(R.id.repetition_divider);
 
-
         repetitionRuleList.setOnClickListener(showRepetitionsActivityListener);
 
         viewHistoryButton = v.findViewById(R.id.view_history_button);
@@ -199,6 +198,21 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
             }
         });
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean showTasker = prefs.getBoolean(SettingsActivity.PREF_TASKER, false);
+        v.findViewById(R.id.tasker_card).setVisibility(showTasker ? View.VISIBLE : View.GONE);
+
+        taskerLabel = v.findViewById(R.id.tasker_label);
+        taskerCommand = v.findViewById(R.id.tasker_command);
+
+        v.findViewById(R.id.execute).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String cmd = taskerCommand.getText().toString();
+                TaskerCommandKt.sendTaskerCommandNoExceptions(v.getContext(), cmd);
+            }
+        });
+
         Toolbar toolbar = v.findViewById(R.id.header);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
@@ -207,27 +221,6 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(R.string.title_activity_task);
         }
-
-        /*
-        button = (Button) v.findViewById(R.id.shortcut);
-        button.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (buttonIntent != null) {
-                            startActivity(buttonIntent);
-                        }
-                        else {
-                            Intent intent = new Intent(Intent.ACTION_PICK_ACTIVITY);
-                            intent.putExtra(Intent.EXTRA_INTENT, new Intent(Intent.ACTION_CREATE_SHORTCUT));
-                            intent.putExtra(Intent.EXTRA_TITLE, "Pick an action");
-
-                            startActivityForResult(intent, REQUEST_PICK_SHORTCUT);
-                        }
-                    }
-                }
-        );
-        */
 
         return v;
     }
@@ -331,6 +324,8 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         taskNotes.setText(task.getNotes());
         notification.setSelection(task.getNotification().ordinal());
         dueNotification.setSelection(task.getDueNotification().ordinal());
+        taskerLabel.setText((task.getTaskerLabel()));
+        taskerCommand.setText((task.getTaskerCommand()));
 
         boolean templateRW = false;
         switch (task.getRepeat()) {
@@ -397,6 +392,8 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
         task.setNotes(nullString(taskNotes));
         task.setNotification(NotificationLevels.values()[notification.getSelectedItemPosition()]);
         task.setDueNotification(NotificationLevels.values()[dueNotification.getSelectedItemPosition()]);
+        task.setTaskerLabel(nullString(taskerLabel));
+        task.setTaskerCommand(nullString(taskerCommand));
         task.flushNow();
 
         Instance instance = getInstance();

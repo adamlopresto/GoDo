@@ -108,7 +108,7 @@ public class NotificationService extends JobIntentService {
                                 "	(case when (NOT blocked_by_context AND NOT blocked_by_task AND due_date <= DATETIME('now', 'localtime')) then due_notification else 0 end), " +
                                 "   (case when (NOT blocked_by_context AND NOT blocked_by_task AND COALESCE(plan_date, start_date, '') <= DATETIME('now', 'localtime')) then notification else 0 end)) " +
                                 "as notification",
-                        InstancesView.COLUMN_ID
+                        InstancesView.COLUMN_ID, InstancesView.COLUMN_TASKER_LABEL, InstancesView.COLUMN_TASKER_COMMAND
                 },
                 "NOT task_name IS NULL " +
                         "AND done_date IS NULL " +
@@ -131,6 +131,8 @@ public class NotificationService extends JobIntentService {
         String name;
         String taskNotes;
         String instanceNotes;
+        String taskerLabel;
+        String taskerCommand;
         int maxNotificationLevel = 0;
         final ArrayList<String> spoken = new ArrayList<>();
         long id;
@@ -178,9 +180,11 @@ public class NotificationService extends JobIntentService {
                         maxNotificationLevel = notificationLevel;
 
                     id = c.getLong(4);
+                    taskerLabel = c.getString(5);
+                    taskerCommand = c.getString(6);
                     NotificationCompat.Builder builder = makeBuilder(notificationLevel);
                     populateBuilder(builder, id, name, taskNotes,
-                            instanceNotes);
+                            instanceNotes, taskerLabel, taskerCommand);
                     if (total != 1) {
                         builder.setGroup(GROUP_KEY);
                         builder.setSortKey(String.format(Locale.US, "%03d", numToNotify));
@@ -306,7 +310,7 @@ public class NotificationService extends JobIntentService {
 
     private void populateBuilder(NotificationCompat.Builder builder, long id,
                                  CharSequence name, String taskNotes,
-                                 String instanceNotes){
+                                 String instanceNotes, String taskerLabel, String taskerCommand){
 
         StringBuilder sb = new StringBuilder();
         if (!TextUtils.isEmpty(taskNotes)) {
@@ -329,6 +333,17 @@ public class NotificationService extends JobIntentService {
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
         builder.addAction(R.drawable.ic_done_black_18dp, getString(R.string.mark_complete), markDone);
+
+        Intent taskerIntent = new Intent();
+        taskerIntent.setClassName("net.dinglisch.android.taskerm", "com.joaomgcd.taskerm.command.ServiceSendCommand");
+        taskerIntent.putExtra("command", taskerCommand);
+        PendingIntent taskerPI = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            taskerPI = PendingIntent.getForegroundService(this, -(int)id, taskerIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        } else {
+            taskerPI = PendingIntent.getService(this, -(int)id, taskerIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+        builder.addAction(R.drawable.ic_done_black_18dp, taskerLabel, taskerPI);
 
         NotificationCompat.WearableExtender wearableExtender = new NotificationCompat.WearableExtender();
         wearableExtender.setContentAction(0);

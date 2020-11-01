@@ -21,6 +21,10 @@ public class TasksTable {
     //as of version 3
     public static final String COLUMN_DUE_NOTIFICATION = "due_notification";
 
+    //as of version 6
+    public static final String COLUMN_TASKER_LABEL = "tasker_label";
+    public static final String COLUMN_TASKER_COMMAND = "tasker_command";
+
     public static void onCreate(@NonNull SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE
                         + "("
@@ -29,8 +33,10 @@ public class TasksTable {
                         + COLUMN_NOTES + " TEXT, "
                         + COLUMN_NOTIFICATION + " INTEGER, "
                         + COLUMN_REPEAT + " INTEGER, "
-                        + COLUMN_DUE_NOTIFICATION + " INTEGER"
-                        + ")"
+                        + COLUMN_DUE_NOTIFICATION + " INTEGER, "
+                        + COLUMN_TASKER_LABEL + " TEXT, "
+                        + COLUMN_TASKER_COMMAND + " TEXT, "
+                + ")"
         );
     }
 
@@ -38,6 +44,14 @@ public class TasksTable {
         if (oldVersion < 3) {
             db.execSQL("ALTER TABLE " + TABLE
                             + " ADD COLUMN " + COLUMN_DUE_NOTIFICATION + " INTEGER"
+            );
+        }
+        if (oldVersion < 6) {
+            db.execSQL("ALTER TABLE " + TABLE
+                    + " ADD COLUMN " + COLUMN_TASKER_LABEL + " TEXT"
+            );
+            db.execSQL("ALTER TABLE " + TABLE
+                    + " ADD COLUMN " + COLUMN_TASKER_COMMAND + " TEXT"
             );
         }
     }

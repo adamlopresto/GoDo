@@ -1,14 +1,17 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
+    ext.kotlin_version = '1.4.20-M1'
     repositories {
         jcenter()
         maven {
             url "https://maven.google.com"
         }
         google()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.1'
+        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
