@@ -71,13 +71,10 @@ public class TaskDetailsFragment extends Fragment implements DateTimePicker.OnDa
     private TextView taskerLabel;
     private TextView taskerCommand;
 
-    private final View.OnClickListener showRepetitionsActivityListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent i = new Intent(getActivity(), RepetitionRulesListActivity.class);
-            i.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, getInstance().getId());
-            startActivity(i);
-        }
+    private final View.OnClickListener showRepetitionsActivityListener = v -> {
+        Intent i = new Intent(getActivity(), RepetitionRulesListActivity.class);
+        i.putExtra(InstanceHolderActivity.EXTRA_INSTANCE, getInstance().getId());
+        startActivity(i);
     };
     private final View.OnClickListener expandContractRepetitionsListener = new View.OnClickListener() {
         @Override

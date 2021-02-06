@@ -55,12 +55,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
 
     @Nullable
     private View.OnClickListener onClickListener;
-    private final View.OnLongClickListener onLongClickListener = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            toggleSelected(v);
-            return true;
-        }
+    private final View.OnLongClickListener onLongClickListener = v -> {
+        toggleSelected(v);
+        return true;
     };
     private int choiceMode;
     private ActionMode.Callback multiChoiceModeListener;
@@ -78,14 +75,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskHolder> im
         this.cursor = cursor;
         this.showCheckBox = showCheckBox;
         if (onClickListener != null) {
-            this.onClickListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (numSelected > 0)
-                        toggleSelected(v);
-                    else
-                        onClickListener.onClick(v);
-                }
+            this.onClickListener = v -> {
+                if (numSelected > 0)
+                    toggleSelected(v);
+                else
+                    onClickListener.onClick(v);
             };
         }
 
