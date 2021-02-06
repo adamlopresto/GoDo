@@ -174,7 +174,7 @@ public class GoDoContentProvider extends ContentProvider {
                 String id = uri.getLastPathSegment();
                 return helper.getReadableDatabase().rawQuery(
                         "SELECT _id, task_name, task_notes, instance_notes, due_date, plan_date, " +
-                                "done_date, 0 as item_type " +
+                                "done_date, 0 as item_type, tasker_label, tasker_command " +
                         "FROM instances_view " +
                         "WHERE _id in (SELECT " + InstanceDependencyTable.COLUMN_FIRST +
                                      " FROM " + InstanceDependencyTable.TABLE +
@@ -182,10 +182,10 @@ public class GoDoContentProvider extends ContentProvider {
                         "UNION "+
                         "SELECT -1 as _id, null as task_name, null as task_notes, " +
                                 "null as instance_notes, null as due_date, null as plan_date, " +
-                                "null as done_date, 1 as item_type " +
+                                "null as done_date, 1 as item_type, null as tasker_label, null as tasker_command " +
                         "UNION "+
                         "SELECT _id, task_name, task_notes, instance_notes, due_date, plan_date, " +
-                                "done_date, 2 as item_type " +
+                                "done_date, 2 as item_type, tasker_label, tasker_command " +
                         "FROM instances_view " +
                         "WHERE _id in (SELECT " + InstanceDependencyTable.COLUMN_SECOND +
                         " FROM " + InstanceDependencyTable.TABLE +
